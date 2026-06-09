@@ -16,7 +16,7 @@
 		<minifiedDrawOffset>(0, 0, 0.2)</minifiedDrawOffset>
 		<defaultPlacingRot>North</defaultPlacingRot>
 		<graphicData>
-			<texPath>TestBuilding/WallCamera</texPath>
+			<texPath>Things/Building/Cameras/WallCamera</texPath>
 			<drawSize>(1.1,1.1)</drawSize>
 			<graphicClass>Graphic_Multi</graphicClass>
 			<drawOffsetEast>(0.5,0,0)</drawOffsetEast>
@@ -72,7 +72,7 @@
 		</thingCategories>
 		<minifiedDef>MinifiedThing</minifiedDef> 
 		<graphicData>
-			<texPath>TestBuilding/PoleMountedCamera</texPath>
+			<texPath>Things/Building/Cameras/PoleMountedCamera</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(1.4,2.4)</drawSize>
 			<drawOffset>(0,0,0.5)</drawOffset>
@@ -116,7 +116,7 @@
 		</thingCategories>
 		<minifiedDef>MinifiedThing</minifiedDef> 
 		<graphicData>
-			<texPath>TestBuilding/PoleMountedCameraAlt</texPath>
+			<texPath>Things/Building/Cameras/PoleMountedCameraAlt</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(1.4,2.4)</drawSize>
 			<drawOffset>(0,0,0.5)</drawOffset>
@@ -161,7 +161,7 @@
 		</thingCategories>
 		<minifiedDef>MinifiedThing</minifiedDef> 
 		<graphicData>
-			<texPath>TestBuilding/SurveillanceStation_south</texPath>
+			<texPath>Things/Building/SurveillanceStation_south</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(6.4,3.4)</drawSize>
 		</graphicData>
