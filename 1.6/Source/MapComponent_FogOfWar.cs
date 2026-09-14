@@ -20,7 +20,7 @@ namespace SurveillanceShift
         private const int SectionSize = 16;
         private static readonly float FogAltitude = AltitudeLayer.Weather.AltitudeFor() + 0.05f;
 
-        private static readonly Material DarkFogMat = MaterialPool.MatFrom(BaseContent.WhiteTex, ShaderDatabase.Transparent, Color.black, 3900);
+        private static readonly Material DarkFogMat = MaterialPool.MatFrom(BaseContent.WhiteTex, ShaderDatabase.Transparent, new ColorInt(25, 25, 25).ToColor, 3900);
 
         private bool[] visibleCells;
         private bool[] prevCells;

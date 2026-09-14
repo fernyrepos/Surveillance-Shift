@@ -78,10 +78,10 @@ namespace SurveillanceShift
             Widgets.Label(labelRect, label);
 
             Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.UpperLeft;
             var descHeight = Text.CalcHeight(desc, contentRect.width);
             var descRect = new Rect(contentRect.x, labelRect.yMax + 5f, contentRect.width, descHeight);
             Widgets.Label(descRect, desc);
+            Text.Anchor = TextAnchor.UpperLeft;
         }
     }
 }

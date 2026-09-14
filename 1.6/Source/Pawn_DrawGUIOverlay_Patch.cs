@@ -9,7 +9,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix(Pawn __instance)
         {
-            if (State.IsLimitedAwareness is false || __instance == ModCompatibility.GetPerspectiveShiftAvatar() || ModCompatibility.IsPerspectiveShiftAuthentic() is false && __instance.Faction == Faction.OfPlayer) return true;
+            if (State.IsLimitedAwareness is false || __instance == ModCompatibility.GetPerspectiveShiftAvatar()) return true;
 
             var map = __instance.Map ?? __instance.Corpse?.Map;
             if (map is null) return true;
