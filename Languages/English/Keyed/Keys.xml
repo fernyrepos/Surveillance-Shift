@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <SS_SelectAwarenessStyle>Select an awareness style</SS_SelectAwarenessStyle>
+  <SS_LimitedAwareness>Limited awareness</SS_LimitedAwareness>
+  <SS_LimitedAwarenessDesc>Fog of war is enabled. You can only see the areas directly observed by your colonists or character. Raids and visitors arrive silently until breached into sight.</SS_LimitedAwarenessDesc>
+  <SS_AreaOmniscience>Area omniscience</SS_AreaOmniscience>
+  <SS_AreaOmniscienceDesc>Classic RimWorld visibility with complete map awareness.</SS_AreaOmniscienceDesc>
+  <SS_PingLocation>Ping location</SS_PingLocation>
+</LanguageData>
