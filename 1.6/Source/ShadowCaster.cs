@@ -3,6 +3,7 @@ using Verse;
 
 namespace SurveillanceShift
 {
+    [HotSwappable]
     public static class ShadowCaster
     {
         private const int StackCapacity = 512;
@@ -42,12 +43,14 @@ namespace SurveillanceShift
             while (stackIndex >= 0)
             {
                 var col = Stack[stackIndex--];
-                if (col.depth > radius) continue;
+                if (col.depth > radius || col.minSlope >= col.maxSlope) continue;
 
-                var minRow = Mathf.FloorToInt(col.depth * col.minSlope);
-                var maxRow = Mathf.CeilToInt(col.depth * col.maxSlope);
+                var minRow = Mathf.FloorToInt(col.depth * col.minSlope + 0.5f);
+                var maxRow = Mathf.FloorToInt(col.depth * col.maxSlope + 0.5f);
+                if (minRow > maxRow) continue;
 
                 var prevOpaque = false;
+                var curMinSlope = col.minSlope;
 
                 for (var row = minRow; row <= maxRow; row++)
                 {
@@ -69,23 +72,40 @@ namespace SurveillanceShift
                     var idx = cz * mapSizeX + cx;
                     var dx = cx - originX;
                     var dz = cz - originZ;
-                    if (dx * dx + dz * dz <= radiusSq)
+
+                    var ed = edifices[idx];
+                    var isWall = ed != null && ed.CanBeSeenOver() is false;
+
+                    var isPinched = false;
+                    if (isWall is false && dx != 0 && dz != 0)
+                    {
+                        var sx = dx > 0 ? 1 : -1;
+                        var sz = dz > 0 ? 1 : -1;
+                        var ed1 = edifices[cz * mapSizeX + (cx - sx)];
+                        var ed2 = edifices[(cz - sz) * mapSizeX + cx];
+                        if (ed1 != null && ed1.CanBeSeenOver() is false && ed2 != null && ed2.CanBeSeenOver() is false)
+                        {
+                            isPinched = true;
+                        }
+                    }
+
+                    var isOpaque = isWall || isPinched;
+
+                    if (isPinched is false && dx * dx + dz * dz <= radiusSq)
                     {
                         visibleCells[idx] = true;
                     }
 
-                    var ed = edifices[idx];
-                    var isOpaque = ed != null && ed.def.Fillage == FillCategory.Full;
-
                     if (isOpaque)
                     {
-                        if (prevOpaque is false && row > minRow && stackIndex < StackCapacity - 1)
+                        var newMaxSlope = (row - 0.5f) / col.depth;
+                        if (prevOpaque is false && newMaxSlope > curMinSlope && stackIndex < StackCapacity - 1)
                         {
                             Stack[++stackIndex] = new Column
                             {
                                 depth = col.depth + 1,
-                                minSlope = col.minSlope,
-                                maxSlope = (row - 0.5f) / col.depth
+                                minSlope = curMinSlope,
+                                maxSlope = newMaxSlope
                             };
                         }
                         prevOpaque = true;
@@ -94,18 +114,18 @@ namespace SurveillanceShift
                     {
                         if (prevOpaque)
                         {
-                            col.minSlope = (row - 0.5f) / col.depth;
+                            curMinSlope = (row - 0.5f) / col.depth;
                         }
                         prevOpaque = false;
                     }
                 }
 
-                if (prevOpaque is false && stackIndex < StackCapacity - 1)
+                if (prevOpaque is false && curMinSlope < col.maxSlope && stackIndex < StackCapacity - 1)
                 {
                     Stack[++stackIndex] = new Column
                     {
                         depth = col.depth + 1,
-                        minSlope = col.minSlope,
+                        minSlope = curMinSlope,
                         maxSlope = col.maxSlope
                     };
                 }
