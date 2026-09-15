@@ -219,6 +219,18 @@
 				<basePowerConsumption>120</basePowerConsumption>
 			</li>
 			<li Class="CompProperties_Flickable" />
+			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
+				<randomGraphics>
+					<li>Things/Building/DominionTower/DominionTower</li>
+					<li>Things/Building/DominionTower/DominionTower2</li>
+					<li>Things/Building/DominionTower/DominionTower3</li>
+				</randomGraphics>
+				<optionalNames>
+					<li>Dominion tower 1</li>
+					<li>Dominion tower 2</li>
+					<li>Dominion tower 3</li>
+				</optionalNames>
+			</li>
 		</comps>
 		<selectable>true</selectable>
 		<tickerType>Normal</tickerType>
