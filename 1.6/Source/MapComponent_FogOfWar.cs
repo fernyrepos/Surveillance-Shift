@@ -32,6 +32,7 @@ namespace SurveillanceShift
         private int sectionsZ;
         private bool firstPass = true;
         private List<MutedArrival> mutedArrivals = new();
+        private List<Message> mutedMessages = new();
 
         public class MutedArrival : IExposable
         {
@@ -69,6 +70,11 @@ namespace SurveillanceShift
             });
         }
 
+        public void QueueMessage(Message message)
+        {
+            mutedMessages.Add(message);
+        }
+
         public override void FinalizeInit()
         {
             base.FinalizeInit();
@@ -84,6 +90,7 @@ namespace SurveillanceShift
             {
                 RecalculateVisibility();
                 ProcessMutedArrivals();
+                ProcessMutedMessages();
             }
         }
 
@@ -285,6 +292,37 @@ namespace SurveillanceShift
             }
         }
 
+        private void ProcessMutedMessages()
+        {
+            for (int i = mutedMessages.Count - 1; i >= 0; i--)
+            {
+                var message = mutedMessages[i];
+                var targets = message.lookTargets?.targets;
+                if (targets.NullOrEmpty())
+                {
+                    mutedMessages.RemoveAt(i);
+                    continue;
+                }
+                var checkable = false;
+                foreach (var target in targets)
+                {
+                    if (target.ThingDestroyed) continue;
+                    checkable = true;
+                    if (target.Map == map && target.Cell.InBounds(map) && visibleCells[map.cellIndices.CellToIndex(target.Cell)])
+                    {
+                        message.ResetTimer();
+                        mutedMessages.RemoveAt(i);
+                        Messages.Message(message);
+                        break;
+                    }
+                }
+                if (checkable is false)
+                {
+                    mutedMessages.RemoveAt(i);
+                }
+            }
+        }
+
         public override void MapRemoved()
         {
             base.MapRemoved();
@@ -299,6 +337,7 @@ namespace SurveillanceShift
         {
             base.ExposeData();
             Scribe_Collections.Look(ref mutedArrivals, "SS_MutedArrivals", LookMode.Deep);
+            Scribe_Collections.Look(ref mutedMessages, "SS_MutedMessages", LookMode.Deep);
         }
     }
 }

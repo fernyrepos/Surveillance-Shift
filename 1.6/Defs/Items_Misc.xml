@@ -3,7 +3,7 @@
 <Defs>
 
 	<ThingDef ParentName="ResourceBase">
-		<defName>RemoteSurveillanceDevice</defName>
+		<defName>SS_RemoteSurveillanceDevice</defName>
 		<label>remote surveillance device</label>
 		<description>A miniaturised computing device with a touch screen and wireless connectivity. Useful for watching video feeds on the go.</description>
 		<graphicData>
@@ -13,8 +13,8 @@
 		<statBases>
 			<MarketValue>1200</MarketValue>
 			<MaxHitPoints>60</MaxHitPoints>
-			<Mass>0.50</Mass>
-			<Flammability>0.50</Flammability>
+			<Mass>0.5</Mass>
+			<Flammability>0.5</Flammability>
 			<DeteriorationRate>6</DeteriorationRate>
 		</statBases>
 		<tickerType>Rare</tickerType>
@@ -27,9 +27,9 @@
 		</thingCategories>
 		<tradeability>Sellable</tradeability>
 	</ThingDef>
-	
+
 	<ThingDef ParentName="ResourceBase">
-		<defName>WalkieTalkie</defName>
+		<defName>SS_WalkieTalkie</defName>
 		<label>walkie talkie</label>
 		<description>A small, portable device that allows radio-communications at short to moderate range.</description>
 		<graphicData>
@@ -40,8 +40,8 @@
 		<statBases>
 			<MarketValue>200</MarketValue>
 			<MaxHitPoints>60</MaxHitPoints>
-			<Mass>0.50</Mass>
-			<Flammability>0.50</Flammability>
+			<Mass>0.5</Mass>
+			<Flammability>0.5</Flammability>
 			<DeteriorationRate>6</DeteriorationRate>
 		</statBases>
 		<tickerType>Rare</tickerType>
@@ -54,9 +54,9 @@
 		</thingCategories>
 		<tradeability>Sellable</tradeability>
 	</ThingDef>
-	
+
 	<ThingDef ParentName="BaseMeleeWeapon_Blunt">
-		<defName>SignalHorn</defName>
+		<defName>SS_SignalHorn</defName>
 		<label>signal horn</label>
 		<description>A primitive horn used to signal danger or call for aid. Can be used as a weapon in a pinch.</description>
 		<graphicData>
@@ -66,7 +66,7 @@
 		<statBases>
 			<WorkToMake>1800</WorkToMake>
 			<MarketValue>70</MarketValue>
-			<Mass>1.0</Mass>
+			<Mass>1</Mass>
 			<DeteriorationRate>2</DeteriorationRate>
 		</statBases>
 		<tickerType>Rare</tickerType>

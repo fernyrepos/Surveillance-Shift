@@ -3,7 +3,7 @@
 <Defs>
 
 	<ThingDef ParentName="BuildingBase">
-		<defName>WallCamera</defName>
+		<defName>SS_WallCamera</defName>
 		<label>wall camera</label>
 		<description>A surveillance camera mounted on a wall.</description>
 		<rotatable>true</rotatable>
@@ -61,9 +61,9 @@
 		<uiOrder>2011</uiOrder>
 		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
-	
+
 	<ThingDef ParentName="BuildingBase">
-		<defName>CameraTower</defName>
+		<defName>SS_CameraTower</defName>
 		<label>camera tower</label>
 		<description>camera tower</description>
 		<category>Building</category>
@@ -105,9 +105,9 @@
 		<uiOrder>2012</uiOrder>
 		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
-	
+
 	<ThingDef ParentName="BuildingBase">
-		<defName>CameraTowerAlt</defName>
+		<defName>SS_CameraTowerAlt</defName>
 		<label>camera tower alt</label>
 		<description>camera tower alt</description>
 		<category>Building</category>
@@ -125,7 +125,7 @@
 			    <offset>(0,0,-0.1)</offset>
 		    </shadowData>
 		</graphicData>
-		<uiIconScale>1.0</uiIconScale>
+		<uiIconScale>1</uiIconScale>
 		<building>
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
@@ -150,9 +150,9 @@
 		<uiOrder>2012</uiOrder>
 		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
-	
+
 	<ThingDef ParentName="BenchBase">
-		<defName>SurveillanceStation</defName>
+		<defName>SS_SurveillanceStation</defName>
 		<label>surveillance station</label>
 		<description>surveillance station</description>
 		<category>Building</category>
@@ -166,14 +166,14 @@
 			<drawSize>(6.4,3.4)</drawSize>
 		</graphicData>
 		<castEdgeShadows>true</castEdgeShadows>
-		<staticSunShadowHeight>0.20</staticSunShadowHeight>
+		<staticSunShadowHeight>0.2</staticSunShadowHeight>
 		<building>
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
 		<interactionCellOffset>(0,0,-1)</interactionCellOffset>
 		<passability>PassThroughOnly</passability>
 		<pathCost>50</pathCost>
-		<fillPercent>0.40</fillPercent>
+		<fillPercent>0.4</fillPercent>
 		<hasInteractionCell>true</hasInteractionCell>
 		<interactionCellOffset>(0,0,-1)</interactionCellOffset>
 		<canOverlapZones>false</canOverlapZones>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>/Defs/IncidentDef[defName="RaidEnemy" or defName="TraderCaravanArrival" or defName="VisitorGroup"]</xpath>
+    <value>
+      <li Class="SurveillanceShift.MuteArrivalExtension" />
+    </value>
+  </Operation>
+</Patch>
