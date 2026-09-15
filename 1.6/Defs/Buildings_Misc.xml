@@ -128,8 +128,8 @@
 		</thingCategories>
 		<minifiedDef>MinifiedThing</minifiedDef> 
 		<graphicData>
-			<texPath>Things/Building/SurveillanceStation_south</texPath>
-			<graphicClass>Graphic_Single</graphicClass>
+			<texPath>Things/Building/SurveillanceStation/SurveillanceStation</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
 			<drawSize>(6.4,3.4)</drawSize>
 		</graphicData>
 		<castEdgeShadows>true</castEdgeShadows>
