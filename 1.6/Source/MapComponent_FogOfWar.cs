@@ -138,6 +138,20 @@ namespace SurveillanceShift
                     var radius = avatar.Downed ? DownedSightRadius : StandardSightRadius;
                     ShadowCaster.ComputeFieldOfView(avatar.Position, radius, map, visibleCells);
                 }
+                foreach (var b in map.listerBuildings.allBuildingsColonist)
+                {
+                    if (b is Building_Camera cam)
+                    {
+                        if (cam.IsActive && (ModCompatibility.IsPerspectiveShiftCameraLockedTo(cam.Position) || State.ActiveFeedCamera == cam))
+                        {
+                            cam.ComputeCameraFOV(visibleCells);
+                        }
+                    }
+                    else if (b is Building_Watchtower tower && tower.IsMannedByAvatar)
+                    {
+                        tower.ComputeWatchtowerFOV(visibleCells);
+                    }
+                }
             }
             else
             {
@@ -149,13 +163,16 @@ namespace SurveillanceShift
                         ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
                     }
                 }
-            }
-
-            foreach (var b in map.listerBuildings.allBuildingsColonist)
-            {
-                if (b is Building_Camera cam)
+                foreach (var b in map.listerBuildings.allBuildingsColonist)
                 {
-                    cam.ComputeCameraFOV(visibleCells);
+                    if (b is Building_Camera cam)
+                    {
+                        cam.ComputeCameraFOV(visibleCells);
+                    }
+                    else if (b is Building_Watchtower tower)
+                    {
+                        tower.ComputeWatchtowerFOV(visibleCells);
+                    }
                 }
             }
 

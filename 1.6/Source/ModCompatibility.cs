@@ -110,5 +110,13 @@ namespace SurveillanceShift
             EnsureFrameCache();
             return cachedIsAuthentic && cachedHasAvatar;
         }
+
+        public static bool IsPerspectiveShiftCameraLockedTo(IntVec3 pos)
+        {
+            EnsureFrameCache();
+            if (PerspectiveShiftAvailable is false) return false;
+            var lockPos = psStateCameraLockPositionField.GetValue(null) as Vector3?;
+            return lockPos.HasValue && lockPos.Value.ToIntVec3() == pos;
+        }
     }
 }

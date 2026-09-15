@@ -60,8 +60,17 @@
 				<compClass>CompPowerTrader</compClass>
 				<basePowerConsumption>40</basePowerConsumption>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource">
+				<pipeNet>SS_VideoCableNet</pipeNet>
+			</li>
 			<li Class="CompProperties_Flickable" />
 		</comps>
+		<modExtensions>
+			<li Class="SurveillanceShift.CameraExtension">
+				<coneAngle>70</coneAngle>
+				<sightRadius>26</sightRadius>
+			</li>
+		</modExtensions>
 		<selectable>true</selectable>
 		<neverMultiSelect>false</neverMultiSelect>
 		<tickerType>Normal</tickerType>
@@ -127,6 +136,9 @@
 				<compClass>CompPowerTrader</compClass>
 				<basePowerConsumption>50</basePowerConsumption>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource">
+				<pipeNet>SS_VideoCableNet</pipeNet>
+			</li>
 			<li Class="CompProperties_Flickable" />
 		</comps>
 		<constructEffect>ConstructMetal</constructEffect>
@@ -175,6 +187,9 @@
 				<basePowerConsumption>350</basePowerConsumption>
 				<shortCircuitInRain>true</shortCircuitInRain>
 			</li>
+			<li Class="PipeSystem.CompProperties_Resource">
+				<pipeNet>SS_VideoCableNet</pipeNet>
+			</li>
 			<li Class="CompProperties_Flickable" />
 			<li Class="CompProperties_Breakdownable" />
 		</comps>
@@ -190,7 +205,7 @@
 		<defName>SS_DominionTower</defName>
 		<label>dominion tower</label>
 		<description>text.todo.</description>
-		<thingClass>SurveillanceShift.Building_DominionTower</thingClass>
+		<thingClass>SurveillanceShift.Building_Watchtower</thingClass>
 		<category>Building</category>
 		<size>(4,4)</size>
 		<rotatable>false</rotatable>
@@ -200,10 +215,12 @@
 			<drawSize>(6,12)</drawSize>
 			<drawOffset>(0,0,4)</drawOffset>
 		</graphicData>
-		<altitudeLayer>Building</altitudeLayer>
-		<passability>Impassable</passability>
-		<fillPercent>1</fillPercent>
-		<pathCost>0</pathCost>
+		<altitudeLayer>PawnUnused</altitudeLayer>
+		<passability>Standable</passability>
+		<fillPercent>0.5</fillPercent>
+		<pathCost>40</pathCost>
+		<hasInteractionCell>true</hasInteractionCell>
+		<interactionCellOffset>(1, 0,-1)</interactionCellOffset>
 		<statBases>
 			<MaxHitPoints>600</MaxHitPoints>
 			<WorkToBuild>3500</WorkToBuild>
@@ -214,11 +231,6 @@
 			<ComponentIndustrial>5</ComponentIndustrial>
 		</costList>
 		<comps>
-			<li Class="CompProperties_Power">
-				<compClass>CompPowerTrader</compClass>
-				<basePowerConsumption>120</basePowerConsumption>
-			</li>
-			<li Class="CompProperties_Flickable" />
 			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
 				<randomGraphics>
 					<li>Things/Building/DominionTower/DominionTower</li>
@@ -233,10 +245,32 @@
 			</li>
 		</comps>
 		<selectable>true</selectable>
+		<drawerType>MapMeshAndRealTime</drawerType>
 		<tickerType>Normal</tickerType>
 		<designationCategory>Security</designationCategory>
 		<uiOrder>2014</uiOrder>
 		<constructEffect>ConstructMetal</constructEffect>
+		<modExtensions>
+			<li Class="SurveillanceShift.WatchtowerExtension">
+				<topGraphicData>
+					<texPath>Things/Building/DominionTower/DominionTower_FrontLayer</texPath>
+					<graphicClass>Graphic_Single</graphicClass>
+					<drawSize>(6,12)</drawSize>
+					<drawOffset>(0,0,4)</drawOffset>
+				</topGraphicData>
+				<moteDef>SS_Mote_Binoculars</moteDef>
+				<climbHeight>7</climbHeight>
+				<climbTicks>300</climbTicks>
+				<vantageOffsets>
+					<li>(-0.4, 6.6)</li>
+					<li>(0.9, 6.6)</li>
+					<li>(-1.8, 6.7)</li>
+					<li>(-0.4, 9.0)</li>
+					<li>(0.8, 9.0)</li>
+					<li>(-1.8, 9.0)</li>
+				</vantageOffsets>
+			</li>
+		</modExtensions>
 	</ThingDef>
 
 </Defs>

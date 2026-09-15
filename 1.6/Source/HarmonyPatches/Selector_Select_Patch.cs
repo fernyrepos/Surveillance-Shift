@@ -9,13 +9,10 @@ namespace SurveillanceShift
     {
         public static bool Prefix(object obj)
         {
-            if (State.IsLimitedAwareness is false) return true;
-            if (obj is Thing t && t != ModCompatibility.GetPerspectiveShiftAvatar())
-            {
-                if (ModCompatibility.IsPerspectiveShiftAuthentic() is false && t.Faction == Faction.OfPlayer) return true;
-                return t.Map.IsVisible(t.Position);
-            }
-            return true;
+            if (State.IsLimitedAwareness is false || obj is not Thing thing) return true;
+            var map = thing.MapHeld;
+            if (map == null) return true;
+            return map.IsVisible(thing.PositionHeld);
         }
     }
 }

@@ -5,14 +5,13 @@ namespace SurveillanceShift
 {
     public class Building_WallCamera : Building_Camera
     {
-        private const float HalfConeAngle = 20f;
-        private const int WallCameraRadius = 26;
+        public float HalfConeAngle => (Extension?.coneAngle ?? 60f) / 2f;
 
-        public override int SightRadius => WallCameraRadius;
+        public override int SightRadius => Extension?.sightRadius ?? 26;
 
         public override void ComputeCameraFOV(bool[] visibleCells)
         {
-            if (IsActive is false) return;
+            if (IsActive is false || IsMonitored is false) return;
 
             var rot = Rotation;
             var forwardCell = Position + rot.FacingCell;
@@ -33,7 +32,7 @@ namespace SurveillanceShift
                 viewOrigin = Position + rot.FacingCell;
             }
 
-            if (!viewOrigin.InBounds(Map)) return;
+            if (viewOrigin.InBounds(Map) is false) return;
 
             var mapSizeX = Map.Size.x;
             visibleCells[Position.z * mapSizeX + Position.x] = true;

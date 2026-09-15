@@ -1,3 +1,5 @@
+using PipeSystem;
+using UnityEngine;
 using Verse;
 using Verse.Sound;
 
@@ -7,6 +9,10 @@ namespace SurveillanceShift
     public static class State
     {
         public static AwarenessMode AwarenessMode = AwarenessMode.AreaOmniscience;
+
+        public static Building_Camera ActiveFeedCamera;
+        public static Map ActiveFeedMap;
+        public static PipeNet ActiveFeedPipeNet;
 
         public static bool IsLimitedAwareness => AwarenessMode == AwarenessMode.LimitedAwareness;
 
@@ -42,6 +48,42 @@ namespace SurveillanceShift
             if (avatar is null || avatar.Map != Find.CurrentMap || cell == avatar.Position) return false;
             SpawnPing(cell, avatar.Map, false);
             return true;
+        }
+
+        public static void ClearActiveFeed()
+        {
+            ActiveFeedCamera = null;
+            ActiveFeedMap = null;
+            ActiveFeedPipeNet = null;
+        }
+
+        public static void DrawFeedReturnButton()
+        {
+            if (ActiveFeedCamera == null || ActiveFeedCamera.Spawned is false)
+            {
+                ClearActiveFeed();
+            }
+            else if (ModCompatibility.HasPerspectiveShiftAvatar() && ModCompatibility.IsPerspectiveShiftCameraLockedTo(ActiveFeedCamera.Position) is false)
+            {
+                ClearActiveFeed();
+            }
+            else
+            {
+                var btnW = 220f;
+                var panelH = 70f;
+                var panelY = UI.screenHeight - 150f - panelH;
+                var panelRect = new Rect(UI.screenWidth / 2f - btnW / 2f - 10f, panelY, btnW + 20f, panelH);
+                Widgets.DrawWindowBackground(panelRect);
+                var btnRect = new Rect(panelRect.xMin + 10f, panelRect.yMin + 10f, btnW, 50f);
+                if (Widgets.ButtonText(btnRect, "SS_StopViewing".Translate()))
+                {
+                    var map = ActiveFeedMap;
+                    var net = ActiveFeedPipeNet;
+                    ClearActiveFeed();
+                    ModCompatibility.ClearPerspectiveShiftCameraLock();
+                    Find.WindowStack.Add(new Dialog_SurveillanceCameras(map, net));
+                }
+            }
         }
     }
 }

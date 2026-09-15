@@ -12,4 +12,10 @@
   <SS_AccessFeed>Access feed</SS_AccessFeed>
   <SS_NoCamerasLinked>No operational cameras linked</SS_NoCamerasLinked>
   <SS_MonitorSurveillanceStation>Monitor surveillance station</SS_MonitorSurveillanceStation>
+  <SS_CameraMonitored>Feed active (monitored)</SS_CameraMonitored>
+  <SS_CameraUnmonitored>Feed inactive (unmonitored)</SS_CameraUnmonitored>
+  <SS_ManWatchtower>Man watchtower</SS_ManWatchtower>
+  <SS_WatchtowerManned>Sentry on duty</SS_WatchtowerManned>
+  <SS_WatchtowerUnmanned>Unmanned</SS_WatchtowerUnmanned>
+  <SS_StopViewing>Stop viewing</SS_StopViewing>
 </LanguageData>

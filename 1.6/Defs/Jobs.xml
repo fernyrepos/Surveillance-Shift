@@ -15,4 +15,11 @@
 		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_ManWatchtower</defName>
+		<driverClass>SurveillanceShift.JobDriver_ManWatchtower</driverClass>
+		<reportString>keeping watch on watchtower.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+
 </Defs>

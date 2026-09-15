@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using PipeSystem;
 using Verse;
 using Verse.AI;
 
@@ -23,7 +24,7 @@ namespace SurveillanceShift
             open.initAction = () =>
             {
                 pawn.rotationTracker.FaceCell(Station.Position);
-                Find.WindowStack.Add(new Dialog_SurveillanceCameras(Station.Map));
+                Find.WindowStack.Add(new Dialog_SurveillanceCameras(Station.Map, Station.GetComp<CompResource>().PipeNet));
             };
             yield return open;
         }

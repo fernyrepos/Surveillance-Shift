@@ -28,4 +28,36 @@
       <color>(0.2, 0.6, 0.95, 0.85)</color>
     </graphicData>
   </ThingDef>
+
+  <ThingDef ParentName="MoteBase">
+    <defName>SS_Mote_Spyglass</defName>
+    <thingClass>SurveillanceShift.Mote_ObservationDevice</thingClass>
+    <drawOffscreen>true</drawOffscreen>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <mote>
+      <fadeInTime>0.1</fadeInTime>
+      <solidTime>999999</solidTime>
+      <fadeOutTime>0.1</fadeOutTime>
+    </mote>
+    <graphicData>
+      <texPath>Things/Mote/Spyglass/Spyglass</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+    </graphicData>
+  </ThingDef>
+
+  <ThingDef ParentName="MoteBase">
+    <defName>SS_Mote_Binoculars</defName>
+    <thingClass>SurveillanceShift.Mote_ObservationDevice</thingClass>
+    <drawOffscreen>true</drawOffscreen>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <mote>
+      <fadeInTime>0.1</fadeInTime>
+      <solidTime>999999</solidTime>
+      <fadeOutTime>0.1</fadeOutTime>
+    </mote>
+    <graphicData>
+      <texPath>Things/Mote/Binoculars/Binoculars</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+    </graphicData>
+  </ThingDef>
 </Defs>

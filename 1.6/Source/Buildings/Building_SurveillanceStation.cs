@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using PipeSystem;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -23,8 +24,18 @@ namespace SurveillanceShift
         {
             get
             {
-                if (Spawned is false || powerComp != null && powerComp.PowerOn is false || Map.gameConditionManager.ElectricityDisabled(Map)) return false;
+                if (Spawned is false || powerComp.PowerOn is false || Map.gameConditionManager.ElectricityDisabled(Map)) return false;
                 return true;
+            }
+        }
+
+        public bool IsBeingMonitored
+        {
+            get
+            {
+                if (CanUseNow is false) return false;
+                var p = InteractionCell.GetFirstPawn(Map);
+                return p != null && (p.CurJobDef == DefsOf.SS_OperateSurveillanceStation || p.CurJobDef == DefsOf.SS_ViewCameraFeeds) && p.CurJob.targetA.Thing == this;
             }
         }
 
@@ -49,31 +60,28 @@ namespace SurveillanceShift
             {
                 yield return new FloatMenuOption("CannotUseNoPath".Translate(), null);
             }
+            else if (myPawn == ModCompatibility.GetPerspectiveShiftAvatar())
+            {
+                yield return new FloatMenuOption("SS_ViewCameraFeeds".Translate(), () =>
+                {
+                    if (myPawn.Position == InteractionCell)
+                    {
+                        Find.WindowStack.Add(new Dialog_SurveillanceCameras(Map, GetComp<CompResource>().PipeNet));
+                    }
+                    else
+                    {
+                        var job = JobMaker.MakeJob(DefsOf.SS_ViewCameraFeeds, this);
+                        myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    }
+                });
+            }
             else
             {
-                if (myPawn == ModCompatibility.GetPerspectiveShiftAvatar())
+                yield return new FloatMenuOption("SS_MonitorSurveillanceStation".Translate(), () =>
                 {
-                    yield return new FloatMenuOption("SS_ViewCameraFeeds".Translate(), () =>
-                    {
-                        if (myPawn.Position == InteractionCell)
-                        {
-                            Find.WindowStack.Add(new Dialog_SurveillanceCameras(Map));
-                        }
-                        else
-                        {
-                            var job = JobMaker.MakeJob(DefsOf.SS_ViewCameraFeeds, this);
-                            myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
-                        }
-                    });
-                }
-                else
-                {
-                    yield return new FloatMenuOption("SS_MonitorSurveillanceStation".Translate(), () =>
-                    {
-                        var job = JobMaker.MakeJob(DefsOf.SS_OperateSurveillanceStation, this);
-                        myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
-                    });
-                }
+                    var job = JobMaker.MakeJob(DefsOf.SS_OperateSurveillanceStation, this);
+                    myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                });
             }
         }
 

@@ -36,6 +36,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="PipeSystem">
+      <HintPath>..\..\..\VanillaExpandedFramework\1.6\Assemblies\PipeSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Krafs.Publicizer" Version="2.*" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

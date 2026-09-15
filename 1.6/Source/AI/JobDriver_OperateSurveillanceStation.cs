@@ -5,6 +5,7 @@ using Verse.AI;
 
 namespace SurveillanceShift
 {
+    [HotSwappable]
     public class JobDriver_OperateSurveillanceStation : JobDriver
     {
         private Building_SurveillanceStation Station => (Building_SurveillanceStation)job.GetTarget(TargetIndex.A).Thing;
@@ -23,10 +24,11 @@ namespace SurveillanceShift
             var monitor = ToilMaker.MakeToil("MakeNewToils");
             monitor.tickAction = () =>
             {
-                pawn.rotationTracker.FaceCell(Station.Position);
+                pawn.rotationTracker.FaceTarget(Station);
                 pawn.skills?.Learn(SkillDefOf.Intellectual, 0.025f);
                 pawn.GainComfortFromCellIfPossible(1, chairsOnly: true);
             };
+            monitor.handlingFacing = true;
             monitor.defaultCompleteMode = ToilCompleteMode.Never;
             yield return monitor;
         }

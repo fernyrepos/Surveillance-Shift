@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using PipeSystem;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -24,18 +25,24 @@ namespace SurveillanceShift
         private const int Columns = 2;
 
         private readonly Map map;
+        private readonly PipeNet pipeNet;
         private Vector2 scrollPosition;
         private List<Building_Camera> cachedCameras;
 
         public override Vector2 InitialSize => new(660f, 480f);
 
-        public Dialog_SurveillanceCameras(Map map)
+        public Dialog_SurveillanceCameras(Map map, PipeNet pipeNet = null)
         {
             this.map = map;
+            this.pipeNet = pipeNet;
             doCloseX = true;
             closeOnClickedOutside = true;
             absorbInputAroundWindow = false;
             cachedCameras = map.listerBuildings.AllBuildingsColonistOfClass<Building_Camera>().ToList();
+            if (pipeNet != null)
+            {
+                cachedCameras = cachedCameras.Where(c => c.GetComp<CompResource>().PipeNet == pipeNet).ToList();
+            }
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -64,9 +71,7 @@ namespace SurveillanceShift
                 for (var i = 0; i < cachedCameras.Count; i++)
                 {
                     var cam = cachedCameras[i];
-                    var col = i % Columns;
-                    var row = i / Columns;
-                    var cardRect = new Rect(col * (cardWidth + CardGap), row * (CardHeight + CardGap), cardWidth, CardHeight);
+                    var cardRect = new Rect((i % Columns) * (cardWidth + CardGap), (i / Columns) * (CardHeight + CardGap), cardWidth, CardHeight);
 
                     Widgets.DrawMenuSection(cardRect);
 
@@ -97,6 +102,9 @@ namespace SurveillanceShift
         private void AccessFeed(Building_Camera cam)
         {
             SoundDefOf.Click.PlayOneShotOnCamera();
+            State.ActiveFeedCamera = cam;
+            State.ActiveFeedMap = map;
+            State.ActiveFeedPipeNet = pipeNet;
             ModCompatibility.SetPerspectiveShiftCameraLock(cam.Position.ToVector3Shifted());
             Close();
         }

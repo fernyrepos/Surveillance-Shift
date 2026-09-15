@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<PipeSystem.PipeNetDef>
+		<defName>SS_VideoCableNet</defName>
+		<noStorageAlert>false</noStorageAlert>
+		<resource>
+			<name>video signal</name>
+			<unit>sig</unit>
+			<color>(80, 160, 240)</color>
+		</resource>
+		<pipeDefs>
+			<li>SS_VideoCable</li>
+		</pipeDefs>
+		<overlayOptions>
+			<overlayColor>(80, 160, 240)</overlayColor>
+		</overlayOptions>
+	</PipeSystem.PipeNetDef>
+
+	<ThingDef ParentName="BuildingBase">
+		<defName>SS_VideoCable</defName>
+		<label>video cable</label>
+		<description>text.todo.</description>
+		<thingClass>PipeSystem.Building_Pipe</thingClass>
+		<category>Building</category>
+		<graphicData>
+			<texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<linkType>Basic</linkType>
+			<linkFlags>
+				<li>Custom8</li>
+			</linkFlags>
+			<damageData>
+				<rect>(0,0,1,1)</rect>
+			</damageData>
+		</graphicData>
+		<uiIconPath>Things/Building/Linked/PowerConduit_MenuIcon</uiIconPath>
+		<uiIconColor>(80, 160, 240)</uiIconColor>
+		<building>
+			<ai_chillDestination>false</ai_chillDestination>
+			<isInert>true</isInert>
+			<isEdifice>false</isEdifice>
+			<deconstructible>true</deconstructible>
+			<canLandGravshipOn>true</canLandGravshipOn>
+		</building>
+		<altitudeLayer>FloorEmplacement</altitudeLayer>
+		<passability>Standable</passability>
+		<leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+		<resourcesFractionWhenDeconstructed>0</resourcesFractionWhenDeconstructed>
+		<statBases>
+			<MaxHitPoints>80</MaxHitPoints>
+			<WorkToBuild>35</WorkToBuild>
+			<Flammability>0.5</Flammability>
+		</statBases>
+		<costList>
+			<Steel>1</Steel>
+		</costList>
+		<comps>
+			<li Class="PipeSystem.CompProperties_Resource">
+				<pipeNet>SS_VideoCableNet</pipeNet>
+			</li>
+		</comps>
+		<placeWorkers>
+			<li>PipeSystem.PlaceWorker_Pipe</li>
+		</placeWorkers>
+		<rotatable>false</rotatable>
+		<selectable>true</selectable>
+		<neverMultiSelect>true</neverMultiSelect>
+		<soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+		<terrainAffordanceNeeded IsNull="True" />
+		<designationCategory>Security</designationCategory>
+		<constructEffect>ConstructMetal</constructEffect>
+		<clearBuildingArea>false</clearBuildingArea>
+		<drawerType>MapMeshOnly</drawerType>
+		<tickerType>Rare</tickerType>
+	</ThingDef>
+</Defs>

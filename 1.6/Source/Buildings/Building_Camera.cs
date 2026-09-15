@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Text;
+using PipeSystem;
 using RimWorld;
 using Verse;
 
@@ -10,6 +12,8 @@ namespace SurveillanceShift
 
         private string customName;
         private CompPowerTrader powerComp;
+        private CompResource compResource;
+        private CameraExtension extension;
 
         public string RenamableLabel
         {
@@ -21,14 +25,34 @@ namespace SurveillanceShift
 
         public string InspectLabel => RenamableLabel;
 
-        public virtual int SightRadius => BaseSightRadius;
+        public CameraExtension Extension => extension ??= def.GetModExtension<CameraExtension>();
+
+        public virtual int SightRadius => Extension?.sightRadius ?? BaseSightRadius;
 
         public bool IsActive
         {
             get
             {
-                if (Spawned is false || powerComp != null && powerComp.PowerOn is false) return false;
+                if (Spawned is false || powerComp.PowerOn is false) return false;
                 return true;
+            }
+        }
+
+        public virtual bool IsMonitored
+        {
+            get
+            {
+                if (IsActive is false) return false;
+                if (ModCompatibility.IsPerspectiveShiftCameraLockedTo(Position)) return true;
+                if (compResource.PipeNet == null) return false;
+                foreach (var connector in compResource.PipeNet.connectors)
+                {
+                    if (connector.parent is Building_SurveillanceStation station && station.IsBeingMonitored)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
@@ -36,6 +60,7 @@ namespace SurveillanceShift
         {
             base.SpawnSetup(map, respawningAfterLoad);
             powerComp = GetComp<CompPowerTrader>();
+            compResource = GetComp<CompResource>();
             if (respawningAfterLoad is false && customName.NullOrEmpty() && Faction == Faction.OfPlayer)
             {
                 Find.WindowStack.Add(new Dialog_RenameBuildingCamera(this));
@@ -44,15 +69,20 @@ namespace SurveillanceShift
 
         public virtual void ComputeCameraFOV(bool[] visibleCells)
         {
-            if (IsActive is false) return;
+            if (IsActive is false || IsMonitored is false) return;
             ShadowCaster.ComputeFieldOfView(Position, SightRadius, Map, visibleCells);
         }
 
         public override string GetInspectString()
         {
-            var baseStr = base.GetInspectString();
-            if (customName.NullOrEmpty()) return baseStr;
-            return customName + (baseStr.NullOrEmpty() ? "" : "\n" + baseStr);
+            var text = new StringBuilder();
+            if (customName.NullOrEmpty() is false)
+            {
+                text.AppendLine(customName);
+            }
+            text.Append(IsMonitored ? "SS_CameraMonitored".Translate() : "SS_CameraUnmonitored".Translate());
+            text.AppendInNewLine(base.GetInspectString());
+            return text.ToString().TrimEndNewlines();
         }
 
         public override IEnumerable<Gizmo> GetGizmos()

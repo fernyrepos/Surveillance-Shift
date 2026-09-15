@@ -16,4 +16,18 @@
 		<canBeDoneByMechs>false</canBeDoneByMechs>
 	</WorkGiverDef>
 
+	<WorkGiverDef>
+		<defName>SS_ManWatchtower</defName>
+		<label>man watchtower</label>
+		<giverClass>SurveillanceShift.WorkGiver_ManWatchtower</giverClass>
+		<workType>SS_Monitoring</workType>
+		<priorityInType>90</priorityInType>
+		<verb>watch</verb>
+		<gerund>keeping watch at</gerund>
+		<requiredCapacities>
+			<li>Sight</li>
+		</requiredCapacities>
+		<canBeDoneByMechs>false</canBeDoneByMechs>
+	</WorkGiverDef>
+
 </Defs>
