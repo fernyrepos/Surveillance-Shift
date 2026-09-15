@@ -193,10 +193,12 @@
 		<thingClass>SurveillanceShift.Building_DominionTower</thingClass>
 		<category>Building</category>
 		<size>(2,2)</size>
+		<rotatable>false</rotatable>
 		<graphicData>
 			<texPath>Things/Building/DominionTower/DominionTower</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
-			<drawSize>(2.5,2.5)</drawSize>
+			<drawSize>(3,6)</drawSize>
+			<drawOffset>(0,0,1.75)</drawOffset>
 		</graphicData>
 		<altitudeLayer>Building</altitudeLayer>
 		<passability>Impassable</passability>
