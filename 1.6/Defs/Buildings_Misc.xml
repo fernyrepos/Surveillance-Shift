@@ -4,8 +4,8 @@
 
 	<ThingDef ParentName="BuildingBase">
 		<defName>SS_WallCamera</defName>
-		<label>wall camera</label>
-		<description>A surveillance camera mounted on a wall.</description>
+		<label>wall-mounted camera</label>
+		<description>A surveillance camera mounted on a wall. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<rotatable>true</rotatable>
 		<thingClass>SurveillanceShift.Building_WallCamera</thingClass>
 		<category>Building</category>
@@ -82,7 +82,7 @@
 	<ThingDef ParentName="BuildingBase">
 		<defName>SS_CameraTower</defName>
 		<label>camera tower</label>
-		<description>camera tower</description>
+		<description>A pillar with four mounted cameras, allowing for a full view of the surrounding area. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<thingClass>SurveillanceShift.Building_Camera</thingClass>
 		<category>Building</category>
 		<thingCategories>
@@ -93,12 +93,13 @@
 			<texPath>Things/Building/Cameras/PoleMountedCamera</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(1.4,2.4)</drawSize>
-			<drawOffset>(0,0,0.5)</drawOffset>
+			<drawOffset>(0,0,0.75)</drawOffset>
 			<shadowData>
 				<volume>(0.3, 0.6, 0.3)</volume>
 				<offset>(0,0,-0.1)</offset>
 			</shadowData>
 		</graphicData>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
 		<building>
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
@@ -113,8 +114,8 @@
 		</statBases>
 		<size>(1,1)</size>
 		<costList>
-			<Steel>40</Steel>
-			<ComponentIndustrial>2</ComponentIndustrial>
+			<Steel>160</Steel>
+			<ComponentIndustrial>8</ComponentIndustrial>
 		</costList>
 		<selectable>true</selectable>
 		<neverMultiSelect>false</neverMultiSelect>
@@ -147,7 +148,7 @@
 	<ThingDef ParentName="BenchBase">
 		<defName>SS_SurveillanceStation</defName>
 		<label>surveillance station</label>
-		<description>surveillance station</description>
+		<description>A central hub for managing and viewing footage from multiple surveillance cameras.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceStation</thingClass>
 		<category>Building</category>
 		<thingCategories>
