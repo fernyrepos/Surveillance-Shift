@@ -99,10 +99,16 @@ namespace SurveillanceShift
             psStateCameraLockPositionField.SetValue(null, null);
         }
 
+        public static void SetPerspectiveShiftCameraLock(Vector3 pos)
+        {
+            if (PerspectiveShiftAvailable is false) return;
+            psStateCameraLockPositionField.SetValue(null, pos);
+        }
+
         public static bool IsPerspectiveShiftAuthentic()
         {
             EnsureFrameCache();
-            return cachedIsAuthentic;
+            return cachedIsAuthentic && cachedHasAvatar;
         }
     }
 }

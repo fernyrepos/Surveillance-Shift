@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -147,6 +148,14 @@ namespace SurveillanceShift
                         var radius = pawn.Downed ? DownedSightRadius : StandardSightRadius;
                         ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
                     }
+                }
+            }
+
+            foreach (var b in map.listerBuildings.allBuildingsColonist)
+            {
+                if (b is Building_Camera cam)
+                {
+                    cam.ComputeCameraFOV(visibleCells);
                 }
             }
 
@@ -338,6 +347,11 @@ namespace SurveillanceShift
             base.ExposeData();
             Scribe_Collections.Look(ref mutedArrivals, "SS_MutedArrivals", LookMode.Deep);
             Scribe_Collections.Look(ref mutedMessages, "SS_MutedMessages", LookMode.Deep);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                mutedArrivals ??= new List<MutedArrival>();
+                mutedMessages ??= new List<Message>();
+            }
         }
     }
 }

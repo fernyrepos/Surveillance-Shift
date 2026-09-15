@@ -30,14 +30,32 @@ namespace SurveillanceShift
             }
         }
 
-        private static void ScanOctant(int octant, int originX, int originZ, int radius, int radiusSq, int mapSizeX, int mapSizeZ, Building[] edifices, bool[] visibleCells)
+        public static void ComputeConeFieldOfView(IntVec3 origin, int radius, Rot4 rot, float maxSlope, Map map, bool[] visibleCells)
+        {
+            var mapSizeX = map.Size.x;
+            var mapSizeZ = map.Size.z;
+            var edifices = map.edificeGrid.InnerArray;
+            visibleCells[origin.z * mapSizeX + origin.x] = true;
+            var radiusSq = radius * radius;
+
+            int oct1, oct2;
+            if (rot == Rot4.North) { oct1 = 1; oct2 = 2; }
+            else if (rot == Rot4.South) { oct1 = 5; oct2 = 6; }
+            else if (rot == Rot4.East) { oct1 = 0; oct2 = 7; }
+            else { oct1 = 3; oct2 = 4; }
+
+            ScanOctant(oct1, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope);
+            ScanOctant(oct2, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope);
+        }
+
+        private static void ScanOctant(int octant, int originX, int originZ, int radius, int radiusSq, int mapSizeX, int mapSizeZ, Building[] edifices, bool[] visibleCells, float minSlope = 0f, float maxSlope = 1f)
         {
             var stackIndex = 0;
             Stack[0] = new Column
             {
                 depth = 1,
-                minSlope = 0f,
-                maxSlope = 1f
+                minSlope = minSlope,
+                maxSlope = maxSlope
             };
 
             while (stackIndex >= 0)

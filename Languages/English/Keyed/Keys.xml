@@ -7,4 +7,9 @@
   <SS_AreaOmniscienceDesc>Classic RimWorld visibility with complete map awareness.</SS_AreaOmniscienceDesc>
   <SS_PingLocation>Ping location</SS_PingLocation>
   <SS_AwarenessSettings>Awareness settings</SS_AwarenessSettings>
+  <SS_SurveillanceCameras>Surveillance cameras</SS_SurveillanceCameras>
+  <SS_ViewCameraFeeds>View camera feeds</SS_ViewCameraFeeds>
+  <SS_AccessFeed>Access feed</SS_AccessFeed>
+  <SS_NoCamerasLinked>No operational cameras linked</SS_NoCamerasLinked>
+  <SS_MonitorSurveillanceStation>Monitor surveillance station</SS_MonitorSurveillanceStation>
 </LanguageData>

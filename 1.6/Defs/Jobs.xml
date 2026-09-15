@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<JobDef>
+		<defName>SS_OperateSurveillanceStation</defName>
+		<driverClass>SurveillanceShift.JobDriver_OperateSurveillanceStation</driverClass>
+		<reportString>monitoring surveillance feeds.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+
+	<JobDef>
+		<defName>SS_ViewCameraFeeds</defName>
+		<driverClass>SurveillanceShift.JobDriver_ViewCameraFeeds</driverClass>
+		<reportString>accessing surveillance feeds.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
+</Defs>

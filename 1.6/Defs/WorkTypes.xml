@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<WorkTypeDef>
+		<defName>SS_Monitoring</defName>
+		<labelShort>Monitor</labelShort>
+		<pawnLabel>Monitor</pawnLabel>
+		<gerundLabel>monitoring</gerundLabel>
+		<verb>Monitor</verb>
+		<description>Monitor security cameras and alert the colony to threats.</description>
+		<alwaysStartActive>false</alwaysStartActive>
+		<naturalPriority>1120</naturalPriority>
+		<requireCapableColonist>true</requireCapableColonist>
+		<relevantSkills>
+			<li>Intellectual</li>
+			<li>Shooting</li>
+		</relevantSkills>
+		<workTags>
+			<li>Intellectual</li>
+		</workTags>
+	</WorkTypeDef>
+
+</Defs>

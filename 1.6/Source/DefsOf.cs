@@ -10,6 +10,9 @@ namespace SurveillanceShift
         public static ThingDef SS_Mote_PingFriendly;
         public static SoundDef SS_Sound_PingHostile;
         public static SoundDef SS_Sound_PingFriendly;
+        public static JobDef SS_OperateSurveillanceStation;
+        public static JobDef SS_ViewCameraFeeds;
+        public static ThingDef SS_SurveillanceStation;
 
         static DefsOf()
         {

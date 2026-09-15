@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<WorkGiverDef>
+		<defName>SS_OperateSurveillanceStation</defName>
+		<label>operate surveillance station</label>
+		<giverClass>SurveillanceShift.WorkGiver_OperateSurveillanceStation</giverClass>
+		<workType>SS_Monitoring</workType>
+		<priorityInType>100</priorityInType>
+		<verb>monitor</verb>
+		<gerund>monitoring at</gerund>
+		<requiredCapacities>
+			<li>Sight</li>
+			<li>Manipulation</li>
+		</requiredCapacities>
+		<canBeDoneByMechs>false</canBeDoneByMechs>
+	</WorkGiverDef>
+
+</Defs>
