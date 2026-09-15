@@ -103,51 +103,18 @@
 		<tickerType>Normal</tickerType>
 		<designationCategory>Security</designationCategory>
 		<uiOrder>2012</uiOrder>
-		<constructEffect>ConstructMetal</constructEffect>
-	</ThingDef>
-
-	<ThingDef ParentName="BuildingBase">
-		<defName>SS_CameraTowerAlt</defName>
-		<label>camera tower alt</label>
-		<description>camera tower alt</description>
-		<category>Building</category>
-		<thingCategories>
-			<li>BuildingsFurniture</li>
-		</thingCategories>
-		<minifiedDef>MinifiedThing</minifiedDef> 
-		<graphicData>
-			<texPath>Things/Building/Cameras/PoleMountedCameraAlt</texPath>
-			<graphicClass>Graphic_Single</graphicClass>
-			<drawSize>(1.4,2.4)</drawSize>
-			<drawOffset>(0,0,0.5)</drawOffset>
-		    <shadowData>
-			    <volume>(0.3, 0.6, 0.3)</volume>
-			    <offset>(0,0,-0.1)</offset>
-		    </shadowData>
-		</graphicData>
-		<uiIconScale>1</uiIconScale>
-		<building>
-			<ai_chillDestination>false</ai_chillDestination>
-		</building>
-		<pathCost>14</pathCost>
-		<passability>PassThroughOnly</passability>
-		<canOverlapZones>false</canOverlapZones>
-		<statBases>
-			<MaxHitPoints>150</MaxHitPoints>
-			<WorkToBuild>500</WorkToBuild>
-			<Flammability>0.5</Flammability>
-			<Mass>5</Mass>
-		</statBases>
-		<size>(1,1)</size>
-		<costList>
-			<Steel>40</Steel>
-			<ComponentIndustrial>2</ComponentIndustrial>
-		</costList>
-		<selectable>true</selectable>
-		<neverMultiSelect>false</neverMultiSelect>
-		<tickerType>Normal</tickerType>
-		<designationCategory>Security</designationCategory>
-		<uiOrder>2012</uiOrder>
+		<comps>
+			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
+				<randomGraphics>
+					<li>Things/Building/Cameras/PoleMountedCamera</li>
+					<li>Things/Building/Cameras/PoleMountedCameraAlt</li>
+				</randomGraphics>
+				<optionalNames>
+					<li>Camera tower</li>
+					<li>Alternate</li>
+				</optionalNames>
+			</li>
+		</comps>
 		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
 
