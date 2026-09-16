@@ -8,6 +8,7 @@ namespace SurveillanceShift
     {
         public static ThingDef SS_Mote_PingHostile;
         public static ThingDef SS_Mote_PingFriendly;
+        public static SoundDef SS_Sound_Alarm;
         public static SoundDef SS_Sound_PingHostile;
         public static SoundDef SS_Sound_PingFriendly;
         public static JobDef SS_OperateSurveillanceStation;
@@ -15,9 +16,14 @@ namespace SurveillanceShift
         public static JobDef SS_ManWatchtower;
         public static JobDef SS_MonitorRemoteDevice;
         public static JobDef SS_LinkDeviceToRouter;
+        public static JobDef SS_PushAlarmTrigger;
         public static ThingDef SS_SurveillanceStation;
         public static ThingDef SS_Mote_RemoteSurveillanceDevice;
         public static ThingDef SS_WalkieTalkie;
+        [MayRequire("dubwise.dubsmintminimap")]
+        public static SoundDef Sound_MapBoot;
+        [MayRequire("dubwise.dubsmintminimap")]
+        public static SoundDef Sound_MapFail;
 
         static DefsOf()
         {

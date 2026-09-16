@@ -51,7 +51,7 @@ namespace SurveillanceShift
             letter.hyperlinkHediffDefs = hediffs;
             var comp = map.GetComponent<MapComponent_FogOfWar>();
             comp.QueueArrival(letter, pawns, parms.faction != null && parms.faction.HostileTo(Faction.OfPlayer));
-            State.MuteSlowdown();
+            parms.silent = true;
             return false;
         }
     }

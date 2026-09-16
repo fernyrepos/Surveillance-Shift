@@ -375,6 +375,10 @@ namespace SurveillanceShift
                     {
                         arrival.letter.lookTargets = new LookTargets(pawn);
                         Find.LetterStack.ReceiveLetter(arrival.letter);
+                        if (Building_Loudspeaker.BroadcastNews(map, arrival.pawns[0].Position, arrival.isHostile) is false)
+                        {
+                            State.SpawnPing(arrival.pawns[0].Position, map, arrival.isHostile);
+                        }
                         mutedArrivals.RemoveAt(i);
                         break;
                     }
@@ -399,16 +403,19 @@ namespace SurveillanceShift
                 }
             }
             if (spotters.Count == 0) return;
-            var requireVisible = ModCompatibility.IsPerspectiveShiftAuthentic() is false;
             foreach (var hostile in map.mapPawns.AllPawnsSpawned)
             {
-                if (hostile.HostileTo(Faction.OfPlayer) && hostile.Dead is false && sightedHostileIDs.Contains(hostile.thingIDNumber) is false && (requireVisible is false || IsVisible(hostile.Position)))
+                if (hostile.HostileTo(Faction.OfPlayer) && hostile.Dead is false && sightedHostileIDs.Contains(hostile.thingIDNumber) is false)
                 {
                     foreach (var spotter in spotters)
                     {
                         if (spotter.Position.DistanceToSquared(hostile.Position) <= WalkieTalkieSightingRadiusSq && GenSight.LineOfSight(spotter.Position, hostile.Position, map))
                         {
                             sightedHostileIDs.Add(hostile.thingIDNumber);
+                            if (Building_Loudspeaker.BroadcastNews(map, hostile.Position, true) is false)
+                            {
+                                State.SpawnPing(hostile.Position, map, true);
+                            }
                             Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), "SS_HostileSpottedDesc".Translate(spotter.LabelShort, hostile.LabelShort), LetterDefOf.ThreatBig, new LookTargets(hostile)));
                             break;
                         }
@@ -435,7 +442,6 @@ namespace SurveillanceShift
             foreach (var hostile in map.mapPawns.AllPawnsSpawned)
             {
                 if (hostile.Dead || hostile.Downed || hostile.HostileTo(Faction.OfPlayer) is false || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
-                if (IsVisible(hostile.Position) is false) continue;
 
                 foreach (var (spotter, horn) in hornBearers)
                 {

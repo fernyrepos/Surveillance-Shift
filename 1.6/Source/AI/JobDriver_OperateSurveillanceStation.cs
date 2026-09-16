@@ -9,6 +9,7 @@ namespace SurveillanceShift
     public class JobDriver_OperateSurveillanceStation : JobDriver
     {
         private Building_SurveillanceStation Station => (Building_SurveillanceStation)job.GetTarget(TargetIndex.A).Thing;
+        private const int ThreatCheckIntervalTicks = 60;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -27,6 +28,10 @@ namespace SurveillanceShift
                 pawn.rotationTracker.FaceTarget(Station);
                 pawn.skills?.Learn(SkillDefOf.Intellectual, 0.025f);
                 pawn.GainComfortFromCellIfPossible(1, chairsOnly: true);
+                if (pawn.IsHashIntervalTick(ThreatCheckIntervalTicks))
+                {
+                    Building_AlarmTrigger.CheckThreatsAndSoundAlarm(Station.Map, pawn);
+                }
             };
             monitor.handlingFacing = true;
             monitor.defaultCompleteMode = ToilCompleteMode.Never;

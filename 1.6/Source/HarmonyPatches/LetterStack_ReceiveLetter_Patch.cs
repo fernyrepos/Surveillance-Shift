@@ -24,7 +24,6 @@ namespace SurveillanceShift
                 if (State.IsTargetFogged(target) is false) return true;
             }
             map.GetComponent<MapComponent_FogOfWar>().QueueLetter(let);
-            State.MuteSlowdown();
             return false;
         }
     }

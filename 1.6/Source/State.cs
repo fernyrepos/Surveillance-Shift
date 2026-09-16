@@ -47,12 +47,6 @@ namespace SurveillanceShift
             return target.Map.IsVisible(target.Cell) is false;
         }
 
-        public static int MutedSlowdownTick = -1;
-
-        public static void MuteSlowdown() => MutedSlowdownTick = Find.TickManager.TicksGame;
-
-        public static bool IsSlowdownMuted => Find.TickManager.TicksGame == MutedSlowdownTick;
-
         public static void SpawnPing(IntVec3 cell, Map map, bool hostile)
         {
             var def = hostile ? DefsOf.SS_Mote_PingHostile : DefsOf.SS_Mote_PingFriendly;

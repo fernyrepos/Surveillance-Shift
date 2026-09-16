@@ -7,8 +7,9 @@ namespace SurveillanceShift
     [StaticConstructorOnStartup]
     public class Mote_Ping : Mote
     {
-        private const float DetectionRadiusSq = 7f * 7f;
-        private const float GraceDelaySeconds = 4f;
+        private const float DetectionRadiusSq = 5f * 5f;
+        private const float GraceDelaySeconds = 2f;
+        private const float MaxLifespanSeconds = 30f;
         private const float TargetMaxScale = 75f;
         private const float GrowthRate = 15f;
         private const float SpawnInterval = 1.25f;
@@ -63,7 +64,7 @@ namespace SurveillanceShift
             return texture;
         }
 
-        public override bool EndOfLife => false;
+        public override bool EndOfLife => age >= MaxLifespanSeconds;
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
@@ -75,34 +76,55 @@ namespace SurveillanceShift
         public override void TimeInterval(float deltaTime)
         {
             age += deltaTime;
-            spawnTimer += deltaTime;
-            if (spawnTimer >= SpawnInterval)
+            if (age >= MaxLifespanSeconds)
             {
-                spawnTimer -= SpawnInterval;
-                ringScales.Add(0.5f);
+                Destroy();
             }
-
-            for (var i = ringScales.Count - 1; i >= 0; i--)
+            else
             {
-                ringScales[i] += GrowthRate * deltaTime;
-                if (ringScales[i] >= TargetMaxScale)
+                spawnTimer += deltaTime;
+                if (spawnTimer >= SpawnInterval)
                 {
-                    ringScales.RemoveAt(i);
+                    spawnTimer -= SpawnInterval;
+                    ringScales.Add(0.5f);
                 }
-            }
 
-            if (age >= GraceDelaySeconds && Find.TickManager.TicksGame % 15 == 0)
-            {
-                CheckProximity();
+                for (var i = ringScales.Count - 1; i >= 0; i--)
+                {
+                    ringScales[i] += GrowthRate * deltaTime;
+                    if (ringScales[i] >= TargetMaxScale)
+                    {
+                        ringScales.RemoveAt(i);
+                    }
+                }
+
+                if (age >= GraceDelaySeconds && Find.TickManager.TicksGame % 15 == 0)
+                {
+                    CheckProximity();
+                }
             }
         }
 
         private void CheckProximity()
         {
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
-            if (avatar != null && avatar.MapHeld == Map && avatar.PositionHeld.DistanceToSquared(Position) <= DetectionRadiusSq)
+            if (avatar != null && avatar.MapHeld == Map)
             {
-                Destroy();
+                if (avatar.PositionHeld.DistanceToSquared(Position) <= DetectionRadiusSq)
+                {
+                    Destroy();
+                }
+            }
+            else
+            {
+                foreach (var colonist in Map.mapPawns.FreeColonistsSpawned)
+                {
+                    if (colonist.Position.DistanceToSquared(Position) <= DetectionRadiusSq)
+                    {
+                        Destroy();
+                        return;
+                    }
+                }
             }
         }
 

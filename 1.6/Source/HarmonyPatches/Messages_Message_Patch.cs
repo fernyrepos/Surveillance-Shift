@@ -23,7 +23,6 @@ namespace SurveillanceShift
                 if (map.IsVisible(target.Cell)) return true;
             }
             map.GetComponent<MapComponent_FogOfWar>().QueueMessage(msg);
-            State.MuteSlowdown();
             return false;
         }
     }

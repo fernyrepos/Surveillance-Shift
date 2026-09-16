@@ -3,6 +3,7 @@
   <ThingDef Name="SS_PingBase" ParentName="MoteBase" Abstract="True">
     <thingClass>SurveillanceShift.Mote_Ping</thingClass>
     <drawOffscreen>true</drawOffscreen>
+    <drawGUIOverlay>true</drawGUIOverlay>
     <graphicData>
       <texPath>Things/Mote/Transparent</texPath>
       <shaderType>MoteGlow</shaderType>

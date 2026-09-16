@@ -31,4 +31,20 @@
       </li>
     </subSounds>
   </SoundDef>
+
+  <SoundDef>
+    <defName>SS_Sound_Alarm</defName>
+    <context>MapOnly</context>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>UI/Alerts/AlertRed</clipPath>
+          </li>
+        </grains>
+        <volumeRange>65~65</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
 </Defs>

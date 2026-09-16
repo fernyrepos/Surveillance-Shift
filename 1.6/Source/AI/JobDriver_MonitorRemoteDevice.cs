@@ -10,6 +10,7 @@ namespace SurveillanceShift
     public class JobDriver_MonitorRemoteDevice : JobDriver
     {
         private const int FaceIntervalTicks = 420;
+        private const int ThreatCheckIntervalTicks = 60;
         private Mote scanningMote;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
@@ -38,6 +39,10 @@ namespace SurveillanceShift
                 if (pawn.IsHashIntervalTick(FaceIntervalTicks))
                 {
                     pawn.rotationTracker.FaceCell(pawn.Position + Rot4.Random.FacingCell);
+                }
+                if (pawn.IsHashIntervalTick(ThreatCheckIntervalTicks))
+                {
+                    Building_AlarmTrigger.CheckThreatsAndSoundAlarm(pawn.Map, pawn);
                 }
                 pawn.skills.Learn(SkillDefOf.Intellectual, 0.025f);
             };

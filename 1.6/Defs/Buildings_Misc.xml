@@ -294,4 +294,131 @@
 		</modExtensions>
 	</ThingDef>
 
+	<ThingDef ParentName="SS_BuildingBase">
+		<defName>SS_AlarmTrigger</defName>
+		<label>alarm trigger</label>
+		<description>text.todo.</description>
+		<thingClass>SurveillanceShift.Building_AlarmTrigger</thingClass>
+		<category>Building</category>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<thingCategories>
+			<li>BuildingsSecurity</li>
+		</thingCategories>
+		<graphicData>
+			<texPath>Things/Building/AlarmTrigger/AlarmTrigger</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<drawSize>(1,1)</drawSize>
+		</graphicData>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<passability>Standable</passability>
+		<rotatable>true</rotatable>
+		<hasInteractionCell>true</hasInteractionCell>
+		<interactionCellOffset>(0,0,-1)</interactionCellOffset>
+		<statBases>
+			<MaxHitPoints>100</MaxHitPoints>
+			<WorkToBuild>350</WorkToBuild>
+			<Flammability>0.3</Flammability>
+			<Mass>2</Mass>
+		</statBases>
+		<size>(1,1)</size>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>15</basePowerConsumption>
+			</li>
+			<li Class="CompProperties_Flickable" />
+		</comps>
+		<uiOrder>2020</uiOrder>
+	</ThingDef>
+
+	<ThingDef ParentName="SS_BuildingBase">
+		<defName>SS_Loudspeaker</defName>
+		<label>colony loudspeaker</label>
+		<description>text.todo.</description>
+		<thingClass>SurveillanceShift.Building_Loudspeaker</thingClass>
+		<category>Building</category>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<thingCategories>
+			<li>BuildingsSecurity</li>
+		</thingCategories>
+		<graphicData>
+			<texPath>Things/Building/Loudspeaker/Loudspeaker</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(1.4,2.4)</drawSize>
+			<drawOffset>(0,0,0.75)</drawOffset>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+		</graphicData>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
+		<building>
+			<ai_chillDestination>false</ai_chillDestination>
+		</building>
+		<pathCost>14</pathCost>
+		<passability>PassThroughOnly</passability>
+		<canOverlapZones>false</canOverlapZones>
+		<rotatable>false</rotatable>
+		<neverMultiSelect>false</neverMultiSelect>
+		<statBases>
+			<MaxHitPoints>120</MaxHitPoints>
+			<WorkToBuild>450</WorkToBuild>
+			<Flammability>0.4</Flammability>
+			<Mass>4</Mass>
+		</statBases>
+		<size>(1,1)</size>
+		<costList>
+			<Steel>45</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>30</basePowerConsumption>
+			</li>
+			<li Class="CompProperties_Flickable" />
+		</comps>
+		<uiOrder>2021</uiOrder>
+	</ThingDef>
+
+	<ThingDef ParentName="SS_BuildingBase">
+		<defName>SS_ColonyRadar</defName>
+		<label>colony radar</label>
+		<description>text.todo.</description>
+		<thingClass>SurveillanceShift.Building_ColonyRadar</thingClass>
+		<category>Building</category>
+		<graphicData>
+			<texPath>Things/Building/Misc/CommsConsole</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+			<drawSize>(2,2)</drawSize>
+		</graphicData>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<fillPercent>0.5</fillPercent>
+		<pathCost>50</pathCost>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1800</WorkToBuild>
+			<Flammability>0.4</Flammability>
+			<Mass>25</Mass>
+		</statBases>
+		<size>(2,2)</size>
+		<costList>
+			<Steel>120</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>250</basePowerConsumption>
+			</li>
+			<li Class="CompProperties_Flickable" />
+		</comps>
+		<uiOrder>2022</uiOrder>
+	</ThingDef>
+
 </Defs>

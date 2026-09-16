@@ -36,4 +36,11 @@
 		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_PushAlarmTrigger</defName>
+		<driverClass>SurveillanceShift.JobDriver_PushAlarmTrigger</driverClass>
+		<reportString>pushing alarm trigger.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
 </Defs>
