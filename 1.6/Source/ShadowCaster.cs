@@ -16,39 +16,57 @@ namespace SurveillanceShift
             public float maxSlope;
         }
 
-        public static void ComputeFieldOfView(IntVec3 origin, int radius, Map map, bool[] visibleCells)
+        public static void ComputeFieldOfView(IntVec3 origin, int radius, Map map, bool[] visibleCells, bool seeOverMountains = false)
         {
             var mapSizeX = map.Size.x;
             var mapSizeZ = map.Size.z;
             var edifices = map.edificeGrid.InnerArray;
             visibleCells[origin.z * mapSizeX + origin.x] = true;
             var radiusSq = radius * radius;
+            var roofGrid = seeOverMountains ? map.roofGrid : null;
 
             for (var octant = 0; octant < 8; octant++)
             {
-                ScanOctant(octant, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells);
+                ScanOctant(octant, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, 1f, seeOverMountains, roofGrid);
             }
         }
 
-        public static void ComputeConeFieldOfView(IntVec3 origin, int radius, Rot4 rot, float maxSlope, Map map, bool[] visibleCells)
+        public static void ComputeConeFieldOfView(IntVec3 origin, int radius, Rot4 rot, float maxSlope, Map map, bool[] visibleCells, bool seeOverMountains = false)
         {
             var mapSizeX = map.Size.x;
             var mapSizeZ = map.Size.z;
             var edifices = map.edificeGrid.InnerArray;
             visibleCells[origin.z * mapSizeX + origin.x] = true;
             var radiusSq = radius * radius;
+            var roofGrid = seeOverMountains ? map.roofGrid : null;
 
             int oct1, oct2;
-            if (rot == Rot4.North) { oct1 = 1; oct2 = 2; }
-            else if (rot == Rot4.South) { oct1 = 5; oct2 = 6; }
-            else if (rot == Rot4.East) { oct1 = 0; oct2 = 7; }
-            else { oct1 = 3; oct2 = 4; }
+            if (rot == Rot4.North)
+            {
+                oct1 = 1;
+                oct2 = 2;
+            }
+            else if (rot == Rot4.South)
+            {
+                oct1 = 5;
+                oct2 = 6;
+            }
+            else if (rot == Rot4.East)
+            {
+                oct1 = 0;
+                oct2 = 7;
+            }
+            else
+            {
+                oct1 = 3;
+                oct2 = 4;
+            }
 
-            ScanOctant(oct1, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope);
-            ScanOctant(oct2, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope);
+            ScanOctant(oct1, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope, seeOverMountains, roofGrid);
+            ScanOctant(oct2, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope, seeOverMountains, roofGrid);
         }
 
-        private static void ScanOctant(int octant, int originX, int originZ, int radius, int radiusSq, int mapSizeX, int mapSizeZ, Building[] edifices, bool[] visibleCells, float minSlope = 0f, float maxSlope = 1f)
+        private static void ScanOctant(int octant, int originX, int originZ, int radius, int radiusSq, int mapSizeX, int mapSizeZ, Building[] edifices, bool[] visibleCells, float minSlope = 0f, float maxSlope = 1f, bool seeOverMountains = false, RoofGrid roofGrid = null)
         {
             var stackIndex = 0;
             Stack[0] = new Column
@@ -92,16 +110,19 @@ namespace SurveillanceShift
                     var dz = cz - originZ;
 
                     var ed = edifices[idx];
-                    var isWall = ed != null && ed.CanBeSeenOver() is false;
+                    var isWall = seeOverMountains is false && ed != null && ed.CanBeSeenOver() is false;
+                    var isRoofed = roofGrid != null && roofGrid.Roofed(idx);
 
                     var isPinched = false;
                     if (isWall is false && dx != 0 && dz != 0)
                     {
                         var sx = dx > 0 ? 1 : -1;
                         var sz = dz > 0 ? 1 : -1;
-                        var ed1 = edifices[cz * mapSizeX + (cx - sx)];
-                        var ed2 = edifices[(cz - sz) * mapSizeX + cx];
-                        if (ed1 != null && ed1.CanBeSeenOver() is false && ed2 != null && ed2.CanBeSeenOver() is false)
+                        var idx1 = cz * mapSizeX + (cx - sx);
+                        var idx2 = (cz - sz) * mapSizeX + cx;
+                        var block1 = edifices[idx1] != null && edifices[idx1].CanBeSeenOver() is false && seeOverMountains is false;
+                        var block2 = edifices[idx2] != null && edifices[idx2].CanBeSeenOver() is false && seeOverMountains is false;
+                        if (block1 && block2)
                         {
                             isPinched = true;
                         }
@@ -109,7 +130,7 @@ namespace SurveillanceShift
 
                     var isOpaque = isWall || isPinched;
 
-                    if (isPinched is false && dx * dx + dz * dz <= radiusSq)
+                    if (isPinched is false && isRoofed is false && dx * dx + dz * dz <= radiusSq)
                     {
                         visibleCells[idx] = true;
                     }

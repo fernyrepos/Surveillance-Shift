@@ -13,7 +13,11 @@ namespace SurveillanceShift
         public static JobDef SS_OperateSurveillanceStation;
         public static JobDef SS_ViewCameraFeeds;
         public static JobDef SS_ManWatchtower;
+        public static JobDef SS_MonitorRemoteDevice;
+        public static JobDef SS_LinkDeviceToRouter;
         public static ThingDef SS_SurveillanceStation;
+        public static ThingDef SS_Mote_RemoteSurveillanceDevice;
+        public static ThingDef SS_WalkieTalkie;
 
         static DefsOf()
         {

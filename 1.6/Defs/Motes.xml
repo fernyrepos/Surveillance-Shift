@@ -29,8 +29,7 @@
     </graphicData>
   </ThingDef>
 
-  <ThingDef ParentName="MoteBase">
-    <defName>SS_Mote_Spyglass</defName>
+  <ThingDef Name="SS_ObservationMoteBase" ParentName="MoteBase" Abstract="True">
     <thingClass>SurveillanceShift.Mote_ObservationDevice</thingClass>
     <drawOffscreen>true</drawOffscreen>
     <altitudeLayer>MoteOverhead</altitudeLayer>
@@ -40,24 +39,29 @@
       <fadeOutTime>0.1</fadeOutTime>
     </mote>
     <graphicData>
-      <texPath>Things/Mote/Spyglass/Spyglass</texPath>
       <graphicClass>Graphic_Multi</graphicClass>
     </graphicData>
   </ThingDef>
 
-  <ThingDef ParentName="MoteBase">
+  <ThingDef ParentName="SS_ObservationMoteBase">
+    <defName>SS_Mote_Spyglass</defName>
+    <graphicData>
+      <texPath>Things/Mote/Spyglass/Spyglass</texPath>
+    </graphicData>
+  </ThingDef>
+
+  <ThingDef ParentName="SS_ObservationMoteBase">
     <defName>SS_Mote_Binoculars</defName>
-    <thingClass>SurveillanceShift.Mote_ObservationDevice</thingClass>
-    <drawOffscreen>true</drawOffscreen>
-    <altitudeLayer>MoteOverhead</altitudeLayer>
-    <mote>
-      <fadeInTime>0.1</fadeInTime>
-      <solidTime>999999</solidTime>
-      <fadeOutTime>0.1</fadeOutTime>
-    </mote>
     <graphicData>
       <texPath>Things/Mote/Binoculars/Binoculars</texPath>
-      <graphicClass>Graphic_Multi</graphicClass>
+    </graphicData>
+  </ThingDef>
+
+  <ThingDef ParentName="SS_ObservationMoteBase">
+    <defName>SS_Mote_RemoteSurveillanceDevice</defName>
+    <thingClass>SurveillanceShift.Mote_RemoteSurveillanceDevice</thingClass>
+    <graphicData>
+      <texPath>Things/Mote/RemoteSurveillanceDevice/RemoteSurveillanceDevice</texPath>
     </graphicData>
   </ThingDef>
 </Defs>

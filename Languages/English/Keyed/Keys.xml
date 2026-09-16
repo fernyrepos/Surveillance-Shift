@@ -18,4 +18,20 @@
   <SS_WatchtowerManned>Sentry on duty</SS_WatchtowerManned>
   <SS_WatchtowerUnmanned>Unmanned</SS_WatchtowerUnmanned>
   <SS_StopViewing>Stop viewing</SS_StopViewing>
+  <SS_BlowSignalHorn>Blow signal horn</SS_BlowSignalHorn>
+  <SS_BlowSignalHornDesc>Blow the signal horn to alert the entire colony to danger.</SS_BlowSignalHornDesc>
+  <SS_SignalHornCooldown>Resting</SS_SignalHornCooldown>
+  <SS_SignalHornLetterLabel>Signal horn sounded</SS_SignalHornLetterLabel>
+  <SS_SignalHornLetterText>{0} has sounded the signal horn!</SS_SignalHornLetterText>
+  <SS_HostileSpotted>Hostile spotted</SS_HostileSpotted>
+  <SS_HostileSpottedDesc>{0} has reported spotting a hostile ({1}) over the radio.</SS_HostileSpottedDesc>
+  <SS_AccessFeedsRemote>Access feeds</SS_AccessFeedsRemote>
+  <SS_AccessFeedsRemoteDesc>Connect to a local surveillance router to view camera feeds remotely.</SS_AccessFeedsRemoteDesc>
+  <SS_NoSurveillanceRouter>No operational surveillance router found on the network.</SS_NoSurveillanceRouter>
+  <SS_UseRemoteSurveillanceDevice>Use remote surveillance device</SS_UseRemoteSurveillanceDevice>
+  <SS_LinkDeviceToRouter>Link device to router</SS_LinkDeviceToRouter>
+  <SS_DeviceNotLinked>This device has not been linked to a router. Select this colonist and right-click a router to link it.</SS_DeviceNotLinked>
+  <SS_LinkedRouterOffline>The linked surveillance router is offline.</SS_LinkedRouterOffline>
+  <SS_AbortMonitoring>Abort monitoring</SS_AbortMonitoring>
+  <SS_AbortMonitoringDesc>Stop monitoring the surveillance feeds through the linked router.</SS_AbortMonitoringDesc>
 </LanguageData>

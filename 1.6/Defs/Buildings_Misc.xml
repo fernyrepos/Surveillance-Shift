@@ -2,13 +2,27 @@
 
 <Defs>
 
-	<ThingDef ParentName="BuildingBase">
+	<ThingDef Name="SS_BuildingBase" ParentName="BuildingBase" Abstract="True">
+		<tickerType>Normal</tickerType>
+		<designationCategory>Security</designationCategory>
+		<constructEffect>ConstructMetal</constructEffect>
+	</ThingDef>
+
+	<ThingDef Name="SS_PoweredBuildingBase" ParentName="SS_BuildingBase" Abstract="True">
+		<comps>
+			<li Class="PipeSystem.CompProperties_Resource">
+				<pipeNet>SS_VideoCableNet</pipeNet>
+			</li>
+			<li Class="CompProperties_Flickable" />
+		</comps>
+	</ThingDef>
+
+	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_WallCamera</defName>
 		<label>wall-mounted camera</label>
 		<description>A surveillance camera mounted on a wall. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<rotatable>true</rotatable>
 		<thingClass>SurveillanceShift.Building_WallCamera</thingClass>
-		<category>Building</category>
 		<thingCategories>
 			<li>BuildingsFurniture</li>
 		</thingCategories>
@@ -60,10 +74,6 @@
 				<compClass>CompPowerTrader</compClass>
 				<basePowerConsumption>40</basePowerConsumption>
 			</li>
-			<li Class="PipeSystem.CompProperties_Resource">
-				<pipeNet>SS_VideoCableNet</pipeNet>
-			</li>
-			<li Class="CompProperties_Flickable" />
 		</comps>
 		<modExtensions>
 			<li Class="SurveillanceShift.CameraExtension">
@@ -71,20 +81,15 @@
 				<sightRadius>26</sightRadius>
 			</li>
 		</modExtensions>
-		<selectable>true</selectable>
 		<neverMultiSelect>false</neverMultiSelect>
-		<tickerType>Normal</tickerType>
-		<designationCategory>Security</designationCategory>
 		<uiOrder>2011</uiOrder>
-		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
 
-	<ThingDef ParentName="BuildingBase">
+	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_CameraTower</defName>
 		<label>camera tower</label>
 		<description>A pillar with four mounted cameras, allowing for a full view of the surrounding area. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<thingClass>SurveillanceShift.Building_Camera</thingClass>
-		<category>Building</category>
 		<thingCategories>
 			<li>BuildingsFurniture</li>
 		</thingCategories>
@@ -117,10 +122,7 @@
 			<Steel>160</Steel>
 			<ComponentIndustrial>8</ComponentIndustrial>
 		</costList>
-		<selectable>true</selectable>
 		<neverMultiSelect>false</neverMultiSelect>
-		<tickerType>Normal</tickerType>
-		<designationCategory>Security</designationCategory>
 		<uiOrder>2012</uiOrder>
 		<comps>
 			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
@@ -137,20 +139,14 @@
 				<compClass>CompPowerTrader</compClass>
 				<basePowerConsumption>50</basePowerConsumption>
 			</li>
-			<li Class="PipeSystem.CompProperties_Resource">
-				<pipeNet>SS_VideoCableNet</pipeNet>
-			</li>
-			<li Class="CompProperties_Flickable" />
 		</comps>
-		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
 
-	<ThingDef ParentName="BenchBase">
+	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_SurveillanceStation</defName>
 		<label>surveillance station</label>
 		<description>A central hub for managing and viewing footage from multiple surveillance cameras.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceStation</thingClass>
-		<category>Building</category>
 		<thingCategories>
 			<li>BuildingsMisc</li>
 		</thingCategories>
@@ -165,6 +161,9 @@
 		<building>
 			<ai_chillDestination>false</ai_chillDestination>
 		</building>
+		<terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+		<interactionCellIcon>DiningChair</interactionCellIcon>
+		<noRightClickDraftAttack>true</noRightClickDraftAttack>
 		<interactionCellOffset>(0,0,-1)</interactionCellOffset>
 		<passability>PassThroughOnly</passability>
 		<pathCost>50</pathCost>
@@ -188,26 +187,49 @@
 				<basePowerConsumption>350</basePowerConsumption>
 				<shortCircuitInRain>true</shortCircuitInRain>
 			</li>
-			<li Class="PipeSystem.CompProperties_Resource">
-				<pipeNet>SS_VideoCableNet</pipeNet>
-			</li>
-			<li Class="CompProperties_Flickable" />
 			<li Class="CompProperties_Breakdownable" />
 		</comps>
-		<selectable>true</selectable>
 		<neverMultiSelect>false</neverMultiSelect>
-		<tickerType>Normal</tickerType>
-		<designationCategory>Security</designationCategory>
 		<uiOrder>2013</uiOrder>
-		<constructEffect>ConstructMetal</constructEffect>
 	</ThingDef>
 
-	<ThingDef ParentName="BuildingBase">
+	<ThingDef ParentName="SS_PoweredBuildingBase">
+		<defName>SS_SurveillanceRouter</defName>
+		<label>surveillance router</label>
+		<description>text.todo.</description>
+		<thingClass>SurveillanceShift.Building_SurveillanceRouter</thingClass>
+		<graphicData>
+			<texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(1,1)</drawSize>
+		</graphicData>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>PassThroughOnly</passability>
+		<statBases>
+			<MaxHitPoints>100</MaxHitPoints>
+			<WorkToBuild>400</WorkToBuild>
+			<Flammability>0.5</Flammability>
+			<Mass>3</Mass>
+		</statBases>
+		<size>(1,1)</size>
+		<costList>
+			<Steel>50</Steel>
+			<ComponentIndustrial>2</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>75</basePowerConsumption>
+			</li>
+			<li Class="CompProperties_Breakdownable" />
+		</comps>
+	</ThingDef>
+
+	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_DominionTower</defName>
 		<label>dominion tower</label>
 		<description>text.todo.</description>
 		<thingClass>SurveillanceShift.Building_Watchtower</thingClass>
-		<category>Building</category>
 		<size>(4,4)</size>
 		<rotatable>false</rotatable>
 		<graphicData>
@@ -245,12 +267,8 @@
 				</optionalNames>
 			</li>
 		</comps>
-		<selectable>true</selectable>
 		<drawerType>MapMeshAndRealTime</drawerType>
-		<tickerType>Normal</tickerType>
-		<designationCategory>Security</designationCategory>
 		<uiOrder>2014</uiOrder>
-		<constructEffect>ConstructMetal</constructEffect>
 		<modExtensions>
 			<li Class="SurveillanceShift.WatchtowerExtension">
 				<topGraphicData>
@@ -270,6 +288,7 @@
 					<li>(0.8, 9.0)</li>
 					<li>(-1.8, 9.0)</li>
 				</vantageOffsets>
+				<seeOverMountains>true</seeOverMountains>
 			</li>
 		</modExtensions>
 	</ThingDef>

@@ -19,6 +19,7 @@ namespace SurveillanceShift
         private const int DownedSightRadius = 4;
         private const int UpdateIntervalTicks = 12;
         private const int SectionSize = 16;
+        private const int WalkieTalkieSightingRadiusSq = 676;
         private static readonly float FogAltitude = AltitudeLayer.Weather.AltitudeFor() + 0.05f;
 
         private static readonly Material DarkFogMat = MaterialPool.MatFrom(BaseContent.WhiteTex, ShaderDatabase.Transparent, new ColorInt(25, 25, 25).ToColor, 3900);
@@ -34,6 +35,7 @@ namespace SurveillanceShift
         private bool firstPass = true;
         private List<MutedArrival> mutedArrivals = new();
         private List<Message> mutedMessages = new();
+        private HashSet<int> sightedHostileIDs = new();
 
         public class MutedArrival : IExposable
         {
@@ -90,6 +92,7 @@ namespace SurveillanceShift
             if (State.IsLimitedAwareness && Find.TickManager.TicksGame % UpdateIntervalTicks == 0)
             {
                 RecalculateVisibility();
+                ProcessWalkieTalkieSightings();
                 ProcessMutedArrivals();
                 ProcessMutedMessages();
             }
@@ -318,6 +321,42 @@ namespace SurveillanceShift
             }
         }
 
+        private void ProcessWalkieTalkieSightings()
+        {
+            var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
+            if (ModCompatibility.IsPerspectiveShiftAuthentic() && avatar != null && avatar.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie) is false)
+            {
+                return;
+            }
+
+            var spotters = new List<Pawn>();
+            foreach (var colonist in map.mapPawns.FreeColonistsSpawned)
+            {
+                if (colonist.Dead is false && colonist.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
+                {
+                    spotters.Add(colonist);
+                }
+            }
+            if (spotters.Count == 0) return;
+            var requireVisible = ModCompatibility.IsPerspectiveShiftAuthentic() is false;
+            foreach (var hostile in map.mapPawns.AllPawnsSpawned)
+            {
+                if (hostile.HostileTo(Faction.OfPlayer) && hostile.Dead is false && sightedHostileIDs.Contains(hostile.thingIDNumber) is false && (requireVisible is false || IsVisible(hostile.Position)))
+                {
+                    foreach (var spotter in spotters)
+                    {
+                        if (spotter.Position.DistanceToSquared(hostile.Position) <= WalkieTalkieSightingRadiusSq && GenSight.LineOfSight(spotter.Position, hostile.Position, map))
+                        {
+                            sightedHostileIDs.Add(hostile.thingIDNumber);
+                            Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), "SS_HostileSpottedDesc".Translate(spotter.LabelShort, hostile.LabelShort), LetterDefOf.ThreatBig, new LookTargets(hostile)));
+                            State.SpawnPing(hostile.Position, map, true);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         private void ProcessMutedMessages()
         {
             for (int i = mutedMessages.Count - 1; i >= 0; i--)
@@ -364,10 +403,12 @@ namespace SurveillanceShift
             base.ExposeData();
             Scribe_Collections.Look(ref mutedArrivals, "SS_MutedArrivals", LookMode.Deep);
             Scribe_Collections.Look(ref mutedMessages, "SS_MutedMessages", LookMode.Deep);
+            Scribe_Collections.Look(ref sightedHostileIDs, "SS_SightedHostileIDs", LookMode.Value);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 mutedArrivals ??= new List<MutedArrival>();
                 mutedMessages ??= new List<Message>();
+                sightedHostileIDs ??= new HashSet<int>();
             }
         }
     }

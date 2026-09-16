@@ -2,6 +2,12 @@
 
 <Defs>
 
+	<OrderedTakeGroupDef>
+		<defName>SS_RemoteSurveillanceDevice</defName>
+		<label>remote surveillance device</label>
+		<max>1</max>
+	</OrderedTakeGroupDef>
+
 	<ThingDef ParentName="ResourceBase">
 		<defName>SS_RemoteSurveillanceDevice</defName>
 		<label>remote surveillance device</label>
@@ -25,6 +31,10 @@
 		<thingCategories>
 			<li>Manufactured</li>
 		</thingCategories>
+		<orderedTakeGroup>SS_RemoteSurveillanceDevice</orderedTakeGroup>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_RemoteSurveillanceDevice" />
+		</comps>
 		<tradeability>Sellable</tradeability>
 	</ThingDef>
 
@@ -112,6 +122,9 @@
 				<cooldownTime>2</cooldownTime>
 			</li>
 		</tools>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_SignalHorn" />
+		</comps>
 	</ThingDef>
 
 </Defs>

@@ -30,4 +30,18 @@
 		<canBeDoneByMechs>false</canBeDoneByMechs>
 	</WorkGiverDef>
 
+	<WorkGiverDef>
+		<defName>SS_MonitorRemoteDevice</defName>
+		<label>monitor remote surveillance device</label>
+		<giverClass>SurveillanceShift.WorkGiver_MonitorRemoteDevice</giverClass>
+		<workType>SS_Monitoring</workType>
+		<priorityInType>80</priorityInType>
+		<verb>monitor</verb>
+		<gerund>monitoring with</gerund>
+		<requiredCapacities>
+			<li>Sight</li>
+		</requiredCapacities>
+		<canBeDoneByMechs>false</canBeDoneByMechs>
+	</WorkGiverDef>
+
 </Defs>

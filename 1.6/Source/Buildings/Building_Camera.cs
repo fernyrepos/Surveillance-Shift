@@ -47,7 +47,7 @@ namespace SurveillanceShift
                 if (compResource.PipeNet == null) return false;
                 foreach (var connector in compResource.PipeNet.connectors)
                 {
-                    if (connector.parent is Building_SurveillanceStation station && station.IsBeingMonitored)
+                    if (connector.parent is Building_SurveillanceStation station && station.IsBeingMonitored || connector.parent is Building_SurveillanceRouter router && router.IsBeingMonitored)
                     {
                         return true;
                     }

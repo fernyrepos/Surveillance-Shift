@@ -22,4 +22,18 @@
 		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_LinkDeviceToRouter</defName>
+		<driverClass>SurveillanceShift.JobDriver_LinkDeviceToRouter</driverClass>
+		<reportString>linking device to router.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+
+	<JobDef>
+		<defName>SS_MonitorRemoteDevice</defName>
+		<driverClass>SurveillanceShift.JobDriver_MonitorRemoteDevice</driverClass>
+		<reportString>monitoring remote surveillance feeds.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+
 </Defs>

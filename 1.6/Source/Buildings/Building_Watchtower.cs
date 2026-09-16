@@ -67,7 +67,7 @@ namespace SurveillanceShift
         public void ComputeWatchtowerFOV(bool[] visibleCells)
         {
             if (IsManned is false) return;
-            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, WatchtowerSightRadius, Map, visibleCells);
+            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, WatchtowerSightRadius, Map, visibleCells, Extension.seeOverMountains);
         }
 
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
