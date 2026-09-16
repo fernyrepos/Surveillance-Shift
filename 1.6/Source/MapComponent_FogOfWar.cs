@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
@@ -42,6 +43,7 @@ namespace SurveillanceShift
         private bool firstPass = true;
         private List<MutedArrival> mutedArrivals = new();
         private List<Message> mutedMessages = new();
+        private List<Letter> mutedLetters = new();
         private HashSet<int> sightedHostileIDs = new();
 
         public class MutedArrival : IExposable
@@ -85,6 +87,11 @@ namespace SurveillanceShift
             mutedMessages.Add(message);
         }
 
+        public void QueueLetter(Letter letter)
+        {
+            mutedLetters.Add(letter);
+        }
+
         public override void FinalizeInit()
         {
             base.FinalizeInit();
@@ -103,6 +110,7 @@ namespace SurveillanceShift
                 ProcessSignalHornSightings();
                 ProcessMutedArrivals();
                 ProcessMutedMessages();
+                ProcessMutedLetters();
             }
         }
 
@@ -181,58 +189,59 @@ namespace SurveillanceShift
                     visibleCells[i] = true;
                 }
                 RebuildSections();
-                return;
-            }
-            (visibleCells, prevCells) = (prevCells, visibleCells);
-            Array.Clear(visibleCells, 0, count);
-
-            if (ModCompatibility.IsPerspectiveShiftAuthentic())
-            {
-                var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
-                if (avatar != null && avatar.Spawned && avatar.Map == map && avatar.Dead is false)
-                {
-                    var radius = avatar.Downed ? DownedSightRadius : StandardSightRadius;
-                    ShadowCaster.ComputeFieldOfView(avatar.Position, radius, map, visibleCells);
-                }
-                foreach (var b in map.listerBuildings.allBuildingsColonist)
-                {
-                    if (b is Building_Camera cam)
-                    {
-                        if (cam.IsActive && (ModCompatibility.IsPerspectiveShiftCameraLockedTo(cam.Position) || State.ActiveFeedCamera == cam))
-                        {
-                            cam.ComputeCameraFOV(visibleCells);
-                        }
-                    }
-                    else if (b is Building_Watchtower tower && tower.IsMannedByAvatar)
-                    {
-                        tower.ComputeWatchtowerFOV(visibleCells);
-                    }
-                }
             }
             else
             {
-                foreach (var pawn in map.mapPawns.FreeColonistsSpawned)
+                (visibleCells, prevCells) = (prevCells, visibleCells);
+                Array.Clear(visibleCells, 0, count);
+                if (ModCompatibility.IsPerspectiveShiftAuthentic())
                 {
-                    if (pawn.Dead is false)
+                    var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
+                    if (avatar != null && avatar.Spawned && avatar.Map == map && avatar.Dead is false)
                     {
-                        var radius = pawn.Downed ? DownedSightRadius : StandardSightRadius;
-                        ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
+                        var radius = avatar.Downed ? DownedSightRadius : StandardSightRadius;
+                        ShadowCaster.ComputeFieldOfView(avatar.Position, radius, map, visibleCells);
+                    }
+                    foreach (var b in map.listerBuildings.allBuildingsColonist)
+                    {
+                        if (b is Building_Camera cam)
+                        {
+                            if (cam.IsActive && (ModCompatibility.IsPerspectiveShiftCameraLockedTo(cam.Position) || State.ActiveFeedCamera == cam))
+                            {
+                                cam.ComputeCameraFOV(visibleCells);
+                            }
+                        }
+                        else if (b is Building_Watchtower tower && tower.IsMannedByAvatar)
+                        {
+                            tower.ComputeWatchtowerFOV(visibleCells);
+                        }
                     }
                 }
-                foreach (var b in map.listerBuildings.allBuildingsColonist)
+                else
                 {
-                    if (b is Building_Camera cam)
+                    foreach (var pawn in map.mapPawns.FreeColonistsSpawned)
                     {
-                        cam.ComputeCameraFOV(visibleCells);
+                        if (pawn.Dead is false)
+                        {
+                            var radius = pawn.Downed ? DownedSightRadius : StandardSightRadius;
+                            ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
+                        }
                     }
-                    else if (b is Building_Watchtower tower)
+                    foreach (var b in map.listerBuildings.allBuildingsColonist)
                     {
-                        tower.ComputeWatchtowerFOV(visibleCells);
+                        if (b is Building_Camera cam)
+                        {
+                            cam.ComputeCameraFOV(visibleCells);
+                        }
+                        else if (b is Building_Watchtower tower)
+                        {
+                            tower.ComputeWatchtowerFOV(visibleCells);
+                        }
                     }
                 }
-            }
 
-            RebuildSections();
+                RebuildSections();
+            }
         }
 
         private void RebuildSections()
@@ -443,35 +452,50 @@ namespace SurveillanceShift
             }
         }
 
+        private void ProcessMutedLetters()
+        {
+            for (int i = mutedLetters.Count - 1; i >= 0; i--)
+            {
+                var letter = mutedLetters[i];
+                if (HasCheckableTarget(letter.lookTargets) is false)
+                {
+                    mutedLetters.RemoveAt(i);
+                }
+                else if (AnyTargetVisible(letter.lookTargets))
+                {
+                    letter.lookTargets = new LookTargets(letter.lookTargets.targets.Where(t => t.IsValid).ToArray());
+                    mutedLetters.RemoveAt(i);
+                    Find.LetterStack.ReceiveLetter(letter);
+                }
+            }
+        }
+
         private void ProcessMutedMessages()
         {
             for (int i = mutedMessages.Count - 1; i >= 0; i--)
             {
                 var message = mutedMessages[i];
-                var targets = message.lookTargets?.targets;
-                if (targets.NullOrEmpty())
+                if (HasCheckableTarget(message.lookTargets) is false)
                 {
                     mutedMessages.RemoveAt(i);
-                    continue;
                 }
-                var checkable = false;
-                foreach (var target in targets)
+                else if (AnyTargetVisible(message.lookTargets))
                 {
-                    if (target.ThingDestroyed) continue;
-                    checkable = true;
-                    if (target.Map == map && target.Cell.InBounds(map) && visibleCells[map.cellIndices.CellToIndex(target.Cell)])
-                    {
-                        message.ResetTimer();
-                        mutedMessages.RemoveAt(i);
-                        Messages.Message(message);
-                        break;
-                    }
-                }
-                if (checkable is false)
-                {
+                    message.ResetTimer();
                     mutedMessages.RemoveAt(i);
+                    Messages.Message(message);
                 }
             }
+        }
+
+        private bool HasCheckableTarget(LookTargets lookTargets)
+        {
+            return lookTargets.targets.Any(t => t.ThingDestroyed is false);
+        }
+
+        private bool AnyTargetVisible(LookTargets lookTargets)
+        {
+            return lookTargets.targets.Any(t => t.ThingDestroyed is false && t.Map == map && t.Cell.InBounds(map) && visibleCells[map.cellIndices.CellToIndex(t.Cell)]);
         }
 
         public override void MapRemoved()
@@ -489,11 +513,13 @@ namespace SurveillanceShift
             base.ExposeData();
             Scribe_Collections.Look(ref mutedArrivals, "SS_MutedArrivals", LookMode.Deep);
             Scribe_Collections.Look(ref mutedMessages, "SS_MutedMessages", LookMode.Deep);
+            Scribe_Collections.Look(ref mutedLetters, "SS_MutedLetters", LookMode.Deep);
             Scribe_Collections.Look(ref sightedHostileIDs, "SS_SightedHostileIDs", LookMode.Value);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 mutedArrivals ??= new List<MutedArrival>();
                 mutedMessages ??= new List<Message>();
+                mutedLetters ??= new List<Letter>();
                 sightedHostileIDs ??= new HashSet<int>();
             }
         }

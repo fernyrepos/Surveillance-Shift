@@ -1,4 +1,5 @@
 using PipeSystem;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
@@ -29,6 +30,28 @@ namespace SurveillanceShift
             }
             return cachedComp.IsVisible(cell);
         }
+
+        public static GlobalTargetInfo ResolveTarget(GlobalTargetInfo target)
+        {
+            if (target.Pawn is { Dead: true } pawn && pawn.Corpse is Corpse corpse)
+            {
+                return new GlobalTargetInfo(corpse);
+            }
+            return target;
+        }
+
+        public static bool IsTargetFogged(GlobalTargetInfo target)
+        {
+            target = ResolveTarget(target);
+            if (target.Map is null) return false;
+            return target.Map.IsVisible(target.Cell) is false;
+        }
+
+        public static int MutedSlowdownTick = -1;
+
+        public static void MuteSlowdown() => MutedSlowdownTick = Find.TickManager.TicksGame;
+
+        public static bool IsSlowdownMuted => Find.TickManager.TicksGame == MutedSlowdownTick;
 
         public static void SpawnPing(IntVec3 cell, Map map, bool hostile)
         {
