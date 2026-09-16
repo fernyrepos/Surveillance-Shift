@@ -16,7 +16,22 @@ namespace SurveillanceShift
         {
             if (t != pawn || pawn == ModCompatibility.GetPerspectiveShiftAvatar() || pawn.Faction != Faction.OfPlayer) return false;
             var router = CompRemoteSurveillanceDevice.FindLinkedRouter(pawn);
-            return router != null && router.IsActive;
+            if (router is null)
+            {
+                JobFailReason.Is("SS_DeviceNotLinked".Translate());
+                return false;
+            }
+            if (router.IsActive is false)
+            {
+                JobFailReason.Is("SS_LinkedRouterOffline".Translate());
+                return false;
+            }
+            if (router.HasCameras is false)
+            {
+                JobFailReason.Is("SS_NoCamerasLinked".Translate());
+                return false;
+            }
+            return true;
         }
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)

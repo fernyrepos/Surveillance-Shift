@@ -14,6 +14,8 @@ namespace SurveillanceShift
         public bool IsActive => Spawned && powerComp.PowerOn && Map.gameConditionManager.ElectricityDisabled(Map) is false;
         public PipeNet PipeNet => GetComp<CompResource>().PipeNet;
 
+        public bool HasCameras => Building_Camera.PipeNetHasCameras(PipeNet);
+
         public bool IsBeingMonitored
         {
             get

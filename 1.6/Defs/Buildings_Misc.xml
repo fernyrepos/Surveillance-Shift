@@ -280,6 +280,7 @@
 				<moteDef>SS_Mote_Binoculars</moteDef>
 				<climbHeight>7</climbHeight>
 				<climbTicks>300</climbTicks>
+				<sightRadius>52</sightRadius>
 				<vantageOffsets>
 					<li>(-0.4, 6.6)</li>
 					<li>(0.9, 6.6)</li>

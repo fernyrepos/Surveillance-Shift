@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -6,14 +7,19 @@ namespace SurveillanceShift
     [StaticConstructorOnStartup]
     public class Mote_Ping : Mote
     {
-        private const float DetectionRadiusSq = 25f;
-        private const float TargetMaxScale = 5f;
-        private const float GrowthRate = 3f;
+        private const float DetectionRadiusSq = 7f * 7f;
+        private const float GraceDelaySeconds = 4f;
+        private const float TargetMaxScale = 75f;
+        private const float GrowthRate = 15f;
+        private const float SpawnInterval = 1.25f;
         private const int TextureSize = 256;
-        private const float RingRadius = 0.40f;
-        private const float RingFalloff = 0.055f;
+        private const float RingRadius = 0.45f;
+        private const float RingFalloff = 0.02f;
 
-        private float currentScale = 0.5f;
+        private static readonly MaterialPropertyBlock PropertyBlock = new();
+        private readonly List<float> ringScales = new();
+        private float spawnTimer;
+        private float age;
 
         static Mote_Ping()
         {
@@ -47,11 +53,13 @@ namespace SurveillanceShift
                     pixels[y * TextureSize + x] = new Color(1f, 1f, 1f, alpha);
                 }
             }
-            var texture = new Texture2D(TextureSize, TextureSize, TextureFormat.ARGB32, true);
-            texture.name = "SS_PingRing";
+            var texture = new Texture2D(TextureSize, TextureSize, TextureFormat.ARGB32, true)
+            {
+                name = "SS_PingRing",
+                wrapMode = TextureWrapMode.Clamp
+            };
             texture.SetPixels(pixels);
             texture.Apply(updateMipmaps: true);
-            texture.wrapMode = TextureWrapMode.Clamp;
             return texture;
         }
 
@@ -61,19 +69,29 @@ namespace SurveillanceShift
         {
             base.SpawnSetup(map, respawningAfterLoad);
             solidTimeOverride = float.MaxValue;
-            linearScale = new Vector3(currentScale, 1f, currentScale);
+            ringScales.Add(0.5f);
         }
 
         public override void TimeInterval(float deltaTime)
         {
-            currentScale += GrowthRate * deltaTime;
-            if (currentScale > TargetMaxScale)
+            age += deltaTime;
+            spawnTimer += deltaTime;
+            if (spawnTimer >= SpawnInterval)
             {
-                currentScale = 0.5f;
+                spawnTimer -= SpawnInterval;
+                ringScales.Add(0.5f);
             }
-            linearScale = new Vector3(currentScale, 1f, currentScale);
 
-            if (Find.TickManager.TicksGame % 15 == 0)
+            for (var i = ringScales.Count - 1; i >= 0; i--)
+            {
+                ringScales[i] += GrowthRate * deltaTime;
+                if (ringScales[i] >= TargetMaxScale)
+                {
+                    ringScales.RemoveAt(i);
+                }
+            }
+
+            if (age >= GraceDelaySeconds && Find.TickManager.TicksGame % 15 == 0)
             {
                 CheckProximity();
             }
@@ -82,26 +100,24 @@ namespace SurveillanceShift
         private void CheckProximity()
         {
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
-            if (avatar != null)
+            if (avatar != null && avatar.MapHeld == Map && avatar.PositionHeld.DistanceToSquared(Position) <= DetectionRadiusSq)
             {
-                if (avatar.MapHeld == Map && avatar.PositionHeld.DistanceToSquared(Position) <= DetectionRadiusSq)
-                {
-                    Destroy();
-                }
-            }
-            else
-            {
-                foreach (var colonist in Map.mapPawns.FreeColonistsSpawned)
-                {
-                    if (colonist.Position.DistanceToSquared(Position) <= DetectionRadiusSq)
-                    {
-                        Destroy();
-                        return;
-                    }
-                }
+                Destroy();
             }
         }
 
-        public override float Alpha => Mathf.Clamp01(1f - currentScale / TargetMaxScale) * 0.85f;
+        public override void DrawAt(Vector3 drawLoc, bool flip = false)
+        {
+            var mat = Graphic.MatSingle;
+            var baseColor = def.graphicData.color;
+            var mesh = MeshPool.plane10;
+            foreach (var scale in ringScales)
+            {
+                var alpha = Mathf.Clamp01(1f - scale / TargetMaxScale) * 0.85f;
+                PropertyBlock.SetColor(ShaderPropertyIDs.Color, new Color(baseColor.r, baseColor.g, baseColor.b, baseColor.a * alpha));
+                var matrix = Matrix4x4.TRS(drawLoc, Quaternion.identity, new Vector3(scale, 1f, scale));
+                Graphics.DrawMesh(mesh, matrix, mat, 0, null, 0, PropertyBlock);
+            }
+        }
     }
 }

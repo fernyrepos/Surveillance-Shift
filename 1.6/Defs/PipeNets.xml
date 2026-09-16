@@ -22,7 +22,7 @@
 		<label>video cable</label>
 		<description>text.todo.</description>
 		<thingClass>PipeSystem.Building_Pipe</thingClass>
-		<category>Building</category>
+		<drawStyleCategory>Conduits</drawStyleCategory>
 		<graphicData>
 			<texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
 			<graphicClass>Graphic_Single</graphicClass>

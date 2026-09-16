@@ -39,6 +39,7 @@ namespace SurveillanceShift
             string disabledReason = null;
             if (linkedRouter is null) disabledReason = "SS_DeviceNotLinked".Translate();
             else if (linkedRouter.IsActive is false) disabledReason = "SS_LinkedRouterOffline".Translate();
+            else if (linkedRouter.HasCameras is false) disabledReason = "SS_NoCamerasLinked".Translate();
 
             if (avatar)
             {

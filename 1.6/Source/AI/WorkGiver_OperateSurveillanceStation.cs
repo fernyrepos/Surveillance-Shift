@@ -17,8 +17,22 @@ namespace SurveillanceShift
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             if (pawn == ModCompatibility.GetPerspectiveShiftAvatar() || t.Faction != pawn.Faction || t is not Building_SurveillanceStation station) return false;
-            if (station.CanUseNow is false || pawn.CanReserve(station, 1, -1, null, forced) is false) return false;
-            return true;
+            if (station.CanUseNow is false)
+            {
+                JobFailReason.Is("CannotUseNoPower".Translate());
+                return false;
+            }
+            if (station.HasCameras is false)
+            {
+                JobFailReason.Is("SS_NoCamerasLinked".Translate());
+                return false;
+            }
+            if (pawn.CanReach(station, PathEndMode.InteractionCell, Danger.Some) is false)
+            {
+                JobFailReason.Is("NoPath".Translate());
+                return false;
+            }
+            return pawn.CanReserve(station, 1, -1, null, forced);
         }
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)

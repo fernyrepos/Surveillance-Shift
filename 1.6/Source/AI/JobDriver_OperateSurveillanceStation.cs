@@ -18,7 +18,7 @@ namespace SurveillanceShift
         public override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-            this.FailOn(() => Station.CanUseNow is false);
+            this.FailOn(() => Station.CanUseNow is false || Station.HasCameras is false);
             yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell);
 
             var monitor = ToilMaker.MakeToil("MakeNewToils");

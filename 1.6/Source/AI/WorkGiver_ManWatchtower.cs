@@ -17,8 +17,12 @@ namespace SurveillanceShift
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
             if (pawn == ModCompatibility.GetPerspectiveShiftAvatar() || t.Faction != pawn.Faction || t is not Building_Watchtower tower) return false;
-            if (pawn.CanReserve(tower, 1, -1, null, forced) is false) return false;
-            return true;
+            if (pawn.CanReach(tower, PathEndMode.InteractionCell, Danger.Some) is false)
+            {
+                JobFailReason.Is("NoPath".Translate());
+                return false;
+            }
+            return pawn.CanReserve(tower, 1, -1, null, forced);
         }
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)

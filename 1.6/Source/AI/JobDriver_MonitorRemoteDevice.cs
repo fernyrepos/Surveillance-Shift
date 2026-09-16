@@ -22,7 +22,7 @@ namespace SurveillanceShift
             this.FailOn(() =>
             {
                 var router = CompRemoteSurveillanceDevice.FindLinkedRouter(pawn);
-                return router is null || router.IsActive is false;
+                return router is null || router.IsActive is false || router.HasCameras is false;
             });
 
             var monitor = ToilMaker.MakeToil("MakeNewToils");

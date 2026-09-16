@@ -38,6 +38,16 @@ namespace SurveillanceShift
             }
         }
 
+        public static bool PipeNetHasCameras(PipeNet net)
+        {
+            if (net is null) return false;
+            foreach (var connector in net.connectors)
+            {
+                if (connector.parent is Building_Camera cam && cam.IsActive) return true;
+            }
+            return false;
+        }
+
         public virtual bool IsMonitored
         {
             get

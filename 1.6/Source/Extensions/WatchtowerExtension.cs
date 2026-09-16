@@ -11,6 +11,7 @@ namespace SurveillanceShift
         public float climbHeight = 7f;
         public int climbTicks = 100;
         public List<Vector2> vantageOffsets;
+        public int sightRadius = 52;
         public bool seeOverMountains;
     }
 }

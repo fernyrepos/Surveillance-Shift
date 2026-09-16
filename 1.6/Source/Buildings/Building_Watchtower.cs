@@ -11,7 +11,6 @@ namespace SurveillanceShift
     [HotSwappable]
     public class Building_Watchtower : Building
     {
-        private const int WatchtowerSightRadius = 52;
         private StoragePriority priority = StoragePriority.Normal;
         private WatchtowerExtension extension;
         private Graphic topGraphic;
@@ -67,7 +66,7 @@ namespace SurveillanceShift
         public void ComputeWatchtowerFOV(bool[] visibleCells)
         {
             if (IsManned is false) return;
-            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, WatchtowerSightRadius, Map, visibleCells, Extension.seeOverMountains);
+            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, Extension.sightRadius, Map, visibleCells, Extension.seeOverMountains);
         }
 
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
@@ -90,18 +89,11 @@ namespace SurveillanceShift
 
             if (myPawn.Drafted) yield break;
 
-            if (myPawn.CanReach(this, PathEndMode.InteractionCell, Danger.Some) is false)
+            yield return new FloatMenuOption("SS_ManWatchtower".Translate(), () =>
             {
-                yield return new FloatMenuOption("CannotUseNoPath".Translate(), null);
-            }
-            else
-            {
-                yield return new FloatMenuOption("SS_ManWatchtower".Translate(), () =>
-                {
-                    var job = JobMaker.MakeJob(DefsOf.SS_ManWatchtower, this);
-                    myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
-                });
-            }
+                var job = JobMaker.MakeJob(DefsOf.SS_ManWatchtower, this);
+                myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+            });
         }
 
         public override IEnumerable<Gizmo> GetGizmos()

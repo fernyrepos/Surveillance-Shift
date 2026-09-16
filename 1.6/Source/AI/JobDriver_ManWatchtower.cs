@@ -20,6 +20,7 @@ namespace SurveillanceShift
         private Mote scanningMote;
         public Vector3? forcedBodyOffset;
         private bool isAtTop;
+        public bool isClimbing;
         private Toil returnToLadder;
         public bool gracefulExitStarted;
         private int currentCycle;
@@ -29,6 +30,7 @@ namespace SurveillanceShift
         private Vector2 startVantage;
         public override Vector3 ForcedBodyOffset => forcedBodyOffset.HasValue ? forcedBodyOffset.Value : Vector3.zero;
         public bool IsAtTop => isAtTop;
+        public bool IsClimbing => isClimbing;
         public bool IsElevated => forcedBodyOffset.HasValue && forcedBodyOffset.Value.y > 0f;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
@@ -47,6 +49,7 @@ namespace SurveillanceShift
             climbLadder.defaultCompleteMode = ToilCompleteMode.Delay;
             climbLadder.initAction = () =>
             {
+                isClimbing = true;
                 maxCycles = Rand.RangeInclusive(20, 30);
                 climbLadder.actor.jobs.curDriver.ticksLeftThisToil = Watchtower.Extension.climbTicks;
                 pawn.rotationTracker.FaceCell(pawn.Position + Rot4.North.FacingCell);
@@ -81,6 +84,7 @@ namespace SurveillanceShift
             watch.defaultCompleteMode = ToilCompleteMode.Delay;
             watch.initAction = () =>
             {
+                isClimbing = false;
                 isAtTop = true;
                 forcedBodyOffset = new Vector3(currentVantage.x, BodyYOffset, currentVantage.y);
                 if (scanningMote == null)
@@ -145,6 +149,8 @@ namespace SurveillanceShift
             returnToLadder.defaultCompleteMode = ToilCompleteMode.Delay;
             returnToLadder.initAction = () =>
             {
+                isClimbing = true;
+                isAtTop = false;
                 CleanupObservationMote();
                 startVantage = new Vector2(forcedBodyOffset.Value.x, forcedBodyOffset.Value.z);
                 nextVantage = new Vector2(0f, Watchtower.Extension.climbHeight);
@@ -173,7 +179,13 @@ namespace SurveillanceShift
                 var progress = 1f - (float)ticksLeftThisToil / Watchtower.Extension.climbTicks;
                 forcedBodyOffset = new Vector3(0f, BodyYOffset, Mathf.Lerp(Watchtower.Extension.climbHeight, 0f, progress));
             };
-            descendLadder.AddFinishAction(() => forcedBodyOffset = Vector3.zero);
+            descendLadder.AddFinishAction(() =>
+            {
+                CleanupObservationMote();
+                forcedBodyOffset = Vector3.zero;
+                isAtTop = false;
+                isClimbing = false;
+            });
             yield return descendLadder;
 
             AddFinishAction(_ =>
@@ -181,12 +193,14 @@ namespace SurveillanceShift
                 CleanupObservationMote();
                 forcedBodyOffset = Vector3.zero;
                 isAtTop = false;
+                isClimbing = false;
             });
         }
 
         public void BeginGracefulExit()
         {
             gracefulExitStarted = true;
+            isClimbing = true;
             JumpToToil(returnToLadder);
         }
 
@@ -250,6 +264,7 @@ namespace SurveillanceShift
             base.ExposeData();
             Scribe_Values.Look(ref forcedBodyOffset, "forcedBodyOffset");
             Scribe_Values.Look(ref isAtTop, "isAtTop");
+            Scribe_Values.Look(ref isClimbing, "isClimbing");
             Scribe_Values.Look(ref currentCycle, "currentCycle");
             Scribe_Values.Look(ref maxCycles, "maxCycles", 5);
             Scribe_Values.Look(ref currentVantage, "currentVantage");

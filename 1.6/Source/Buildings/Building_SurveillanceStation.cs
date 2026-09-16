@@ -29,6 +29,8 @@ namespace SurveillanceShift
             }
         }
 
+        public bool HasCameras => Building_Camera.PipeNetHasCameras(GetComp<CompResource>().PipeNet);
+
         public bool IsBeingMonitored
         {
             get
@@ -52,15 +54,7 @@ namespace SurveillanceShift
                 yield return opt;
             }
 
-            if (CanUseNow is false)
-            {
-                yield return new FloatMenuOption("CannotUseNoPower".Translate(), null);
-            }
-            else if (myPawn.CanReach(this, PathEndMode.InteractionCell, Danger.Some) is false)
-            {
-                yield return new FloatMenuOption("CannotUseNoPath".Translate(), null);
-            }
-            else if (myPawn == ModCompatibility.GetPerspectiveShiftAvatar())
+            if (myPawn == ModCompatibility.GetPerspectiveShiftAvatar())
             {
                 yield return new FloatMenuOption("SS_ViewCameraFeeds".Translate(), () =>
                 {
