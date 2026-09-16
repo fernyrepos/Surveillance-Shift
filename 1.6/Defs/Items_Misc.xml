@@ -88,9 +88,6 @@
 		</statBases>
 		<tickerType>Rare</tickerType>
 		<techLevel>Neolithic</techLevel>
-		<weaponTags>
-			<li>NeolithicMeleeBasic</li>
-		</weaponTags>
 		<costStuffCount>40</costStuffCount>
 		<stuffCategories>
 			<li>Metallic</li>
