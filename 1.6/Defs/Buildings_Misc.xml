@@ -199,7 +199,7 @@
 		<description>text.todo.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceRouter</thingClass>
 		<graphicData>
-			<texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
+			<texPath>Things/Building/Router/Router</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<drawSize>(1,1)</drawSize>
 		</graphicData>
@@ -280,7 +280,7 @@
 				<moteDef>SS_Mote_Binoculars</moteDef>
 				<climbHeight>7</climbHeight>
 				<climbTicks>300</climbTicks>
-				<sightRadius>52</sightRadius>
+				<sightRadius>90</sightRadius>
 				<vantageOffsets>
 					<li>(-0.4, 6.6)</li>
 					<li>(0.9, 6.6)</li>
