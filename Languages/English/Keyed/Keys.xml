@@ -34,4 +34,6 @@
   <SS_LinkedRouterOffline>The linked surveillance router is offline.</SS_LinkedRouterOffline>
   <SS_AbortMonitoring>Abort monitoring</SS_AbortMonitoring>
   <SS_AbortMonitoringDesc>Stop monitoring the surveillance feeds through the linked router.</SS_AbortMonitoringDesc>
+  <SS_HideColonistBar>Hide colonist bar in authentic mode</SS_HideColonistBar>
+  <SS_HideColonistBarDesc>While limited awareness is active in authentic mode, hide the colonist bar and its toggle button in the play settings.</SS_HideColonistBarDesc>
 </LanguageData>

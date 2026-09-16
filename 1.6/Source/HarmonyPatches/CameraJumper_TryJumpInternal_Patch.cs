@@ -8,7 +8,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix(IntVec3 cell, Map map)
         {
-            if (State.IsLimitedAwareness is false || map.IsVisible(cell)) return true;
+            if (State.IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || Find.CurrentGravship != null || map.IsVisible(cell)) return true;
 
             State.SpawnPing(cell, map, false);
             return false;

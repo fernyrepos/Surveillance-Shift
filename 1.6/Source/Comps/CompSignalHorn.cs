@@ -14,37 +14,42 @@ namespace SurveillanceShift
 
     public class CompSignalHorn : ThingComp
     {
-        private const int CooldownTicks = 1200;
-        private int lastBlownTick = -CooldownTicks;
-
         public Gizmo GetGizmo(Pawn pawn)
         {
             if (pawn.Spawned is false || pawn.Faction != Faction.OfPlayer) return null;
 
-            var onCooldown = Find.TickManager.TicksGame < lastBlownTick + CooldownTicks;
             return new Command_Action
             {
                 defaultLabel = "SS_BlowSignalHorn".Translate(),
                 defaultDesc = "SS_BlowSignalHornDesc".Translate(),
                 icon = parent.def.uiIcon,
-                disabled = onCooldown,
-                disabledReason = onCooldown ? "SS_SignalHornCooldown".Translate() : null,
                 action = () => Blow(pawn)
             };
         }
 
-        private void Blow(Pawn pawn)
+        public void Blow(Pawn pawn)
         {
-            lastBlownTick = Find.TickManager.TicksGame;
             SoundDefOf.PsychicPulseGlobal.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
             var letter = LetterMaker.MakeLetter("SS_SignalHornLetterLabel".Translate(), "SS_SignalHornLetterText".Translate(pawn.LabelShort), LetterDefOf.ThreatBig, new LookTargets(pawn));
             Find.LetterStack.ReceiveLetter(letter);
-            State.SpawnPing(pawn.Position, pawn.Map, true);
         }
 
-        public override void PostExposeData()
+        public static CompSignalHorn FindSignalHorn(Pawn pawn)
         {
-            Scribe_Values.Look(ref lastBlownTick, "lastBlownTick", -CooldownTicks);
+            foreach (var eq in pawn.equipment.AllEquipmentListForReading)
+            {
+                var comp = eq.GetComp<CompSignalHorn>();
+                if (comp != null) return comp;
+            }
+            foreach (var thing in pawn.inventory.innerContainer)
+            {
+                if (thing is ThingWithComps twc)
+                {
+                    var comp = twc.GetComp<CompSignalHorn>();
+                    if (comp != null) return comp;
+                }
+            }
+            return null;
         }
     }
 }

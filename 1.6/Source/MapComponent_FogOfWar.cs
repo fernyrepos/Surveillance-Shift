@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RimWorld;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
@@ -20,9 +21,15 @@ namespace SurveillanceShift
         private const int UpdateIntervalTicks = 12;
         private const int SectionSize = 16;
         private const int WalkieTalkieSightingRadiusSq = 676;
+        private const float ArrowEdgeDistance = 7f;
+        private const float ArrowCenterRadiusSq = 9f * 9f;
+        private const int ArrowRenderQueue = 3960;
         private static readonly float FogAltitude = AltitudeLayer.Weather.AltitudeFor() + 0.05f;
 
         private static readonly Material DarkFogMat = MaterialPool.MatFrom(BaseContent.WhiteTex, ShaderDatabase.Transparent, new ColorInt(25, 25, 25).ToColor, 3900);
+        private static readonly float ArrowAltitude = AltitudeLayer.Weather.AltitudeFor() + 0.1f;
+        private static readonly Material HostileArrowMat = MaterialPool.MatFrom("UI/Overlays/Arrow", ShaderDatabase.Transparent, DefsOf.SS_Mote_PingHostile.graphicData.color, ArrowRenderQueue);
+        private static readonly Material FriendlyArrowMat = MaterialPool.MatFrom("UI/Overlays/Arrow", ShaderDatabase.Transparent, DefsOf.SS_Mote_PingFriendly.graphicData.color, ArrowRenderQueue);
 
         private bool[] visibleCells;
         private bool[] prevCells;
@@ -93,6 +100,7 @@ namespace SurveillanceShift
             {
                 RecalculateVisibility();
                 ProcessWalkieTalkieSightings();
+                ProcessSignalHornSightings();
                 ProcessMutedArrivals();
                 ProcessMutedMessages();
             }
@@ -100,7 +108,7 @@ namespace SurveillanceShift
 
         public override void MapComponentUpdate()
         {
-            if (State.IsLimitedAwareness is false || Find.CurrentMap != map) return;
+            if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected || WorldComponent_GravshipController.CutsceneInProgress || Find.GravshipController.LandingAreaConfirmationInProgress) return;
 
             var viewRect = Find.CameraDriver.CurrentViewRect;
             var minSX = Mathf.Max(0, viewRect.minX / SectionSize);
@@ -119,6 +127,41 @@ namespace SurveillanceShift
                     }
                 }
             }
+
+            DrawPingArrows();
+        }
+
+        private void DrawPingArrows()
+        {
+            DrawPings(DefsOf.SS_Mote_PingHostile, HostileArrowMat);
+            DrawPings(DefsOf.SS_Mote_PingFriendly, FriendlyArrowMat);
+        }
+
+        private void DrawPings(ThingDef def, Material mat)
+        {
+            foreach (var thing in map.listerThings.ThingsOfDef(def))
+            {
+                DrawPingArrow(((Mote)thing).exactPosition, mat);
+            }
+        }
+
+        private void DrawPingArrow(Vector3 mapTarget, Material mat)
+        {
+            var center = UI.UIToMapPosition(UI.screenWidth / 2, UI.screenHeight / 2);
+            if ((center - mapTarget).MagnitudeHorizontalSquared() < ArrowCenterRadiusSq)
+            {
+                var position = mapTarget;
+                position.y = ArrowAltitude;
+                position.z -= 1.5f;
+                Graphics.DrawMesh(MeshPool.plane20, position, Quaternion.identity, mat, 0);
+            }
+            else
+            {
+                var dir = (mapTarget - center).Yto0().normalized;
+                var edgePos = center + dir * ArrowEdgeDistance;
+                edgePos.y = ArrowAltitude;
+                Graphics.DrawMesh(MeshPool.plane20, edgePos, Quaternion.LookRotation(dir), mat, 0);
+            }
         }
 
         private void RecalculateVisibility()
@@ -129,6 +172,16 @@ namespace SurveillanceShift
                 visibleCells = new bool[count];
                 prevCells = new bool[count];
                 firstPass = true;
+            }
+            if (Find.GravshipController.LandingAreaConfirmationInProgress)
+            {
+                (visibleCells, prevCells) = (prevCells, visibleCells);
+                for (var i = 0; i < count; i++)
+                {
+                    visibleCells[i] = true;
+                }
+                RebuildSections();
+                return;
             }
             (visibleCells, prevCells) = (prevCells, visibleCells);
             Array.Clear(visibleCells, 0, count);
@@ -313,7 +366,6 @@ namespace SurveillanceShift
                     {
                         arrival.letter.lookTargets = new LookTargets(pawn);
                         Find.LetterStack.ReceiveLetter(arrival.letter);
-                        State.SpawnPing(pawn.Position, map, arrival.isHostile);
                         mutedArrivals.RemoveAt(i);
                         break;
                     }
@@ -349,9 +401,43 @@ namespace SurveillanceShift
                         {
                             sightedHostileIDs.Add(hostile.thingIDNumber);
                             Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), "SS_HostileSpottedDesc".Translate(spotter.LabelShort, hostile.LabelShort), LetterDefOf.ThreatBig, new LookTargets(hostile)));
-                            State.SpawnPing(hostile.Position, map, true);
                             break;
                         }
+                    }
+                }
+            }
+        }
+
+        private void ProcessSignalHornSightings()
+        {
+            var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
+            var hornBearers = new List<(Pawn pawn, CompSignalHorn horn)>();
+            foreach (var colonist in map.mapPawns.FreeColonistsSpawned)
+            {
+                if (colonist.Dead || colonist.Downed || colonist.InMentalState || colonist.Awake() is false || colonist == avatar) continue;
+                var horn = CompSignalHorn.FindSignalHorn(colonist);
+                if (horn != null)
+                {
+                    hornBearers.Add((colonist, horn));
+                }
+            }
+            if (hornBearers.Count == 0) return;
+
+            foreach (var hostile in map.mapPawns.AllPawnsSpawned)
+            {
+                if (hostile.Dead || hostile.Downed || hostile.HostileTo(Faction.OfPlayer) is false || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
+                if (IsVisible(hostile.Position) is false) continue;
+
+                foreach (var (spotter, horn) in hornBearers)
+                {
+                    var sightRadius = spotter.CurJobDef == DefsOf.SS_ManWatchtower && spotter.CurJob?.targetA.Thing is Building_Watchtower tower
+                        ? tower.Extension.sightRadius
+                        : StandardSightRadius;
+                    if (spotter.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(spotter.Position, hostile.Position, map, skipFirstCell: true))
+                    {
+                        sightedHostileIDs.Add(hostile.thingIDNumber);
+                        horn.Blow(spotter);
+                        return;
                     }
                 }
             }

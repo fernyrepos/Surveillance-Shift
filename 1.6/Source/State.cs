@@ -21,7 +21,7 @@ namespace SurveillanceShift
 
         public static bool IsVisible(this Map map, IntVec3 cell)
         {
-            if (IsLimitedAwareness is false) return true;
+            if (IsLimitedAwareness is false || map is null) return true;
             if (map != cachedMap)
             {
                 cachedComp = map.GetComponent<MapComponent_FogOfWar>();
@@ -41,9 +41,16 @@ namespace SurveillanceShift
             sound.PlayOneShotOnCamera(map);
         }
 
+        public static void ClearCaches()
+        {
+            cachedMap = null;
+            cachedComp = null;
+            ClearActiveFeed();
+        }
+
         public static bool SuppressCameraLock(IntVec3 cell)
         {
-            if (IsLimitedAwareness is false || ModCompatibility.HasPerspectiveShiftAvatar() is false) return false;
+            if (IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || ModCompatibility.HasPerspectiveShiftAvatar() is false) return false;
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
             if (avatar is null || avatar.Map != Find.CurrentMap || cell == avatar.Position) return false;
             SpawnPing(cell, avatar.Map, false);

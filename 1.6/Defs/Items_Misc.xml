@@ -38,6 +38,12 @@
 		<tradeability>Sellable</tradeability>
 	</ThingDef>
 
+	<OrderedTakeGroupDef>
+		<defName>SS_WalkieTalkie</defName>
+		<label>walkie talkie</label>
+		<max>1</max>
+	</OrderedTakeGroupDef>
+
 	<ThingDef ParentName="ResourceBase">
 		<defName>SS_WalkieTalkie</defName>
 		<label>walkie talkie</label>
@@ -63,6 +69,7 @@
 			<li>Manufactured</li>
 		</thingCategories>
 		<tradeability>Sellable</tradeability>
+		<orderedTakeGroup>SS_WalkieTalkie</orderedTakeGroup>
 	</ThingDef>
 
 	<ThingDef ParentName="BaseMeleeWeapon_Blunt">

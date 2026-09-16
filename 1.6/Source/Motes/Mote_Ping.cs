@@ -9,9 +9,9 @@ namespace SurveillanceShift
     {
         private const float DetectionRadiusSq = 7f * 7f;
         private const float GraceDelaySeconds = 4f;
-        private const float TargetMaxScale = 800f;
-        private const float GrowthRate = 32f;
-        private const float SpawnInterval = 4f;
+        private const float TargetMaxScale = 75f;
+        private const float GrowthRate = 15f;
+        private const float SpawnInterval = 1.25f;
         private const int TextureSize = 256;
         private const float RingRadius = 0.45f;
         private const float RingFalloff = 0.02f;
