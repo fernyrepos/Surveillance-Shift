@@ -45,6 +45,10 @@ namespace SurveillanceShift
         private List<Message> mutedMessages = new();
         private List<Letter> mutedLetters = new();
         private HashSet<int> sightedHostileIDs = new();
+        private SoftFogRenderer softFog;
+        private bool lastSoftFogEnabled = SoftFogRenderer.Enabled;
+
+        private SoftFogRenderer SoftFog => softFog ??= new SoftFogRenderer(map);
 
         public class MutedArrival : IExposable
         {
@@ -118,20 +122,27 @@ namespace SurveillanceShift
         {
             if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected || WorldComponent_GravshipController.CutsceneInProgress || Find.GravshipController.LandingAreaConfirmationInProgress) return;
 
-            var viewRect = Find.CameraDriver.CurrentViewRect;
-            var minSX = Mathf.Max(0, viewRect.minX / SectionSize);
-            var maxSX = Mathf.Min(sectionsX - 1, viewRect.maxX / SectionSize);
-            var minSZ = Mathf.Max(0, viewRect.minZ / SectionSize);
-            var maxSZ = Mathf.Min(sectionsZ - 1, viewRect.maxZ / SectionSize);
-
-            for (var sz = minSZ; sz <= maxSZ; sz++)
+            if (SoftFogRenderer.Enabled)
             {
-                var row = sz * sectionsX;
-                for (var sx = minSX; sx <= maxSX; sx++)
+                SoftFog.Draw();
+            }
+            else
+            {
+                var viewRect = Find.CameraDriver.CurrentViewRect;
+                var minSX = Mathf.Max(0, viewRect.minX / SectionSize);
+                var maxSX = Mathf.Min(sectionsX - 1, viewRect.maxX / SectionSize);
+                var minSZ = Mathf.Max(0, viewRect.minZ / SectionSize);
+                var maxSZ = Mathf.Min(sectionsZ - 1, viewRect.maxZ / SectionSize);
+
+                for (var sz = minSZ; sz <= maxSZ; sz++)
                 {
-                    if (sectionMeshes.TryGetValue(row + sx, out var mesh))
+                    var row = sz * sectionsX;
+                    for (var sx = minSX; sx <= maxSX; sx++)
                     {
-                        Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, DarkFogMat, 0);
+                        if (sectionMeshes.TryGetValue(row + sx, out var mesh))
+                        {
+                            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, DarkFogMat, 0);
+                        }
                     }
                 }
             }
@@ -188,7 +199,7 @@ namespace SurveillanceShift
                 {
                     visibleCells[i] = true;
                 }
-                RebuildSections();
+                PublishFog();
             }
             else
             {
@@ -240,8 +251,38 @@ namespace SurveillanceShift
                     }
                 }
 
+                PublishFog();
+            }
+        }
+
+        private void PublishFog()
+        {
+            if (SoftFogRenderer.Enabled != lastSoftFogEnabled)
+            {
+                lastSoftFogEnabled = SoftFogRenderer.Enabled;
+                firstPass = true;
+                if (SoftFogRenderer.Enabled)
+                {
+                    ClearSectionMeshes();
+                }
+            }
+            if (SoftFogRenderer.Enabled)
+            {
+                SoftFog.Submit(visibleCells);
+            }
+            else
+            {
                 RebuildSections();
             }
+        }
+
+        private void ClearSectionMeshes()
+        {
+            foreach (var mesh in sectionMeshes.Values)
+            {
+                UnityEngine.Object.Destroy(mesh);
+            }
+            sectionMeshes.Clear();
         }
 
         private void RebuildSections()
@@ -507,11 +548,9 @@ namespace SurveillanceShift
         public override void MapRemoved()
         {
             base.MapRemoved();
-            foreach (var mesh in sectionMeshes.Values)
-            {
-                UnityEngine.Object.Destroy(mesh);
-            }
-            sectionMeshes.Clear();
+            softFog?.Dispose();
+            softFog = null;
+            ClearSectionMeshes();
         }
 
         public override void ExposeData()
