@@ -49,7 +49,18 @@ namespace SurveillanceShift
 
             DrawOption(leftRect, "SS_AreaOmniscience".Translate(), "SS_AreaOmniscienceDesc".Translate(), FullAwarenessIcon, State.AwarenessMode == AwarenessMode.AreaOmniscience, () => State.AwarenessMode = AwarenessMode.AreaOmniscience);
 
-            DrawOption(rightRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, () => State.AwarenessMode = AwarenessMode.LimitedAwareness);
+            DrawOption(rightRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, SelectLimitedAwareness);
+        }
+
+        private void SelectLimitedAwareness()
+        {
+            if (State.AwarenessMode == AwarenessMode.LimitedAwareness) return;
+            State.AwarenessMode = AwarenessMode.LimitedAwareness;
+            if (Current.Game is null) return;
+            foreach (var map in Current.Game.Maps)
+            {
+                map.GetComponent<MapComponent_FogOfWar>().RecalculateVisibility();
+            }
         }
 
         private void DrawOption(Rect rect, string label, string desc, Texture2D icon, bool selected, Action onSelect)

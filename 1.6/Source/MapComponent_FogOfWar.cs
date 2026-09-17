@@ -112,11 +112,14 @@ namespace SurveillanceShift
             if (State.IsLimitedAwareness && Find.TickManager.TicksGame % UpdateIntervalTicks == 0)
             {
                 RecalculateVisibility();
-                ProcessWalkieTalkieSightings();
-                ProcessSignalHornSightings();
                 ProcessMutedArrivals();
                 ProcessMutedMessages();
                 ProcessMutedLetters();
+                if (State.AlertsActive)
+                {
+                    ProcessWalkieTalkieSightings();
+                    ProcessSignalHornSightings();
+                }
             }
         }
 

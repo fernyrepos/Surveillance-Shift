@@ -20,7 +20,9 @@ namespace SurveillanceShift
         public static Map ActiveFeedMap;
         public static PipeNet ActiveFeedPipeNet;
 
-        public static bool IsLimitedAwareness => AwarenessMode == AwarenessMode.LimitedAwareness && (ModCompatibility.PerspectiveShiftAvailable is false || ModCompatibility.IsPerspectiveShiftAuthentic() || SurveillanceShiftMod.settings.enableAlertInDirector);
+        public static bool IsLimitedAwareness => AwarenessMode == AwarenessMode.LimitedAwareness;
+
+        public static bool AlertsActive => SurveillanceShiftMod.settings.enableAlertInDirector || ModCompatibility.PerspectiveShiftAvailable is false || ModCompatibility.HasPerspectiveShiftAvatar();
 
         public static readonly bool GuardingPawnsActive = LoadedModManager.RunningMods.Any(m => m.PackageIdPlayerFacing == "Thek.GuardingP");
 
@@ -231,7 +233,7 @@ namespace SurveillanceShift
         public static void CheckForThreatsAndReact(Pawn pawn, ColonistSurveillanceData data)
         {
             data.UpdateWalkieStatus(pawn);
-            if (data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
+            if (AlertsActive is false || data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
             var map = pawn.Map;
             var hostile = FindHostile(pawn, map, surveying: true);
             if (hostile == null) return;
@@ -241,7 +243,7 @@ namespace SurveillanceShift
 
         public static Job TryGetReactionJob(Pawn pawn, ColonistSurveillanceData data)
         {
-            if (data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return null;
+            if (AlertsActive is false || data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return null;
             var map = pawn.Map;
             var hostile = FindHostile(pawn, map, surveying: false);
             return hostile == null ? null : GetReactionJob(pawn, data, hostile);
@@ -296,6 +298,7 @@ namespace SurveillanceShift
 
         public static Job TryGetAnimalReactionJob(Pawn pawn, AnimalSurveillanceData data)
         {
+            if (AlertsActive is false) return null;
             var map = pawn.Map;
             var sightRadius = SurveillanceShiftMod.settings.fogViewDistance;
             Pawn hostile = null;
