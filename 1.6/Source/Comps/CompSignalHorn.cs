@@ -31,7 +31,7 @@ namespace SurveillanceShift
         {
             SoundDefOf.PsychicPulseGlobal.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
             var letter = LetterMaker.MakeLetter("SS_SignalHornLetterLabel".Translate(), "SS_SignalHornLetterText".Translate(pawn.LabelShort), LetterDefOf.ThreatBig, new LookTargets(pawn));
-            Find.LetterStack.ReceiveLetter(letter);
+            State.ReceiveLetterUnmuted(letter);
         }
 
         public static CompSignalHorn FindSignalHorn(Pawn pawn)

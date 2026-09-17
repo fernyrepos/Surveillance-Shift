@@ -443,28 +443,67 @@ namespace SurveillanceShift
             var spotters = new List<Pawn>();
             foreach (var colonist in map.mapPawns.FreeColonistsSpawned)
             {
-                if (colonist.Dead is false && colonist.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
+                if (colonist.Dead is false && colonist != avatar && colonist.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
                 {
                     spotters.Add(colonist);
                 }
             }
             if (spotters.Count == 0) return;
+            var newSightings = new List<(Pawn hostile, Pawn spotter)>();
+            var anySighting = false;
             foreach (var hostile in map.mapPawns.AllPawnsSpawned)
             {
-                if (hostile.HostileTo(Faction.OfPlayer) && hostile.Dead is false && sightedHostileIDs.Contains(hostile.thingIDNumber) is false)
+                if (hostile.HostileTo(Faction.OfPlayer) is false || hostile.Dead || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
+                foreach (var spotter in spotters)
                 {
-                    foreach (var spotter in spotters)
+                    if (spotter.Position.DistanceToSquared(hostile.Position) > WalkieTalkieSightingRadiusSq || GenSight.LineOfSight(spotter.Position, hostile.Position, map) is false) continue;
+                    sightedHostileIDs.Add(hostile.thingIDNumber);
+                    anySighting = true;
+                    State.SpawnPing(hostile.Position, map, true);
+                    if (TryReportIncidentArrival(hostile) is false && LetterStackHasTarget(hostile) is false)
                     {
-                        if (spotter.Position.DistanceToSquared(hostile.Position) <= WalkieTalkieSightingRadiusSq && GenSight.LineOfSight(spotter.Position, hostile.Position, map))
-                        {
-                            sightedHostileIDs.Add(hostile.thingIDNumber);
-                            Building_Loudspeaker.BroadcastNews(map, true);
-                            Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), "SS_HostileSpottedDesc".Translate(spotter.LabelShort, hostile.LabelShort), LetterDefOf.ThreatBig, new LookTargets(hostile)));
-                            break;
-                        }
+                        newSightings.Add((hostile, spotter));
                     }
+                    break;
                 }
             }
+            if (anySighting is false) return;
+            Building_Loudspeaker.BroadcastNews(map, true);
+            if (newSightings.Count == 0) return;
+            var text = string.Join("\n", newSightings.Select(s => "SS_HostileSpottedDesc".Translate(s.spotter.LabelShort, s.hostile.LabelShort)));
+            State.ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), text, LetterDefOf.ThreatBig, new LookTargets(newSightings.Select(s => s.hostile))));
+        }
+
+        private bool TryReportIncidentArrival(Pawn hostile)
+        {
+            for (int i = mutedArrivals.Count - 1; i >= 0; i--)
+            {
+                var arrival = mutedArrivals[i];
+                if (arrival.pawns.Contains(hostile) is false) continue;
+                foreach (var pawn in arrival.pawns)
+                {
+                    sightedHostileIDs.Add(pawn.thingIDNumber);
+                }
+                arrival.letter.lookTargets = new LookTargets(hostile);
+                State.ReceiveLetterUnmuted(arrival.letter);
+                mutedArrivals.RemoveAt(i);
+                return true;
+            }
+            return false;
+        }
+
+        private bool LetterStackHasTarget(Pawn pawn)
+        {
+            foreach (var letter in Find.LetterStack.LettersListForReading)
+            {
+                var targets = letter.lookTargets?.targets;
+                if (targets.NullOrEmpty()) continue;
+                foreach (var t in targets)
+                {
+                    if (t.Thing == pawn) return true;
+                }
+            }
+            return false;
         }
 
         private void ProcessSignalHornSightings()

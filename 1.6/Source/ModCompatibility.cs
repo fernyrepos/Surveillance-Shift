@@ -45,10 +45,9 @@ namespace SurveillanceShift
                 var caiSettingsType = AccessTools.TypeByName("CombatAI.Settings");
                 caiFogEnabledField = AccessTools.Field(caiSettingsType, "FogOfWar_Enabled");
 
-                var harmony = new Harmony("ferny.SurveillanceShift.CAILockdown");
                 var exposeDataMethod = AccessTools.Method(caiSettingsType, "ExposeData");
                 var lockdownMethod = AccessTools.Method(typeof(ModCompatibility), nameof(CAISettings_ExposeData_Postfix));
-                harmony.Patch(exposeDataMethod, postfix: new HarmonyMethod(lockdownMethod));
+                SurveillanceShiftMod.harmony.Patch(exposeDataMethod, postfix: new HarmonyMethod(lockdownMethod));
 
                 DisableCAIFog(caiSettingsField.GetValue(null));
             }

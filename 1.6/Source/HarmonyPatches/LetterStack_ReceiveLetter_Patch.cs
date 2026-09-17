@@ -8,7 +8,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix(Letter let)
         {
-            if (State.IsLimitedAwareness is false) return true;
+            if (State.IsLimitedAwareness is false || State.SuppressMuting) return true;
             var targets = let.lookTargets?.targets;
             if (targets.NullOrEmpty()) return true;
             Map map = null;

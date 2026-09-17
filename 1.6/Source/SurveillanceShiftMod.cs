@@ -7,11 +7,12 @@ namespace SurveillanceShift
     public class SurveillanceShiftMod : Mod
     {
         public static SurveillanceShiftModSettings settings;
-
+        public static Harmony harmony;
         public SurveillanceShiftMod(ModContentPack pack) : base(pack)
         {
             settings = GetSettings<SurveillanceShiftModSettings>();
-            new Harmony("ferny.SurveillanceShift").PatchAll();
+            harmony = new Harmony("ferny.SurveillanceShift");
+            harmony.PatchAll();
         }
 
         public override string SettingsCategory() => Content.Name;

@@ -60,6 +60,21 @@ namespace SurveillanceShift
             sound.PlayOneShotOnCamera(map);
         }
 
+        public static bool SuppressMuting;
+
+        public static void ReceiveLetterUnmuted(Letter letter)
+        {
+            SuppressMuting = true;
+            try
+            {
+                Find.LetterStack.ReceiveLetter(letter);
+            }
+            finally
+            {
+                SuppressMuting = false;
+            }
+        }
+
         public static void ClearCaches()
         {
             cachedMap = null;
