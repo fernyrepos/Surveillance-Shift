@@ -196,7 +196,7 @@
 	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_SurveillanceRouter</defName>
 		<label>surveillance router</label>
-		<description>text.todo.</description>
+		<description>A hardware that manages and routes surveillance footage from multiple video sources onto a private bandwidth usable by remote surveillance devices.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceRouter</thingClass>
 		<graphicData>
 			<texPath>Things/Building/Router/Router</texPath>
@@ -222,13 +222,27 @@
 				<basePowerConsumption>75</basePowerConsumption>
 			</li>
 			<li Class="CompProperties_Breakdownable" />
+			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
+				<randomGraphics>
+					<li>Things/Building/Router/Router</li>
+					<li>Things/Building/Router/Router_Alt_a</li>
+					<li>Things/Building/Router/Router_Alt_b</li>
+					<li>Things/Building/Router/Router_Alt_c</li>
+				</randomGraphics>
+				<optionalNames>
+					<li>Standard</li>
+					<li>Alternate A</li>
+					<li>Alternate B</li>
+					<li>Alternate C</li>
+				</optionalNames>
+			</li>
 		</comps>
 	</ThingDef>
 
 	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_DominionTower</defName>
-		<label>dominion tower</label>
-		<description>text.todo.</description>
+		<label>watchtower</label>
+		<description>An elevated structure used for large-range surveillance of the surrounding area.</description>
 		<thingClass>SurveillanceShift.Building_Watchtower</thingClass>
 		<size>(4,4)</size>
 		<rotatable>false</rotatable>
