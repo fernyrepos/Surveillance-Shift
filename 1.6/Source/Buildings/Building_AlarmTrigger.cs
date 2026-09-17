@@ -49,7 +49,6 @@ namespace SurveillanceShift
             lastTriggeredTick = Find.TickManager.TicksGame;
             alarmActive = true;
 
-            var soundPlayed = false;
             for (var i = linkedTargets.Count - 1; i >= 0; i--)
             {
                 var target = linkedTargets[i];
@@ -67,10 +66,9 @@ namespace SurveillanceShift
                 }
                 else if (target is Building_Loudspeaker speaker)
                 {
-                    if (speaker.IsPowered && soundPlayed is false)
+                    if (speaker.IsPowered)
                     {
                         speaker.Alert(true);
-                        soundPlayed = true;
                     }
                 }
                 else
@@ -84,10 +82,7 @@ namespace SurveillanceShift
                     glower.UpdateLit(Map);
                 }
             }
-            if (soundPlayed is false)
-            {
-                DefsOf.SS_Sound_Alarm.PlayOneShotOnCamera(Map);
-            }
+            DefsOf.SS_Sound_Alarm.PlayOneShotOnCamera(Map);
         }
 
         public static bool AnyAlarmActive(Map map)

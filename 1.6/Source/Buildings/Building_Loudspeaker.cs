@@ -10,17 +10,6 @@ namespace SurveillanceShift
         private CompPowerTrader powerComp;
 
         public bool IsPowered => powerComp.PowerOn && Map.gameConditionManager.ElectricityDisabled(Map) is false;
-        public bool IsLinkedToAlarmTrigger
-        {
-            get
-            {
-                foreach (var trigger in Map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>())
-                {
-                    if (trigger.LinkedTargets.Contains(this)) return true;
-                }
-                return false;
-            }
-        }
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
@@ -30,33 +19,31 @@ namespace SurveillanceShift
 
         public void Alert(bool isHostile)
         {
-            if (IsPowered is false || isHostile is false || IsLinkedToAlarmTrigger is false) return;
-            DefsOf.SS_Sound_Alarm.PlayOneShotOnCamera(Map);
-            foreach (var colonist in Map.mapPawns.FreeColonistsSpawned.ToList())
+            if (IsPowered is false) return;
+            if (isHostile)
             {
-                if (colonist.Awake() is false)
+                DefsOf.SS_Sound_LoudspeakerHostile.PlayOneShotOnCamera(Map);
+                foreach (var colonist in Map.mapPawns.FreeColonistsSpawned.ToList())
                 {
-                    RestUtility.WakeUp(colonist);
+                    if (colonist.Awake() is false)
+                    {
+                        RestUtility.WakeUp(colonist);
+                    }
                 }
+                return;
             }
+            DefsOf.SS_Sound_LoudspeakerNeutral.PlayOneShotOnCamera(Map);
         }
 
         public static bool BroadcastNews(Map map, bool isHostile)
         {
-            Building_Loudspeaker chosen = null;
             foreach (var speaker in map.listerBuildings.AllBuildingsColonistOfClass<Building_Loudspeaker>())
             {
                 if (speaker.IsPowered is false) continue;
-                chosen ??= speaker;
-                if (isHostile && speaker.IsLinkedToAlarmTrigger)
-                {
-                    chosen = speaker;
-                    break;
-                }
+                speaker.Alert(isHostile);
+                return true;
             }
-            if (chosen == null) return false;
-            chosen.Alert(isHostile);
-            return true;
+            return false;
         }
     }
 }
