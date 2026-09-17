@@ -7,6 +7,7 @@ namespace SurveillanceShift
         public ThreatReportReaction reportReaction = ThreatReportReaction.ReportViaButton;
         public int lastThreatReportTick = -9999;
         public bool hadWalkie;
+        public bool reactionConfigured;
 
         public void UpdateWalkieStatus(Pawn pawn)
         {
@@ -14,7 +15,7 @@ namespace SurveillanceShift
             if (hasWalkie && hadWalkie is false)
             {
                 hadWalkie = true;
-                if (ModCompatibility.HasPerspectiveShiftAvatar())
+                if (reactionConfigured is false)
                 {
                     reportReaction = ThreatReportReaction.ReportViaRadio;
                 }
@@ -22,10 +23,14 @@ namespace SurveillanceShift
             else if (hasWalkie is false && hadWalkie)
             {
                 hadWalkie = false;
-                if (reportReaction == ThreatReportReaction.ReportViaRadio)
+                if (reactionConfigured is false || reportReaction == ThreatReportReaction.ReportViaRadio)
                 {
                     reportReaction = ModCompatibility.HasPerspectiveShiftAvatar() ? ThreatReportReaction.ReportInPerson : ThreatReportReaction.ReportViaButton;
                 }
+            }
+            else if (reactionConfigured is false)
+            {
+                reportReaction = hasWalkie ? ThreatReportReaction.ReportViaRadio : ModCompatibility.HasPerspectiveShiftAvatar() ? ThreatReportReaction.ReportInPerson : ThreatReportReaction.ReportViaButton;
             }
         }
 
@@ -34,6 +39,7 @@ namespace SurveillanceShift
             Scribe_Values.Look(ref reportReaction, "SS_reportReaction", ThreatReportReaction.ReportViaButton);
             Scribe_Values.Look(ref lastThreatReportTick, "SS_lastThreatReportTick", -9999);
             Scribe_Values.Look(ref hadWalkie, "SS_hadWalkie", false);
+            Scribe_Values.Look(ref reactionConfigured, "SS_reactionConfigured", false);
         }
     }
 }

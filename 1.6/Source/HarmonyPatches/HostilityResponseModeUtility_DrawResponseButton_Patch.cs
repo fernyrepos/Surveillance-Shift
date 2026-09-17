@@ -54,14 +54,30 @@ namespace SurveillanceShift
                 var options = new List<FloatMenuOption>();
                 if (ModCompatibility.HasPerspectiveShiftAvatar())
                 {
-                    options.Add(new FloatMenuOption("SS_ReportInPerson".Translate(), () => data.reportReaction = ThreatReportReaction.ReportInPerson, InPersonReportTex, Color.white));
+                    options.Add(new FloatMenuOption("SS_ReportInPerson".Translate(), () =>
+                    {
+                        data.reportReaction = ThreatReportReaction.ReportInPerson;
+                        data.reactionConfigured = true;
+                    }, InPersonReportTex, Color.white));
                     if (pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
                     {
-                        options.Add(new FloatMenuOption("SS_ReportViaRadio".Translate(), () => data.reportReaction = ThreatReportReaction.ReportViaRadio, WalkieTalkieTex, Color.white));
+                        options.Add(new FloatMenuOption("SS_ReportViaRadio".Translate(), () =>
+                        {
+                            data.reportReaction = ThreatReportReaction.ReportViaRadio;
+                            data.reactionConfigured = true;
+                        }, WalkieTalkieTex, Color.white));
                     }
                 }
-                options.Add(new FloatMenuOption("SS_ReportViaButton".Translate(), () => data.reportReaction = ThreatReportReaction.ReportViaButton, AlarmTriggerTex, Color.white));
-                options.Add(new FloatMenuOption("SS_ReportDoNotReport".Translate(), () => data.reportReaction = ThreatReportReaction.DoNotReport, HostilityResponseMode.Ignore.GetIcon(), Color.white));
+                options.Add(new FloatMenuOption("SS_ReportViaButton".Translate(), () =>
+                {
+                    data.reportReaction = ThreatReportReaction.ReportViaButton;
+                    data.reactionConfigured = true;
+                }, AlarmTriggerTex, Color.white));
+                options.Add(new FloatMenuOption("SS_ReportDoNotReport".Translate(), () =>
+                {
+                    data.reportReaction = ThreatReportReaction.DoNotReport;
+                    data.reactionConfigured = true;
+                }, HostilityResponseMode.Ignore.GetIcon(), Color.white));
                 Find.WindowStack.Add(new FloatMenu(options));
             }
         }

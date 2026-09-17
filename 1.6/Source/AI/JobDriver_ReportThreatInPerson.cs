@@ -27,6 +27,10 @@ namespace SurveillanceShift
                     pawn.pather.StopDead();
                     ReadyForNextToil();
                 }
+                else if (pawn.pather.Moving is false)
+                {
+                    pawn.pather.StartPath(avatar, PathEndMode.Touch);
+                }
             };
             approach.defaultCompleteMode = ToilCompleteMode.PatherArrival;
             yield return approach;

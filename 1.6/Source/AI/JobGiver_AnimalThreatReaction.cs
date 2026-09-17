@@ -8,6 +8,7 @@ namespace SurveillanceShift
     {
         public override Job TryGiveJob(Pawn pawn)
         {
+            if (pawn.CurJobDef == DefsOf.SS_AnimalReportThreat || pawn.CurJobDef == DefsOf.SS_PushAlarmTrigger) return pawn.CurJob;
             if (State.GuardingPawnsActive is false || pawn.Faction != Faction.OfPlayer || pawn.training.HasLearned(DefsOf.SS_KeepWatch) is false || PawnUtility.PlayerForcedJobNowOrSoon(pawn)) return null;
             var data = pawn.GetSurveillanceData();
             if (data.alertResponse == AnimalAlertResponse.None || Find.TickManager.TicksGame - data.lastThreatReportTick <= GenDate.TicksPerHour) return null;

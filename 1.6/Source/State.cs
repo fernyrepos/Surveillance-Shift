@@ -264,9 +264,24 @@ namespace SurveillanceShift
             }
             if (reaction == ThreatReportReaction.ReportInPerson && avatar != null && avatar.Spawned && avatar.Map == pawn.Map && avatar != pawn && pawn.CanReach(avatar, PathEndMode.Touch, Danger.Deadly))
             {
-                return JobMaker.MakeJob(DefsOf.SS_ReportThreatInPerson, avatar, hostile);
+                return MakeReportJob(avatar, hostile);
             }
-            return GetButtonReactionJob(pawn);
+            var buttonJob = GetButtonReactionJob(pawn);
+            if (buttonJob != null) return buttonJob;
+            if (avatar != null && avatar.Spawned && avatar.Map == pawn.Map && avatar != pawn && pawn.CanReach(avatar, PathEndMode.Touch, Danger.Deadly))
+            {
+                return MakeReportJob(avatar, hostile);
+            }
+            DeliverThreatSpotted(pawn, hostile, LetterDefOf.ThreatBig);
+            Building_Loudspeaker.BroadcastNews(pawn.Map, true);
+            return null;
+        }
+
+        private static Job MakeReportJob(Pawn avatar, Pawn hostile)
+        {
+            var job = JobMaker.MakeJob(DefsOf.SS_ReportThreatInPerson, avatar, hostile);
+            job.locomotionUrgency = LocomotionUrgency.Sprint;
+            return job;
         }
 
         private static Job GetButtonReactionJob(Pawn pawn)

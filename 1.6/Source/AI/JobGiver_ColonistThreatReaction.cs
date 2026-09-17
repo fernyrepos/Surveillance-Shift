@@ -8,6 +8,7 @@ namespace SurveillanceShift
     {
         public override Job TryGiveJob(Pawn pawn)
         {
+            if (pawn.CurJobDef == DefsOf.SS_ReportThreatInPerson || pawn.CurJobDef == DefsOf.SS_PushAlarmTrigger) return pawn.CurJob;
             if (State.IsLimitedAwareness is false || pawn.Faction != Faction.OfPlayer || pawn.RaceProps.Humanlike is false || pawn.IsPrisoner || pawn.IsSlave || pawn.Downed || pawn.Awake() is false || pawn.InMentalState || pawn == ModCompatibility.GetPerspectiveShiftAvatar() || PawnUtility.PlayerForcedJobNowOrSoon(pawn)) return null;
             var data = pawn.GetColonistSurveillanceData();
             if (pawn.Drafted && data.reportReaction != ThreatReportReaction.ReportViaRadio) return null;
