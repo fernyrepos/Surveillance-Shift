@@ -3,7 +3,6 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
-using Verse.Sound;
 
 namespace SurveillanceShift
 {
@@ -52,7 +51,6 @@ namespace SurveillanceShift
 
             if (Widgets.ButtonInvisible(buttonRect))
             {
-                SoundDefOf.Tick_High.PlayOneShotOnCamera();
                 var options = new List<FloatMenuOption>();
                 if (ModCompatibility.HasPerspectiveShiftAvatar())
                 {
