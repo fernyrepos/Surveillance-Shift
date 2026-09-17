@@ -25,6 +25,7 @@
   <SS_SignalHornLetterText>{0} has sounded the signal horn!</SS_SignalHornLetterText>
   <SS_HostileSpotted>Hostile spotted</SS_HostileSpotted>
   <SS_HostileSpottedDesc>{0} has reported spotting a hostile ({1}) over the radio.</SS_HostileSpottedDesc>
+  <SS_HostileSpottedInPersonDesc>{0} has reported spotting a hostile ({1}) in person.</SS_HostileSpottedInPersonDesc>
   <SS_AccessFeedsRemote>Access feeds</SS_AccessFeedsRemote>
   <SS_AccessFeedsRemoteDesc>Connect to a local surveillance router to view camera feeds remotely.</SS_AccessFeedsRemoteDesc>
   <SS_NoSurveillanceRouter>No operational surveillance router found on the network.</SS_NoSurveillanceRouter>
@@ -59,4 +60,29 @@
   <SS_ScoutsTruthProvided>Provided intelligence to diplomatic scouts from {0}.</SS_ScoutsTruthProvided>
   <SS_ScoutsLieSuccess>Successfully deceived diplomatic scouts from {0}.</SS_ScoutsLieSuccess>
   <SS_ScoutsLieCaught>Diplomatic scouts from {0} discovered your deception.</SS_ScoutsLieCaught>
+  <SS_EnableScouts>Enable scouts/diplomatic information system</SS_EnableScouts>
+  <SS_LimitViewingMaps>Limit viewing maps while player character is not present</SS_LimitViewingMaps>
+  <SS_AnnounceVisits>Announce visits/raids regardless of awareness setting</SS_AnnounceVisits>
+  <SS_EnableAlertInDirector>Enable alert system while in director mode</SS_EnableAlertInDirector>
+  <SS_FriendlyScoutFrequency>Friendly scout frequency</SS_FriendlyScoutFrequency>
+  <SS_HostileScoutFrequency>Hostile scout frequency</SS_HostileScoutFrequency>
+  <SS_RelationsLiePenalty>Relations hit on being caught lying</SS_RelationsLiePenalty>
+  <SS_RelationsIgnorePenalty>Relations hit on ignoring sharing information</SS_RelationsIgnorePenalty>
+  <SS_RelationsTruthBoost>Relations boost on sharing information</SS_RelationsTruthBoost>
+  <SS_FogViewDistance>View distance for fog of war</SS_FogViewDistance>
+  <SS_EnablePatrol>Enable patrol</SS_EnablePatrol>
+  <SS_EnablePatrolDesc>If enabled, this animal will wander between patrol spots.</SS_EnablePatrolDesc>
+  <SS_AlertResponse>Alert response:\n{0}</SS_AlertResponse>
+  <SS_AlertResponseDesc>How this animal reacts when spotting a hostile.</SS_AlertResponseDesc>
+  <SS_ReportToHandler>Report to handler</SS_ReportToHandler>
+  <SS_UseAlarmTrigger>Use alarm trigger</SS_UseAlarmTrigger>
+  <SS_HostileSpottedMote>Hostile spotted!</SS_HostileSpottedMote>
+  <SS_None>None</SS_None>
+  <SS_ReportInPerson>Report in person</SS_ReportInPerson>
+  <SS_ReportViaRadio>Report via radio</SS_ReportViaRadio>
+  <SS_ReportViaButton>Report via button</SS_ReportViaButton>
+  <SS_ReportDoNotReport>Do not report</SS_ReportDoNotReport>
+  <SS_ThreatReportReactionDesc>Threat report reaction: {0}</SS_ThreatReportReactionDesc>
+  <SS_NoAlarmTriggerFound>{0} could not find an operational alarm trigger to push.</SS_NoAlarmTriggerFound>
+  <SS_Name>Name</SS_Name>
 </LanguageData>

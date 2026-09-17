@@ -19,6 +19,14 @@ namespace SurveillanceShift
 
         public static bool Prepare() => ModsConfig.IsActive("dubwise.dubsmintminimap");
 
+        public static void ResetCache()
+        {
+            cachedRadarMap = null;
+            cachedHasRadar = false;
+            lastRadarOn = false;
+            nextRadarCheckTick = 0;
+        }
+
         public static MethodBase TargetMethod()
         {
             radarOffField = AccessTools.Field("DubsMintMinimap.MainTabWindow_MiniMap:radarOff");

@@ -10,7 +10,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix(TaggedString baseLetterLabel, TaggedString baseLetterText, LetterDef baseLetterDef, IncidentParms parms, LookTargets lookTargets, IncidentDef def, NamedArgument[] textArgs)
         {
-            if (State.IsLimitedAwareness is false || parms.target is not Map map || def.HasModExtension<MuteArrivalExtension>() is false) return true;
+            if (SurveillanceShiftMod.settings.announceVisits || State.IsLimitedAwareness is false || parms.target is not Map map || def.HasModExtension<MuteArrivalExtension>() is false) return true;
 
             var pawns = new List<Pawn>();
             foreach (var item in lookTargets.targets)

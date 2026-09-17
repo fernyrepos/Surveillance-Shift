@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using PipeSystem;
 using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
 using Verse;
+using Verse.AI;
 using Verse.Sound;
 
 namespace SurveillanceShift
@@ -17,10 +20,26 @@ namespace SurveillanceShift
         public static Map ActiveFeedMap;
         public static PipeNet ActiveFeedPipeNet;
 
-        public static bool IsLimitedAwareness => AwarenessMode == AwarenessMode.LimitedAwareness;
+        public static bool IsLimitedAwareness => AwarenessMode == AwarenessMode.LimitedAwareness && (ModCompatibility.PerspectiveShiftAvailable is false || ModCompatibility.IsPerspectiveShiftAuthentic() || SurveillanceShiftMod.settings.enableAlertInDirector);
+
+        public static readonly bool GuardingPawnsActive = LoadedModManager.RunningMods.Any(m => m.PackageIdPlayerFacing == "Thek.GuardingP");
 
         private static Map cachedMap;
         private static MapComponent_FogOfWar cachedComp;
+
+        private static readonly ConditionalWeakTable<Pawn, AnimalSurveillanceData> surveillanceData = new();
+
+        public static AnimalSurveillanceData GetSurveillanceData(this Pawn pawn)
+        {
+            return surveillanceData.GetValue(pawn, p => new AnimalSurveillanceData());
+        }
+
+        private static readonly ConditionalWeakTable<Pawn, ColonistSurveillanceData> colonistSurveillanceData = new();
+
+        public static ColonistSurveillanceData GetColonistSurveillanceData(this Pawn pawn)
+        {
+            return colonistSurveillanceData.GetValue(pawn, p => new ColonistSurveillanceData());
+        }
 
         public static bool IsVisible(this Map map, IntVec3 cell)
         {
@@ -83,11 +102,13 @@ namespace SurveillanceShift
             pendingFactionDebts.Clear();
             retaliationMultipliers.Clear();
             factionKnownWealth.Clear();
+            ModCompatibility.ResetCache();
+            DubsMinimap_Radar_Patch.ResetCache();
         }
 
         public static bool SuppressCameraLock(IntVec3 cell)
         {
-            if (IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || ModCompatibility.HasPerspectiveShiftAvatar() is false) return false;
+            if (SurveillanceShiftMod.settings.limitViewingMaps is false || IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || ModCompatibility.HasPerspectiveShiftAvatar() is false) return false;
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
             if (avatar is null || avatar.Map != Find.CurrentMap || cell == avatar.Position) return false;
             SpawnPing(cell, avatar.Map, false);
@@ -203,6 +224,116 @@ namespace SurveillanceShift
                     Find.WindowStack.Add(new Dialog_SurveillanceCameras(map, net));
                 }
             }
+        }
+
+        private const int ThreatCooldownTicks = 1200;
+
+        public static void CheckForThreatsAndReact(Pawn pawn, ColonistSurveillanceData data)
+        {
+            data.UpdateWalkieStatus(pawn);
+            if (data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
+            var map = pawn.Map;
+            var hostile = FindHostile(pawn, map, surveying: true);
+            if (hostile == null) return;
+            var job = GetReactionJob(pawn, data, hostile);
+            if (job != null) pawn.jobs.StartJob(job, JobCondition.InterruptForced);
+        }
+
+        public static Job TryGetReactionJob(Pawn pawn, ColonistSurveillanceData data)
+        {
+            if (data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return null;
+            var map = pawn.Map;
+            var hostile = FindHostile(pawn, map, surveying: false);
+            return hostile == null ? null : GetReactionJob(pawn, data, hostile);
+        }
+
+        private static Job GetReactionJob(Pawn pawn, ColonistSurveillanceData data, Pawn hostile)
+        {
+            data.lastThreatReportTick = Find.TickManager.TicksGame;
+            var reaction = data.reportReaction;
+            var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
+            if (reaction == ThreatReportReaction.ReportViaRadio)
+            {
+                if (avatar != null && avatar.Spawned && avatar.Map == pawn.Map && avatar.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie) && pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
+                {
+                    DeliverThreatSpotted(pawn, hostile, LetterDefOf.ThreatBig);
+                    Building_Loudspeaker.BroadcastNews(pawn.Map, true);
+                    return null;
+                }
+                reaction = ModCompatibility.HasPerspectiveShiftAvatar() ? ThreatReportReaction.ReportInPerson : ThreatReportReaction.ReportViaButton;
+            }
+            if (reaction == ThreatReportReaction.ReportInPerson && avatar != null && avatar.Spawned && avatar.Map == pawn.Map && avatar != pawn && pawn.CanReach(avatar, PathEndMode.Touch, Danger.Deadly))
+            {
+                return JobMaker.MakeJob(DefsOf.SS_ReportThreatInPerson, avatar, hostile);
+            }
+            return GetButtonReactionJob(pawn);
+        }
+
+        private static Job GetButtonReactionJob(Pawn pawn)
+        {
+            var job = Building_AlarmTrigger.GetAlarmTriggerJob(pawn);
+            if (job == null && Building_AlarmTrigger.AnyAlarmActive(pawn.Map) is false)
+            {
+                Messages.Message("SS_NoAlarmTriggerFound".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.CautionInput);
+            }
+            return job;
+        }
+
+        public static Job TryGetAnimalReactionJob(Pawn pawn, AnimalSurveillanceData data)
+        {
+            var map = pawn.Map;
+            var sightRadius = SurveillanceShiftMod.settings.fogViewDistance;
+            Pawn hostile = null;
+            foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
+            {
+                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && pawn.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, p.Position, map, skipFirstCell: true))
+                {
+                    hostile = p;
+                    break;
+                }
+            }
+            if (hostile == null) return null;
+            data.lastThreatReportTick = Find.TickManager.TicksGame;
+            SpawnPing(hostile.Position, map, true);
+            if (data.alertResponse == AnimalAlertResponse.ReportToHandler)
+            {
+                var master = pawn.playerSettings.Master;
+                return master != null && master.Spawned && master.Map == pawn.Map ? JobMaker.MakeJob(DefsOf.SS_AnimalReportThreat, master, hostile) : null;
+            }
+            return GetButtonReactionJob(pawn);
+        }
+
+        private static Pawn FindHostile(Pawn pawn, Map map, bool surveying)
+        {
+            foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
+            {
+                if (target.Thing is Pawn hostile && hostile.Spawned && hostile.Dead is false && hostile.Downed is false)
+                {
+                    if (surveying)
+                    {
+                        if (map.IsVisible(hostile.Position)) return hostile;
+                    }
+                    else
+                    {
+                        var sightRadius = SurveillanceShiftMod.settings.fogViewDistance;
+                        if (pawn.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, hostile.Position, map, skipFirstCell: true)) return hostile;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static void DeliverThreatSpotted(Pawn reporter, Thing hostile, LetterDef letterDef, bool inPerson = false)
+        {
+            MoteMaker.ThrowText(reporter.DrawPos, reporter.Map, "SS_HostileSpottedMote".Translate());
+            SpawnPing(hostile.Position, reporter.Map, true);
+            var fog = reporter.Map.GetComponent<MapComponent_FogOfWar>();
+            if (hostile is Pawn p && fog.TryReportIncidentArrival(p))
+            {
+                return;
+            }
+            var desc = inPerson ? "SS_HostileSpottedInPersonDesc".Translate(reporter.LabelShort, hostile.LabelShort) : "SS_HostileSpottedDesc".Translate(reporter.LabelShort, hostile.LabelShort);
+            ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), desc, letterDef, new LookTargets(hostile)));
         }
     }
 }

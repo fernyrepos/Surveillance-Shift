@@ -30,7 +30,7 @@ namespace SurveillanceShift
                 pawn.GainComfortFromCellIfPossible(1, chairsOnly: true);
                 if (pawn.IsHashIntervalTick(ThreatCheckIntervalTicks))
                 {
-                    Building_AlarmTrigger.CheckThreatsAndSoundAlarm(Station.Map, pawn);
+                    State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
                 }
             };
             monitor.handlingFacing = true;

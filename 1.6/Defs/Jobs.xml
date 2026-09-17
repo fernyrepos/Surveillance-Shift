@@ -43,4 +43,18 @@
 		<casualInterruptible>false</casualInterruptible>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_AnimalReportThreat</defName>
+		<driverClass>SurveillanceShift.JobDriver_AnimalReportThreat</driverClass>
+		<reportString>reporting threat to master.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
+	<JobDef>
+		<defName>SS_ReportThreatInPerson</defName>
+		<driverClass>SurveillanceShift.JobDriver_ReportThreatInPerson</driverClass>
+		<reportString>reporting threat to TargetA.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
 </Defs>

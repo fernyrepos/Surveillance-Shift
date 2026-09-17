@@ -1,3 +1,4 @@
+using System.Linq;
 using RimWorld;
 using Verse;
 using Verse.Sound;
@@ -31,7 +32,7 @@ namespace SurveillanceShift
         {
             if (IsPowered is false || isHostile is false || IsLinkedToAlarmTrigger is false) return;
             DefsOf.SS_Sound_Alarm.PlayOneShotOnCamera(Map);
-            foreach (var colonist in Map.mapPawns.FreeColonistsSpawned)
+            foreach (var colonist in Map.mapPawns.FreeColonistsSpawned.ToList())
             {
                 if (colonist.Awake() is false)
                 {

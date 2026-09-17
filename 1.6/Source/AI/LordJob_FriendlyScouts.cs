@@ -49,7 +49,7 @@ namespace SurveillanceShift
             {
                 if (negotiated is false)
                 {
-                    State.ApplyDebt(faction, -25);
+                    State.ApplyDebt(faction, -SurveillanceShiftMod.settings.relationsIgnorePenalty);
                     Messages.Message("SS_ScoutsIgnored".Translate(faction.Name), MessageTypeDefOf.NegativeEvent);
                 }
             }));
@@ -62,7 +62,7 @@ namespace SurveillanceShift
             {
                 if (negotiated is false)
                 {
-                    State.ApplyDebt(faction, -25);
+                    State.ApplyDebt(faction, -SurveillanceShiftMod.settings.relationsIgnorePenalty);
                 }
             }));
             graph.AddTransition(harmTransition);

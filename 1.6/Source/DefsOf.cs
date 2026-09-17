@@ -19,6 +19,8 @@ namespace SurveillanceShift
         public static JobDef SS_MonitorRemoteDevice;
         public static JobDef SS_LinkDeviceToRouter;
         public static JobDef SS_PushAlarmTrigger;
+        public static JobDef SS_AnimalReportThreat;
+        public static JobDef SS_ReportThreatInPerson;
         public static ThingDef SS_SurveillanceStation;
         public static ThingDef SS_Mote_RemoteSurveillanceDevice;
         public static ThingDef SS_WalkieTalkie;
@@ -26,6 +28,8 @@ namespace SurveillanceShift
         public static SoundDef Sound_MapBoot;
         [MayRequire("dubwise.dubsmintminimap")]
         public static SoundDef Sound_MapFail;
+        [MayRequire("Thek.GuardingP")]
+        public static TrainableDef SS_KeepWatch;
 
         static DefsOf()
         {

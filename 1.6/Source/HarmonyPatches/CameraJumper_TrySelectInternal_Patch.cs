@@ -9,7 +9,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix(Thing thing)
         {
-            if (State.IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || ModCompatibility.IsPerspectiveShiftAuthentic() is false && thing.Faction == Faction.OfPlayer || thing == ModCompatibility.GetPerspectiveShiftAvatar()) return true;
+            if (SurveillanceShiftMod.settings.limitViewingMaps is false || State.IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || ModCompatibility.IsPerspectiveShiftAuthentic() is false && thing.Faction == Faction.OfPlayer || thing == ModCompatibility.GetPerspectiveShiftAvatar()) return true;
 
             if (thing.Map.IsVisible(thing.Position) is false)
             {

@@ -66,6 +66,14 @@ namespace SurveillanceShift
             }
         }
 
+        public static void ResetCache()
+        {
+            lastCacheFrame = -1;
+            cachedAvatar = null;
+            cachedHasAvatar = false;
+            cachedIsAuthentic = false;
+        }
+
         private static void EnsureFrameCache()
         {
             var curFrame = Time.frameCount;

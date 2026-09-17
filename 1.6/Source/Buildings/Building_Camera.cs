@@ -106,7 +106,7 @@ namespace SurveillanceShift
             {
                 yield return new Command_Action
                 {
-                    defaultLabel = "Rename".Translate(),
+                    defaultLabel = customName.NullOrEmpty() ? "SS_Name".Translate() : "Rename".Translate(),
                     icon = TexButton.Rename,
                     action = () => Find.WindowStack.Add(new Dialog_RenameBuildingCamera(this))
                 };

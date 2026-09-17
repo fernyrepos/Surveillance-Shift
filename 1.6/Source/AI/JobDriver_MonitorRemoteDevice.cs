@@ -42,7 +42,7 @@ namespace SurveillanceShift
                 }
                 if (pawn.IsHashIntervalTick(ThreatCheckIntervalTicks))
                 {
-                    Building_AlarmTrigger.CheckThreatsAndSoundAlarm(pawn.Map, pawn);
+                    State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
                 }
                 pawn.skills.Learn(SkillDefOf.Intellectual, 0.025f);
             };

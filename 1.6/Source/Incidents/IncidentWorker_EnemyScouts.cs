@@ -9,10 +9,12 @@ namespace SurveillanceShift
 {
     public class IncidentWorker_EnemyScouts : IncidentWorker
     {
-        public override bool CanFireNowSub(IncidentParms parms) => State.IsLimitedAwareness && base.CanFireNowSub(parms) && CandidateFactions().Any();
+        public override bool CanFireNowSub(IncidentParms parms) => SurveillanceShiftMod.settings.enableScouts && State.IsLimitedAwareness && base.CanFireNowSub(parms) && CandidateFactions().Any();
 
         private static IEnumerable<Faction> CandidateFactions() =>
             Find.FactionManager.AllFactions.Where(f => f.IsPlayer is false && f.defeated is false && f.Hidden is false && f.HostileTo(Faction.OfPlayer) && f.temporary is false && f.def.humanlikeFaction);
+
+        public override float BaseChanceThisGame => base.BaseChanceThisGame * SurveillanceShiftMod.settings.hostileScoutFrequency;
 
         public override bool TryExecuteWorker(IncidentParms parms)
         {

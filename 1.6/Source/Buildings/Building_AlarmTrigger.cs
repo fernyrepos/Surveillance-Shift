@@ -90,31 +90,25 @@ namespace SurveillanceShift
             }
         }
 
-        public static void SoundNearestAlarm(Map map, Pawn monitorPawn)
+        public static bool AnyAlarmActive(Map map)
         {
-            if (map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>().Any(t => t.AlarmActive)) return;
+            return map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>().Any(t => t.AlarmActive);
+        }
+
+        public static Job GetAlarmTriggerJob(Pawn pawn)
+        {
             Building_AlarmTrigger best = null;
             var bestDist = float.MaxValue;
-            foreach (var t in map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>())
+            foreach (var t in pawn.Map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>())
             {
-                var dist = (monitorPawn.Position - t.Position).LengthHorizontalSquared;
-                if (t.AlarmActive is false && t.CanTriggerNow && Find.TickManager.TicksGame >= t.lastTriggeredTick + AutoAlarmCooldownTicks && monitorPawn.CanReserveAndReach(t, PathEndMode.InteractionCell, Danger.Deadly) && dist < bestDist)
+                var dist = (pawn.Position - t.Position).LengthHorizontalSquared;
+                if (t.AlarmActive is false && t.CanTriggerNow && Find.TickManager.TicksGame >= t.lastTriggeredTick + AutoAlarmCooldownTicks && pawn.CanReserveAndReach(t, PathEndMode.InteractionCell, Danger.Deadly) && dist < bestDist)
                 {
                     bestDist = dist;
                     best = t;
                 }
             }
-            if (best == null) return;
-            monitorPawn.jobs.StartJob(JobMaker.MakeJob(DefsOf.SS_PushAlarmTrigger, best), JobCondition.InterruptForced);
-        }
-
-        public static void CheckThreatsAndSoundAlarm(Map map, Pawn monitorPawn)
-        {
-            var pawns = map.mapPawns.AllPawnsSpawned;
-            if (pawns.Any(p => p.HostileTo(Faction.OfPlayer) && p.Dead is false && p.Downed is false && map.IsVisible(p.Position)))
-            {
-                SoundNearestAlarm(map, monitorPawn);
-            }
+            return best == null ? null : JobMaker.MakeJob(DefsOf.SS_PushAlarmTrigger, best);
         }
 
         public override void DrawExtraSelectionOverlays()

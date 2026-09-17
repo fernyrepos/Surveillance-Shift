@@ -101,7 +101,7 @@ namespace SurveillanceShift
                 {
                     pawn.skills?.Learn(SkillDefOf.Shooting, 0.035f);
                     pawn.skills?.Learn(SkillDefOf.Intellectual, 0.015f);
-                    Building_AlarmTrigger.CheckThreatsAndSoundAlarm(Watchtower.Map, pawn);
+                    State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
                 }
             };
             yield return watch;

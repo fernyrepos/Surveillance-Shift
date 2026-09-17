@@ -8,8 +8,6 @@ namespace SurveillanceShift
     {
         private const float BaseLieSuccessChance = 0.35f;
         private const float SocialSkillLieFactor = 0.035f;
-        private const int TruthGoodwillBonus = 10;
-        private const int LieCaughtGoodwillPenalty = -40;
 
         public Dialog_FriendlyScoutNegotiation(Pawn negotiator, Pawn scout, Faction faction, LordJob_FriendlyScouts job)
             : base(MakeNode(negotiator, scout, faction, job))
@@ -28,7 +26,7 @@ namespace SurveillanceShift
                     job.negotiated = true;
                     job.CleanupMarker();
                     job.lord.ReceiveMemo("ScoutsNegotiated");
-                    State.ApplyDebt(faction, TruthGoodwillBonus);
+                    State.ApplyDebt(faction, SurveillanceShiftMod.settings.relationsTruthBoost);
                     Messages.Message("SS_ScoutsTruthProvided".Translate(faction.Name), MessageTypeDefOf.NeutralEvent);
                 },
                 resolveTree = true
@@ -47,12 +45,12 @@ namespace SurveillanceShift
                     if (Rand.Chance(lieSuccessChance))
                     {
                         State.ClearDebt(faction);
-                        State.ApplyDebt(faction, TruthGoodwillBonus);
+                        State.ApplyDebt(faction, SurveillanceShiftMod.settings.relationsTruthBoost);
                         Messages.Message("SS_ScoutsLieSuccess".Translate(faction.Name), MessageTypeDefOf.PositiveEvent);
                     }
                     else
                     {
-                        State.ApplyDebt(faction, LieCaughtGoodwillPenalty);
+                        State.ApplyDebt(faction, -SurveillanceShiftMod.settings.relationsLiePenalty);
                         Messages.Message("SS_ScoutsLieCaught".Translate(faction.Name), MessageTypeDefOf.NegativeEvent);
                     }
                 },

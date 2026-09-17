@@ -17,7 +17,7 @@ namespace SurveillanceShift
     [HotSwappable]
     public class MapComponent_FogOfWar : MapComponent
     {
-        private const int StandardSightRadius = 26;
+        private int StandardSightRadius => SurveillanceShiftMod.settings.fogViewDistance;
         private const int DownedSightRadius = 4;
         private const int UpdateIntervalTicks = 12;
         private const int SectionSize = 16;
@@ -45,6 +45,8 @@ namespace SurveillanceShift
         private List<Message> mutedMessages = new();
         private List<Letter> mutedLetters = new();
         private HashSet<int> sightedHostileIDs = new();
+        private int lastSignalHornTick = -2500;
+        private const int SignalHornMapCooldownTicks = 2500;
         private SoftFogRenderer softFog;
         private bool lastSoftFogEnabled = SoftFogRenderer.Enabled;
 
@@ -474,7 +476,7 @@ namespace SurveillanceShift
             State.ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), text, LetterDefOf.ThreatBig, new LookTargets(newSightings.Select(s => s.hostile))));
         }
 
-        private bool TryReportIncidentArrival(Pawn hostile)
+        public bool TryReportIncidentArrival(Pawn hostile)
         {
             for (int i = mutedArrivals.Count - 1; i >= 0; i--)
             {
@@ -508,13 +510,14 @@ namespace SurveillanceShift
 
         private void ProcessSignalHornSightings()
         {
+            if (Find.TickManager.TicksGame < lastSignalHornTick + SignalHornMapCooldownTicks) return;
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
             var hornBearers = new List<(Pawn pawn, CompSignalHorn horn)>();
             foreach (var colonist in map.mapPawns.FreeColonistsSpawned)
             {
                 if (colonist.Dead || colonist.Downed || colonist.InMentalState || colonist.Awake() is false || colonist == avatar) continue;
                 var horn = CompSignalHorn.FindSignalHorn(colonist);
-                if (horn != null)
+                if (horn != null && horn.CanBlowNow)
                 {
                     hornBearers.Add((colonist, horn));
                 }
@@ -534,6 +537,14 @@ namespace SurveillanceShift
                     {
                         sightedHostileIDs.Add(hostile.thingIDNumber);
                         horn.Blow(spotter);
+                        lastSignalHornTick = Find.TickManager.TicksGame;
+                        foreach (var h in map.mapPawns.AllPawnsSpawned)
+                        {
+                            if (h.HostileTo(Faction.OfPlayer) && (map.IsVisible(h.Position) || spotter.Position.DistanceToSquared(h.Position) <= sightRadius * sightRadius))
+                            {
+                                sightedHostileIDs.Add(h.thingIDNumber);
+                            }
+                        }
                         return;
                     }
                 }
@@ -601,6 +612,7 @@ namespace SurveillanceShift
             Scribe_Collections.Look(ref mutedMessages, "SS_MutedMessages", LookMode.Deep);
             Scribe_Collections.Look(ref mutedLetters, "SS_MutedLetters", LookMode.Deep);
             Scribe_Collections.Look(ref sightedHostileIDs, "SS_SightedHostileIDs", LookMode.Value);
+            Scribe_Values.Look(ref lastSignalHornTick, "SS_lastSignalHornTick", -SignalHornMapCooldownTicks);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 mutedArrivals ??= new List<MutedArrival>();

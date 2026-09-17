@@ -77,7 +77,7 @@
 		</comps>
 		<modExtensions>
 			<li Class="SurveillanceShift.CameraExtension">
-				<coneAngle>70</coneAngle>
+				<coneAngle>110</coneAngle>
 				<sightRadius>26</sightRadius>
 			</li>
 		</modExtensions>
