@@ -27,11 +27,9 @@ namespace SurveillanceShift
             powerComp = GetComp<CompPowerTrader>();
         }
 
-        public void Alert(IntVec3 eventPos, bool isHostile)
+        public void Alert(bool isHostile)
         {
-            if (IsPowered is false) return;
-            State.SpawnPing(eventPos, Map, isHostile);
-            if (isHostile is false || IsLinkedToAlarmTrigger is false) return;
+            if (IsPowered is false || isHostile is false || IsLinkedToAlarmTrigger is false) return;
             DefsOf.SS_Sound_Alarm.PlayOneShotOnCamera(Map);
             foreach (var colonist in Map.mapPawns.FreeColonistsSpawned)
             {
@@ -42,7 +40,7 @@ namespace SurveillanceShift
             }
         }
 
-        public static bool BroadcastNews(Map map, IntVec3 eventPos, bool isHostile)
+        public static bool BroadcastNews(Map map, bool isHostile)
         {
             Building_Loudspeaker chosen = null;
             foreach (var speaker in map.listerBuildings.AllBuildingsColonistOfClass<Building_Loudspeaker>())
@@ -56,7 +54,7 @@ namespace SurveillanceShift
                 }
             }
             if (chosen == null) return false;
-            chosen.Alert(eventPos, isHostile);
+            chosen.Alert(isHostile);
             return true;
         }
     }

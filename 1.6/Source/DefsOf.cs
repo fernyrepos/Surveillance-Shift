@@ -8,6 +8,8 @@ namespace SurveillanceShift
     {
         public static ThingDef SS_Mote_PingHostile;
         public static ThingDef SS_Mote_PingFriendly;
+        public static ThingDef SS_Mote_Spyglass;
+        public static ThingDef SS_Mote_Binoculars;
         public static SoundDef SS_Sound_Alarm;
         public static SoundDef SS_Sound_PingHostile;
         public static SoundDef SS_Sound_PingFriendly;

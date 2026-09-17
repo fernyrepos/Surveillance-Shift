@@ -69,7 +69,7 @@ namespace SurveillanceShift
                 {
                     if (speaker.IsPowered && soundPlayed is false)
                     {
-                        speaker.Alert(Position, true);
+                        speaker.Alert(true);
                         soundPlayed = true;
                     }
                 }
@@ -86,7 +86,6 @@ namespace SurveillanceShift
             }
             if (soundPlayed is false)
             {
-                State.SpawnPing(Position, Map, true);
                 DefsOf.SS_Sound_Alarm.PlayOneShotOnCamera(Map);
             }
         }
@@ -99,14 +98,14 @@ namespace SurveillanceShift
             foreach (var t in map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>())
             {
                 var dist = (monitorPawn.Position - t.Position).LengthHorizontalSquared;
-                if (t.AlarmActive is false && t.CanTriggerNow && Find.TickManager.TicksGame >= t.lastTriggeredTick + AutoAlarmCooldownTicks && monitorPawn.CanReserveAndReach(t, PathEndMode.InteractionCell, Danger.Some) && dist < bestDist)
+                if (t.AlarmActive is false && t.CanTriggerNow && Find.TickManager.TicksGame >= t.lastTriggeredTick + AutoAlarmCooldownTicks && monitorPawn.CanReserveAndReach(t, PathEndMode.InteractionCell, Danger.Deadly) && dist < bestDist)
                 {
                     bestDist = dist;
                     best = t;
                 }
             }
             if (best == null) return;
-            monitorPawn.jobs.TryTakeOrderedJob(JobMaker.MakeJob(DefsOf.SS_PushAlarmTrigger, best), JobTag.Misc);
+            monitorPawn.jobs.StartJob(JobMaker.MakeJob(DefsOf.SS_PushAlarmTrigger, best), JobCondition.InterruptForced);
         }
 
         public static void CheckThreatsAndSoundAlarm(Map map, Pawn monitorPawn)
@@ -165,7 +164,7 @@ namespace SurveillanceShift
                 yield return opt;
             }
 
-            if (myPawn.CanReach(this, PathEndMode.InteractionCell, Danger.Some) is false)
+            if (myPawn.CanReach(this, PathEndMode.InteractionCell, Danger.Deadly) is false)
             {
                 yield return new FloatMenuOption("CannotUseNoPath".Translate(), null);
             }

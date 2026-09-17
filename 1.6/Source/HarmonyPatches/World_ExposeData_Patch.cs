@@ -1,6 +1,5 @@
 using HarmonyLib;
 using RimWorld.Planet;
-using Verse;
 
 namespace SurveillanceShift
 {
@@ -9,7 +8,7 @@ namespace SurveillanceShift
     {
         public static void Postfix()
         {
-            Scribe_Values.Look(ref State.AwarenessMode, "SS_AwarenessMode", AwarenessMode.AreaOmniscience);
+            State.ExposeData();
         }
     }
 }

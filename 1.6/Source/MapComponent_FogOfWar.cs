@@ -101,7 +101,7 @@ namespace SurveillanceShift
             base.FinalizeInit();
             if (State.IsLimitedAwareness)
             {
-                LongEventHandler.ExecuteWhenFinished(RecalculateVisibility);
+                LongEventHandler.ExecuteWhenFinished(() => RecalculateVisibility());
             }
         }
 
@@ -120,7 +120,7 @@ namespace SurveillanceShift
 
         public override void MapComponentUpdate()
         {
-            if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected || WorldComponent_GravshipController.CutsceneInProgress || Find.GravshipController.LandingAreaConfirmationInProgress) return;
+            if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected) return;
 
             if (SoftFogRenderer.Enabled)
             {
@@ -167,23 +167,24 @@ namespace SurveillanceShift
         private void DrawPingArrow(Vector3 mapTarget, Material mat)
         {
             var center = UI.UIToMapPosition(UI.screenWidth / 2, UI.screenHeight / 2);
+            var scale = new Vector3(0.7f, 1f, 0.7f);
             if ((center - mapTarget).MagnitudeHorizontalSquared() < ArrowCenterRadiusSq)
             {
                 var position = mapTarget;
                 position.y = ArrowAltitude;
                 position.z -= 1.5f;
-                Graphics.DrawMesh(MeshPool.plane20, position, Quaternion.identity, mat, 0);
+                Graphics.DrawMesh(MeshPool.plane20, Matrix4x4.TRS(position, Quaternion.identity, scale), mat, 0);
             }
             else
             {
                 var dir = (mapTarget - center).Yto0().normalized;
                 var edgePos = center + dir * ArrowEdgeDistance;
                 edgePos.y = ArrowAltitude;
-                Graphics.DrawMesh(MeshPool.plane20, edgePos, Quaternion.LookRotation(dir), mat, 0);
+                Graphics.DrawMesh(MeshPool.plane20, Matrix4x4.TRS(edgePos, Quaternion.LookRotation(dir), scale), mat, 0);
             }
         }
 
-        private void RecalculateVisibility()
+        public void RecalculateVisibility(bool gravshipReveal = false, HashSet<IntVec3> excludeCells = null)
         {
             var count = map.cellIndices.NumGridCells;
             if (visibleCells.Length != count)
@@ -192,14 +193,21 @@ namespace SurveillanceShift
                 prevCells = new bool[count];
                 firstPass = true;
             }
-            if (Find.GravshipController.LandingAreaConfirmationInProgress)
+            if (gravshipReveal || Find.GravshipController.LandingAreaConfirmationInProgress || WorldComponent_GravshipController.CutsceneInProgress || Find.CurrentGravship != null)
             {
                 (visibleCells, prevCells) = (prevCells, visibleCells);
                 for (var i = 0; i < count; i++)
                 {
-                    visibleCells[i] = true;
+                    visibleCells[i] = map.roofGrid.Roofed(i) is false;
                 }
-                PublishFog();
+                if (excludeCells != null)
+                {
+                    foreach (var cell in excludeCells)
+                    {
+                        visibleCells[map.cellIndices.CellToIndex(cell)] = true;
+                    }
+                }
+                ApplyFog();
             }
             else
             {
@@ -251,11 +259,11 @@ namespace SurveillanceShift
                     }
                 }
 
-                PublishFog();
+                ApplyFog();
             }
         }
 
-        private void PublishFog()
+        private void ApplyFog()
         {
             if (SoftFogRenderer.Enabled != lastSoftFogEnabled)
             {
@@ -416,10 +424,7 @@ namespace SurveillanceShift
                     {
                         arrival.letter.lookTargets = new LookTargets(pawn);
                         Find.LetterStack.ReceiveLetter(arrival.letter);
-                        if (Building_Loudspeaker.BroadcastNews(map, arrival.pawns[0].Position, arrival.isHostile) is false)
-                        {
-                            State.SpawnPing(arrival.pawns[0].Position, map, arrival.isHostile);
-                        }
+                        Building_Loudspeaker.BroadcastNews(map, arrival.isHostile);
                         mutedArrivals.RemoveAt(i);
                         break;
                     }
@@ -453,10 +458,7 @@ namespace SurveillanceShift
                         if (spotter.Position.DistanceToSquared(hostile.Position) <= WalkieTalkieSightingRadiusSq && GenSight.LineOfSight(spotter.Position, hostile.Position, map))
                         {
                             sightedHostileIDs.Add(hostile.thingIDNumber);
-                            if (Building_Loudspeaker.BroadcastNews(map, hostile.Position, true) is false)
-                            {
-                                State.SpawnPing(hostile.Position, map, true);
-                            }
+                            Building_Loudspeaker.BroadcastNews(map, true);
                             Find.LetterStack.ReceiveLetter(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), "SS_HostileSpottedDesc".Translate(spotter.LabelShort, hostile.LabelShort), LetterDefOf.ThreatBig, new LookTargets(hostile)));
                             break;
                         }

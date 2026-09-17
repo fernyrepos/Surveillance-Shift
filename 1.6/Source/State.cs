@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using PipeSystem;
+using RimWorld;
 using RimWorld.Planet;
 using UnityEngine;
 using Verse;
@@ -63,6 +65,9 @@ namespace SurveillanceShift
             cachedMap = null;
             cachedComp = null;
             ClearActiveFeed();
+            pendingFactionDebts.Clear();
+            retaliationMultipliers.Clear();
+            factionKnownWealth.Clear();
         }
 
         public static bool SuppressCameraLock(IntVec3 cell)
@@ -79,6 +84,81 @@ namespace SurveillanceShift
             ActiveFeedCamera = null;
             ActiveFeedMap = null;
             ActiveFeedPipeNet = null;
+        }
+
+        public static bool ApplyingPendingDebt;
+        private const int RetaliationMultiplierStep = 2;
+        private static Dictionary<int, int> pendingFactionDebts = new();
+        private static Dictionary<int, int> retaliationMultipliers = new();
+        private static Dictionary<int, float> factionKnownWealth = new();
+
+        public static void AddDebt(Faction faction, int debt)
+        {
+            if (faction.IsPlayer) return;
+            var id = faction.loadID;
+            pendingFactionDebts.TryGetValue(id, out var current);
+            pendingFactionDebts[id] = current + debt;
+        }
+
+        public static int GetDebt(Faction faction)
+        {
+            pendingFactionDebts.TryGetValue(faction.loadID, out var debt);
+            return debt;
+        }
+
+        public static void ClearDebt(Faction faction)
+        {
+            pendingFactionDebts.Remove(faction.loadID);
+        }
+
+        public static void ApplyDebt(Faction faction, int extraChange = 0)
+        {
+            var debt = GetDebt(faction);
+            ClearDebt(faction);
+            var totalChange = debt + extraChange;
+            if (totalChange != 0)
+            {
+                ApplyingPendingDebt = true;
+                try
+                {
+                    faction.TryAffectGoodwillWith(Faction.OfPlayer, totalChange);
+                }
+                finally
+                {
+                    ApplyingPendingDebt = false;
+                }
+            }
+        }
+
+        public static int GetRetaliationMultiplier(Faction faction)
+        {
+            retaliationMultipliers.TryGetValue(faction.loadID, out var mult);
+            return mult <= 0 ? 1 : mult;
+        }
+
+        public static void IncrementRetaliation(Faction faction)
+        {
+            retaliationMultipliers[faction.loadID] = GetRetaliationMultiplier(faction) * RetaliationMultiplierStep;
+        }
+
+        public static void ResetRetaliation(Faction faction) => retaliationMultipliers.Remove(faction.loadID);
+
+        public static void SetKnownWealth(Faction faction, float wealth) => factionKnownWealth[faction.loadID] = wealth;
+
+        public static bool TryGetKnownWealth(Faction faction, out float wealth)
+        {
+            return factionKnownWealth.TryGetValue(faction.loadID, out wealth);
+        }
+
+        public static void ExposeData()
+        {
+            Scribe_Values.Look(ref AwarenessMode, "SS_AwarenessMode", AwarenessMode.AreaOmniscience);
+            Scribe_Collections.Look(ref pendingFactionDebts, "SS_pendingFactionDebts", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref retaliationMultipliers, "SS_retaliationMultipliers", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref factionKnownWealth, "SS_factionKnownWealth", LookMode.Value, LookMode.Value);
+            pendingFactionDebts ??= new Dictionary<int, int>();
+            retaliationMultipliers ??= new Dictionary<int, int>();
+            factionKnownWealth ??= new Dictionary<int, float>();
         }
 
         public static void DrawFeedReturnButton()
