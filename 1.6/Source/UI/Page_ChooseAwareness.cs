@@ -47,9 +47,9 @@ namespace SurveillanceShift
             var leftRect = new Rect(startX, startY, CardWidth, rect.height);
             var rightRect = new Rect(startX + CardWidth + Gap, startY, CardWidth, rect.height);
 
-            DrawOption(leftRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, () => State.AwarenessMode = AwarenessMode.LimitedAwareness);
+            DrawOption(leftRect, "SS_AreaOmniscience".Translate(), "SS_AreaOmniscienceDesc".Translate(), FullAwarenessIcon, State.AwarenessMode == AwarenessMode.AreaOmniscience, () => State.AwarenessMode = AwarenessMode.AreaOmniscience);
 
-            DrawOption(rightRect, "SS_AreaOmniscience".Translate(), "SS_AreaOmniscienceDesc".Translate(), FullAwarenessIcon, State.AwarenessMode == AwarenessMode.AreaOmniscience, () => State.AwarenessMode = AwarenessMode.AreaOmniscience);
+            DrawOption(rightRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, () => State.AwarenessMode = AwarenessMode.LimitedAwareness);
         }
 
         private void DrawOption(Rect rect, string label, string desc, Texture2D icon, bool selected, Action onSelect)
