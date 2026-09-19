@@ -4,37 +4,16 @@ using Verse.AI;
 
 namespace SurveillanceShift
 {
-    public class WorkGiver_MonitorRemoteDevice : WorkGiver_Scanner
+    public class WorkGiver_MonitorRemoteDevice : WorkGiver
     {
-        public override ThingRequest PotentialWorkThingRequest => ThingRequest.ForGroup(ThingRequestGroup.Pawn);
-
-        public override PathEndMode PathEndMode => PathEndMode.OnCell;
-
-        public override Danger MaxPathDanger(Pawn pawn) => Danger.Some;
-
-        public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
+        public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
-            if (t != pawn || pawn == ModCompatibility.GetPerspectiveShiftAvatar() || pawn.Faction != Faction.OfPlayer) return false;
+            if (pawn == ModCompatibility.GetPerspectiveShiftAvatar() || pawn.Faction != Faction.OfPlayer) return true;
             var router = CompRemoteSurveillanceDevice.FindLinkedRouter(pawn);
-            if (router is null)
-            {
-                JobFailReason.Is("SS_DeviceNotLinked".Translate());
-                return false;
-            }
-            if (router.IsActive is false)
-            {
-                JobFailReason.Is("SS_LinkedRouterOffline".Translate());
-                return false;
-            }
-            if (router.HasCameras is false)
-            {
-                JobFailReason.Is("SS_NoCamerasLinked".Translate());
-                return false;
-            }
-            return true;
+            return router is null || router.IsActive is false || router.HasCameras is false;
         }
 
-        public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
+        public override Job NonScanJob(Pawn pawn)
         {
             return JobMaker.MakeJob(DefsOf.SS_MonitorRemoteDevice, pawn);
         }
