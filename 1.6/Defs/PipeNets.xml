@@ -23,7 +23,7 @@
 		<researchPrerequisites>
 			<li>SS_VideoSurveillance</li>
 		</researchPrerequisites>
-		<description>text.todo.</description>
+		<description>High-definition cables for transmitting video data between surveillance devices.</description>
 		<thingClass>PipeSystem.Building_Pipe</thingClass>
 		<drawStyleCategory>Conduits</drawStyleCategory>
 		<graphicData>
