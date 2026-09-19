@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using RimWorld;
-using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
@@ -12,7 +11,26 @@ namespace SurveillanceShift
         private Faction faction;
         private IntVec3 chillSpot;
         public bool negotiated;
-        private Mote markerMote;
+
+        public Pawn Negotiator
+        {
+            get
+            {
+                Pawn best = null;
+                var bestLevel = -1;
+                foreach (var p in lord.ownedPawns)
+                {
+                    if (p.ageTracker.Adult is false) continue;
+                    var level = p.skills.GetSkill(SkillDefOf.Social).Level;
+                    if (level > bestLevel)
+                    {
+                        bestLevel = level;
+                        best = p;
+                    }
+                }
+                return best ?? lord.ownedPawns[0];
+            }
+        }
 
         public LordJob_FriendlyScouts() { }
 
@@ -68,38 +86,6 @@ namespace SurveillanceShift
             graph.AddTransition(harmTransition);
 
             return graph;
-        }
-
-        public void CleanupMarker()
-        {
-            if (markerMote != null && markerMote.Destroyed is false)
-            {
-                markerMote.Destroy();
-                markerMote = null;
-            }
-        }
-
-        public override void LordJobTick()
-        {
-            base.LordJobTick();
-            if (negotiated is false && lord.ownedPawns.Count > 0)
-            {
-                var leader = lord.ownedPawns[0];
-                if (leader.Spawned)
-                {
-                    if (markerMote == null || markerMote.Destroyed || markerMote.link1.Target.Thing != leader)
-                    {
-                        markerMote = MoteMaker.MakeAttachedOverlay(leader, DefsOf.SS_Mote_Spyglass, new Vector3(0f, 0f, 0.4f));
-                    }
-                    markerMote.Maintain();
-                }
-            }
-        }
-
-        public override void Cleanup()
-        {
-            base.Cleanup();
-            CleanupMarker();
         }
 
         public override void ExposeData()

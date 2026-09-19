@@ -9,22 +9,21 @@ namespace SurveillanceShift
         private const float BaseLieSuccessChance = 0.35f;
         private const float SocialSkillLieFactor = 0.035f;
 
-        public Dialog_FriendlyScoutNegotiation(Pawn negotiator, Pawn scout, Faction faction, LordJob_FriendlyScouts job)
-            : base(MakeNode(negotiator, scout, faction, job))
+        public Dialog_FriendlyScoutNegotiation(Pawn colonist, Pawn negotiator, Faction faction, LordJob_FriendlyScouts job)
+            : base(MakeNode(colonist, negotiator, faction, job))
         {
             closeOnCancel = true;
         }
 
-        private static DiaNode MakeNode(Pawn negotiator, Pawn scout, Faction faction, LordJob_FriendlyScouts job)
+        private static DiaNode MakeNode(Pawn colonist, Pawn negotiator, Faction faction, LordJob_FriendlyScouts job)
         {
-            var node = new DiaNode("SS_FriendlyScoutsDialogIntro".Translate(faction.Name, scout.LabelShort));
+            var node = new DiaNode("SS_FriendlyScoutsDialogIntro".Translate(faction.Name, negotiator.LabelShort));
 
             var truthOption = new DiaOption("SS_ProvideTruth".Translate())
             {
                 action = () =>
                 {
                     job.negotiated = true;
-                    job.CleanupMarker();
                     job.lord.ReceiveMemo("ScoutsNegotiated");
                     State.ApplyDebt(faction, SurveillanceShiftMod.settings.relationsTruthBoost);
                     Messages.Message("SS_ScoutsTruthProvided".Translate(faction.Name), MessageTypeDefOf.NeutralEvent);
@@ -33,14 +32,13 @@ namespace SurveillanceShift
             };
             node.options.Add(truthOption);
 
-            var socialSkill = negotiator.skills.GetSkill(SkillDefOf.Social).Level;
+            var socialSkill = colonist.skills.GetSkill(SkillDefOf.Social).Level;
             var lieSuccessChance = Mathf.Clamp01(BaseLieSuccessChance + socialSkill * SocialSkillLieFactor);
             var lieOption = new DiaOption("SS_LieToScouts".Translate(lieSuccessChance.ToStringPercent()))
             {
                 action = () =>
                 {
                     job.negotiated = true;
-                    job.CleanupMarker();
                     job.lord.ReceiveMemo("ScoutsNegotiated");
                     if (Rand.Chance(lieSuccessChance))
                     {

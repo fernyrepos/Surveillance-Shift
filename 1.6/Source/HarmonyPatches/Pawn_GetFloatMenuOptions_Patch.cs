@@ -20,7 +20,7 @@ namespace SurveillanceShift
             if (__instance.Dead || __instance.Downed || selPawn.Dead || selPawn.Downed || selPawn.Faction != Faction.OfPlayer || selPawn.RaceProps.Humanlike is false || selPawn.health.capacities.CapableOf(PawnCapacityDefOf.Talking) is false || selPawn.CanReach(__instance, PathEndMode.Touch, Danger.Deadly) is false) yield break;
 
             var lord = __instance.GetLord();
-            if (lord?.LordJob is LordJob_FriendlyScouts scoutsJob && scoutsJob.negotiated is false)
+            if (lord?.LordJob is LordJob_FriendlyScouts scoutsJob && scoutsJob.negotiated is false && scoutsJob.Negotiator == __instance)
             {
                 yield return new FloatMenuOption("SS_ConverseWithScout".Translate(), () =>
                 Find.WindowStack.Add(new Dialog_FriendlyScoutNegotiation(selPawn, __instance, __instance.Faction, scoutsJob)));
