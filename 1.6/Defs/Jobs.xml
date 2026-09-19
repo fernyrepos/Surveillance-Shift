@@ -57,4 +57,11 @@
 		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_NegotiateWithScout</defName>
+		<driverClass>SurveillanceShift.JobDriver_NegotiateWithScout</driverClass>
+		<reportString>conversing with TargetA.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
 </Defs>

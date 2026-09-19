@@ -23,7 +23,10 @@ namespace SurveillanceShift
             if (lord?.LordJob is LordJob_FriendlyScouts scoutsJob && scoutsJob.negotiated is false && scoutsJob.Negotiator == __instance)
             {
                 yield return new FloatMenuOption("SS_ConverseWithScout".Translate(), () =>
-                Find.WindowStack.Add(new Dialog_FriendlyScoutNegotiation(selPawn, __instance, __instance.Faction, scoutsJob)));
+                {
+                    var job = JobMaker.MakeJob(DefsOf.SS_NegotiateWithScout, __instance);
+                    selPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                });
             }
         }
     }

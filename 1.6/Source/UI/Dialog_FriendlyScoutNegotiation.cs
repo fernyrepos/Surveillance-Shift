@@ -1,18 +1,25 @@
 using RimWorld;
 using UnityEngine;
 using Verse;
+using Verse.AI.Group;
 
 namespace SurveillanceShift
 {
     public class Dialog_FriendlyScoutNegotiation : Dialog_NodeTree
     {
         private const float BaseLieSuccessChance = 0.35f;
-        private const float SocialSkillLieFactor = 0.035f;
+        private const float SocialSkillLieFactor = 0.03f;
 
         public Dialog_FriendlyScoutNegotiation(Pawn colonist, Pawn negotiator, Faction faction, LordJob_FriendlyScouts job)
             : base(MakeNode(colonist, negotiator, faction, job))
         {
             closeOnCancel = true;
+        }
+
+        public static void Open(Pawn colonist, Pawn negotiator)
+        {
+            var job = (LordJob_FriendlyScouts)negotiator.GetLord().LordJob;
+            Find.WindowStack.Add(new Dialog_FriendlyScoutNegotiation(colonist, negotiator, negotiator.Faction, job));
         }
 
         private static DiaNode MakeNode(Pawn colonist, Pawn negotiator, Faction faction, LordJob_FriendlyScouts job)

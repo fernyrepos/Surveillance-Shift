@@ -125,6 +125,7 @@ namespace SurveillanceShift
 
         public override void MapComponentUpdate()
         {
+            Pawn_DrawGUIOverlay_Patch.RenderQueued();
             if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected) return;
 
             if (SoftFogRenderer.Enabled)

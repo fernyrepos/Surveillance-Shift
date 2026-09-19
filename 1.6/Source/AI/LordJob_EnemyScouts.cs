@@ -10,6 +10,7 @@ namespace SurveillanceShift
         private Faction faction;
         private IntVec3 scoutSpot;
         private bool retaliationTriggered;
+        private bool scanCompleted;
         private const int ScanDurationTicks = 2500 * 3;
 
         public LordJob_EnemyScouts() { }
@@ -40,6 +41,7 @@ namespace SurveillanceShift
             scanToExit.AddTrigger(new Trigger_TicksPassed(ScanDurationTicks));
             scanToExit.AddPreAction(new TransitionAction_Custom(() =>
             {
+                scanCompleted = true;
                 State.ApplyDebt(faction);
                 State.SetKnownWealth(faction, Map.wealthWatcher.WealthTotal);
                 State.ResetRetaliation(faction);
@@ -65,12 +67,23 @@ namespace SurveillanceShift
             }
         }
 
+        public override void Cleanup()
+        {
+            base.Cleanup();
+            if (scanCompleted is false && retaliationTriggered is false)
+            {
+                retaliationTriggered = true;
+                State.IncrementRetaliation(faction);
+            }
+        }
+
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_References.Look(ref faction, "faction");
             Scribe_Values.Look(ref scoutSpot, "scoutSpot");
             Scribe_Values.Look(ref retaliationTriggered, "retaliationTriggered");
+            Scribe_Values.Look(ref scanCompleted, "scanCompleted");
         }
     }
 }

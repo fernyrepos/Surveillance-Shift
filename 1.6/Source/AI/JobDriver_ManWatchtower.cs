@@ -14,7 +14,6 @@ namespace SurveillanceShift
         private const int ScanDurationMax = 450;
         private const int PaceDurationTicks = 60;
         private const int StepDurationTicks = 35;
-        private const float MoteForwardOffset = 0.38f;
         private Building_Watchtower Watchtower => (Building_Watchtower)job.GetTarget(TargetIndex.A).Thing;
         private float BodyYOffset => 9f;
         private Mote scanningMote;
@@ -97,7 +96,6 @@ namespace SurveillanceShift
             };
             watch.tickAction = () =>
             {
-                UpdateMoteTransform();
                 if (pawn.IsHashIntervalTick(SkillIntervalTicks))
                 {
                     pawn.skills?.Learn(SkillDefOf.Shooting, 0.035f);
@@ -117,13 +115,11 @@ namespace SurveillanceShift
                 nextVantage = options.Count > 1 ? options.RandomElementByWeight(v => v != startVantage ? 1f : 0f) : startVantage;
                 pace.actor.jobs.curDriver.ticksLeftThisToil = PaceDurationTicks;
                 FaceWalkDirection(startVantage, nextVantage);
-                UpdateMoteTransform();
             };
             pace.tickAction = () =>
             {
                 var cur = Vector2.Lerp(startVantage, nextVantage, 1f - (float)ticksLeftThisToil / PaceDurationTicks);
                 forcedBodyOffset = new Vector3(cur.x, BodyYOffset, cur.y);
-                UpdateMoteTransform();
             };
             pace.AddFinishAction(() =>
             {
@@ -240,26 +236,12 @@ namespace SurveillanceShift
                     : currentVantage.x < -0.2f ? Rand.Bool ? Rot4.North : Rot4.West : Rot4.North;
             }
             pawn.rotationTracker.FaceCell(pawn.Position + rot.FacingCell);
-            UpdateMoteTransform();
-        }
-
-        private void UpdateMoteTransform()
-        {
-            if (scanningMote != null)
-            {
-                scanningMote.Rotation = pawn.Rotation;
-                scanningMote.exactRotation = pawn.Rotation.AsAngle;
-                var pos = pawn.DrawPos + pawn.Rotation.FacingCell.ToVector3() * MoteForwardOffset;
-                pos.y += pawn.Rotation == Rot4.North ? -0.05f : 0.05f;
-                scanningMote.exactPosition = pos;
-            }
         }
 
         private void AttachObservationMote()
         {
             CleanupObservationMote();
             scanningMote = MoteMaker.MakeAttachedOverlay(pawn, Watchtower.Extension.moteDef, Vector3.zero);
-            UpdateMoteTransform();
         }
 
         private void CleanupObservationMote()

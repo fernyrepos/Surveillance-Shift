@@ -8,7 +8,6 @@ namespace SurveillanceShift
     {
         public static ThingDef SS_Mote_PingHostile;
         public static ThingDef SS_Mote_PingFriendly;
-        public static ThingDef SS_Mote_Spyglass;
         public static ThingDef SS_Mote_Binoculars;
         public static SoundDef SS_Sound_Alarm;
         public static SoundDef SS_Sound_LoudspeakerHostile;
@@ -23,6 +22,9 @@ namespace SurveillanceShift
         public static JobDef SS_PushAlarmTrigger;
         public static JobDef SS_AnimalReportThreat;
         public static JobDef SS_ReportThreatInPerson;
+        public static JobDef SS_NegotiateWithScout;
+        public static IncidentDef SS_FriendlyScouts;
+        public static IncidentDef SS_EnemyScouts;
         public static ThingDef SS_SurveillanceStation;
         public static ThingDef SS_Mote_RemoteSurveillanceDevice;
         public static ThingDef SS_WalkieTalkie;
