@@ -28,6 +28,7 @@ namespace SurveillanceShift
         private Vector2 currentVantage;
         private Vector2 nextVantage;
         private Vector2 startVantage;
+        public Job pendingJob;
         public override Vector3 ForcedBodyOffset => forcedBodyOffset.HasValue ? forcedBodyOffset.Value : Vector3.zero;
         public bool IsAtTop => isAtTop;
         public bool IsClimbing => isClimbing;
@@ -186,6 +187,11 @@ namespace SurveillanceShift
                 forcedBodyOffset = Vector3.zero;
                 isAtTop = false;
                 isClimbing = false;
+                if (pendingJob != null)
+                {
+                    pawn.jobs.jobQueue.EnqueueFirst(pendingJob);
+                    pendingJob = null;
+                }
             });
             yield return descendLadder;
 
@@ -195,6 +201,11 @@ namespace SurveillanceShift
                 forcedBodyOffset = Vector3.zero;
                 isAtTop = false;
                 isClimbing = false;
+                if (pendingJob != null)
+                {
+                    pawn.jobs.jobQueue.EnqueueFirst(pendingJob);
+                    pendingJob = null;
+                }
             });
         }
 
@@ -272,6 +283,7 @@ namespace SurveillanceShift
             Scribe_Values.Look(ref nextVantage, "nextVantage");
             Scribe_Values.Look(ref startVantage, "startVantage");
             Scribe_Values.Look(ref gracefulExitStarted, "gracefulExitStarted");
+            Scribe_References.Look(ref pendingJob, "pendingJob");
         }
     }
 }

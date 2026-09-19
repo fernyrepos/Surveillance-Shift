@@ -10,7 +10,7 @@ namespace SurveillanceShift
     {
         protected const int BaseSightRadius = 24;
 
-        private string customName;
+        public string customName;
         private CompPowerTrader powerComp;
         private CompResource compResource;
         private CameraExtension extension;

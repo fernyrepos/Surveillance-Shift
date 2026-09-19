@@ -323,11 +323,17 @@ namespace SurveillanceShift
 
         private static Pawn FindHostile(Pawn pawn, Map map, bool surveying)
         {
+            var watchtower = pawn.CurJobDef == DefsOf.SS_ManWatchtower && pawn.jobs.curDriver is JobDriver_ManWatchtower driver && driver.IsAtTop ? pawn.CurJob.targetA.Thing as Building_Watchtower : null;
+
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
                 if (target.Thing is Pawn hostile && hostile.Spawned && hostile.Dead is false && hostile.Downed is false)
                 {
-                    if (surveying)
+                    if (watchtower != null)
+                    {
+                        if (watchtower.CanWatchtowerSee(hostile.Position)) return hostile;
+                    }
+                    else if (surveying)
                     {
                         if (map.IsVisible(hostile.Position)) return hostile;
                     }

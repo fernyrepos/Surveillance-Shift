@@ -533,10 +533,12 @@ namespace SurveillanceShift
 
                 foreach (var (spotter, horn) in hornBearers)
                 {
-                    var sightRadius = spotter.CurJobDef == DefsOf.SS_ManWatchtower && spotter.CurJob?.targetA.Thing is Building_Watchtower tower
-                        ? tower.Extension.sightRadius
-                        : StandardSightRadius;
-                    if (spotter.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(spotter.Position, hostile.Position, map, skipFirstCell: true))
+                    var tower = spotter.CurJobDef == DefsOf.SS_ManWatchtower ? spotter.CurJob.targetA.Thing as Building_Watchtower : null;
+                    var sightRadius = tower != null ? tower.Extension.sightRadius : StandardSightRadius;
+                    var canSee = tower != null
+                        ? tower.CanWatchtowerSee(hostile.Position)
+                        : spotter.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(spotter.Position, hostile.Position, map, skipFirstCell: true);
+                    if (canSee)
                     {
                         sightedHostileIDs.Add(hostile.thingIDNumber);
                         horn.Blow(spotter);

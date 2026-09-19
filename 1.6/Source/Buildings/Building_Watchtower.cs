@@ -69,6 +69,18 @@ namespace SurveillanceShift
             ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, Extension.sightRadius, Map, visibleCells, Extension.seeOverMountains);
         }
 
+        public bool CanWatchtowerSee(IntVec3 targetCell)
+        {
+            var center = this.OccupiedRect().CenterCell;
+            var radius = Extension.sightRadius;
+            if (center.DistanceToSquared(targetCell) > radius * radius) return false;
+            if (Extension.seeOverMountains)
+            {
+                return Map.roofGrid.Roofed(targetCell) is false;
+            }
+            return GenSight.LineOfSight(center, targetCell, Map, skipFirstCell: true);
+        }
+
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
         {
             base.DynamicDrawPhaseAt(phase, drawLoc, flip);
