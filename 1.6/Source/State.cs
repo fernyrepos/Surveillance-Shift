@@ -24,6 +24,20 @@ namespace SurveillanceShift
 
         public static bool AlertsActive => SurveillanceShiftMod.settings.enableAlertInDirector || ModCompatibility.PerspectiveShiftAvailable is false || ModCompatibility.HasPerspectiveShiftAvatar();
 
+        private const float MinSightRadius = 1.5f;
+        private const int DownedSightRadius = 4;
+
+        public static int SightRadius(this Pawn pawn)
+        {
+            if (pawn.Downed) return Mathf.RoundToInt(Mathf.Clamp(DownedSightRadius * pawn.SightFactor(), MinSightRadius, DownedSightRadius));
+            return Mathf.RoundToInt(Mathf.Max(MinSightRadius, SurveillanceShiftMod.settings.fogViewDistance * pawn.SightFactor()));
+        }
+
+        public static float SightFactor(this Pawn pawn)
+        {
+            return pawn.health.capacities.GetLevel(PawnCapacityDefOf.Sight);
+        }
+
         public static readonly bool GuardingPawnsActive = LoadedModManager.RunningMods.Any(m => m.PackageIdPlayerFacing == "Thek.GuardingP");
 
         private static Map cachedMap;
@@ -300,7 +314,7 @@ namespace SurveillanceShift
         {
             if (AlertsActive is false) return null;
             var map = pawn.Map;
-            var sightRadius = SurveillanceShiftMod.settings.fogViewDistance;
+            var sightRadius = SightRadius(pawn);
             Pawn hostile = null;
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
@@ -339,7 +353,7 @@ namespace SurveillanceShift
                     }
                     else
                     {
-                        var sightRadius = SurveillanceShiftMod.settings.fogViewDistance;
+                        var sightRadius = SightRadius(pawn);
                         if (pawn.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, hostile.Position, map, skipFirstCell: true)) return hostile;
                     }
                 }

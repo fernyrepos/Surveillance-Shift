@@ -65,14 +65,15 @@ namespace SurveillanceShift
 
         public void ComputeWatchtowerFOV(bool[] visibleCells)
         {
-            if (IsManned is false) return;
-            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, Extension.sightRadius, Map, visibleCells, Extension.seeOverMountains);
+            var man = MannedPawn;
+            if (man is null) return;
+            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, Mathf.RoundToInt(Extension.sightRadius * man.SightFactor()), Map, visibleCells, Extension.seeOverMountains);
         }
 
         public bool CanWatchtowerSee(IntVec3 targetCell)
         {
             var center = this.OccupiedRect().CenterCell;
-            var radius = Extension.sightRadius;
+            var radius = Mathf.RoundToInt(Extension.sightRadius * MannedPawn.SightFactor());
             if (center.DistanceToSquared(targetCell) > radius * radius) return false;
             if (Extension.seeOverMountains)
             {

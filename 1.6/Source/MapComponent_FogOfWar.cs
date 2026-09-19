@@ -17,8 +17,6 @@ namespace SurveillanceShift
     [HotSwappable]
     public class MapComponent_FogOfWar : MapComponent
     {
-        private int StandardSightRadius => SurveillanceShiftMod.settings.fogViewDistance;
-        private const int DownedSightRadius = 4;
         private const int UpdateIntervalTicks = 12;
         private const int SectionSize = 16;
         private const int WalkieTalkieSightingRadiusSq = 676;
@@ -224,7 +222,7 @@ namespace SurveillanceShift
                     var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
                     if (avatar != null && avatar.Spawned && avatar.Map == map && avatar.Dead is false)
                     {
-                        var radius = avatar.Downed ? DownedSightRadius : StandardSightRadius;
+                        var radius = avatar.SightRadius();
                         ShadowCaster.ComputeFieldOfView(avatar.Position, radius, map, visibleCells);
                     }
                     foreach (var b in map.listerBuildings.allBuildingsColonist)
@@ -248,7 +246,7 @@ namespace SurveillanceShift
                     {
                         if (pawn.Dead is false)
                         {
-                            var radius = pawn.Downed ? DownedSightRadius : StandardSightRadius;
+                            var radius = pawn.SightRadius();
                             ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
                         }
                     }
@@ -534,8 +532,8 @@ namespace SurveillanceShift
 
                 foreach (var (spotter, horn) in hornBearers)
                 {
-                    var tower = spotter.CurJobDef == DefsOf.SS_ManWatchtower ? spotter.CurJob.targetA.Thing as Building_Watchtower : null;
-                    var sightRadius = tower != null ? tower.Extension.sightRadius : StandardSightRadius;
+                    var tower = spotter.CurJobDef == DefsOf.SS_ManWatchtower && spotter.jobs.curDriver is JobDriver_ManWatchtower driver && driver.IsAtTop ? spotter.CurJob.targetA.Thing as Building_Watchtower : null;
+                    var sightRadius = tower != null ? tower.Extension.sightRadius : spotter.SightRadius();
                     var canSee = tower != null
                         ? tower.CanWatchtowerSee(hostile.Position)
                         : spotter.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(spotter.Position, hostile.Position, map, skipFirstCell: true);
