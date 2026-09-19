@@ -45,7 +45,7 @@
   <SS_UnlinkedFromAlarm>Unlinked {0} from alarm system.</SS_UnlinkedFromAlarm>
   <SS_RadarActive>Radar operational (minimap telemetry online)</SS_RadarActive>
   <SS_RadarOffline>Colony radar is unpowered or missing. Minimap offline.</SS_RadarOffline>
-  <SS_ConverseWithScout>Converse with scout</SS_ConverseWithScout>
+  <SS_ConverseWithScout>Discuss diplomatic relations</SS_ConverseWithScout>
   <SS_FriendlyScoutsDialogIntro>A diplomatic scout from {0} named {1} has arrived to verify relations and reports of colony conduct.</SS_FriendlyScoutsDialogIntro>
   <SS_ProvideTruth>Provide truth on colony actions (+10 goodwill, apply debts)</SS_ProvideTruth>
   <SS_LieToScouts>Conceal wrongdoing and lie ({0} success chance)</SS_LieToScouts>
@@ -56,7 +56,7 @@
   <SS_LetterEnemyScoutsLabel>Scouting party from {0}</SS_LetterEnemyScoutsLabel>
   <SS_LetterEnemyScoutsText>Scouts from {0} have arrived at the edge of your settlement to observe your colony's prosperity and potential unwanted activity. They will observe for a while then leave. They can be intercepted, but be warned that this can cause retaliation.</SS_LetterEnemyScoutsText>
   <SS_LetterRetaliationLabel>Retaliation party from {0}</SS_LetterRetaliationLabel>
-  <SS_LetterRetaliationText>After their scouting party did not return, {0} has sent another larger scouting party determined to discern the ongoings of this settlement.</SS_LetterRetaliationText>
+  <SS_LetterRetaliationText>After their previous scouting party failed, {0} has sent another larger scouting party determined to discern the ongoings of this settlement.</SS_LetterRetaliationText>
   <SS_ScoutsTruthProvided>Provided intelligence to diplomatic scouts from {0}.</SS_ScoutsTruthProvided>
   <SS_ScoutsLieSuccess>Successfully deceived diplomatic scouts from {0}.</SS_ScoutsLieSuccess>
   <SS_ScoutsLieCaught>Diplomatic scouts from {0} discovered your deception.</SS_ScoutsLieCaught>
