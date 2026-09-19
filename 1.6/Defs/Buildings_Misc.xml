@@ -23,7 +23,7 @@
 		<researchPrerequisites>
 			<li>SS_VideoSurveillance</li>
 		</researchPrerequisites>
-		<description>A surveillance camera mounted on a wall. Must be powered and connected to a surveillance station or router via video cables to function.</description>
+		<description>A surveillance camera mounted to a wall. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<rotatable>true</rotatable>
 		<thingClass>SurveillanceShift.Building_WallCamera</thingClass>
 		<thingCategories>
@@ -154,7 +154,7 @@
 		<researchPrerequisites>
 			<li>SS_VideoSurveillance</li>
 		</researchPrerequisites>
-		<description>A central hub for managing and viewing footage from multiple surveillance cameras.</description>
+		<description>A robust set of monitors for viewing live feeds from surveillance cameras on a video cable network.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceStation</thingClass>
 		<thingCategories>
 			<li>BuildingsMisc</li>
@@ -208,7 +208,7 @@
 		<researchPrerequisites>
 			<li>SS_RemoteSurveillance</li>
 		</researchPrerequisites>
-		<description>A hardware that manages and routes surveillance footage from multiple video sources onto a private bandwidth usable by remote surveillance devices.</description>
+		<description>A hardware that manages and routes surveillance footage from multiple video sources onto a private bandwidth usable by remote surveillance devices for portable monitoring.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceRouter</thingClass>
 		<graphicData>
 			<texPath>Things/Building/Router/Router</texPath>
