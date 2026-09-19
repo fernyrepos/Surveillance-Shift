@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Defs>
+	<VEF.Buildings.HiddenDesignatorsDef>
+		<defName>SS_CAI5000_HiddenDesignators</defName>
+		<hiddenDesignators>
+			<li>CombatAI_TribalPoleCCTV</li>
+			<li>CombatAI_IndustrialPoleCCTV</li>
+			<li>CombatAI_SpacerPoleCCTV</li>
+			<li>CombatAI_CCTVTurretIndustrial</li>
+			<li>CombatAI_CCTVTurretSpacer</li>
+			<li>CombatAI_IndoorCCTV</li>
+		</hiddenDesignators>
+	</VEF.Buildings.HiddenDesignatorsDef>
+</Defs>

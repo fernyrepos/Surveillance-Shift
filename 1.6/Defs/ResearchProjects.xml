@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<ResearchTabDef>
+		<defName>SS_SurveillanceTab</defName>
+		<label>Surveillance Shift</label>
+	</ResearchTabDef>
+
+	<ResearchProjectDef>
+		<defName>SS_VideoSurveillance</defName>
+		<label>video surveillance</label>
+		<description>Develop closed-circuit video systems for monitoring the colony through surveillance stations, wall-mounted cameras, and wired video networks.</description>
+		<baseCost>1600</baseCost>
+		<techLevel>Industrial</techLevel>
+		<prerequisites>
+			<li>Electricity</li>
+			<li>Machining</li>
+		</prerequisites>
+		<researchViewX>1</researchViewX>
+		<researchViewY>1</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef>
+		<defName>SS_CameraTower</defName>
+		<label>camera tower</label>
+		<description>Adapt wall-mounted surveillance technology into elevated, all-direction camera towers.</description>
+		<baseCost>1200</baseCost>
+		<techLevel>Industrial</techLevel>
+		<prerequisites>
+			<li>SS_VideoSurveillance</li>
+		</prerequisites>
+		<researchViewX>3</researchViewX>
+		<researchViewY>1</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef>
+		<defName>SS_Loudspeaker</defName>
+		<label>loudspeakers</label>
+		<description>Construct colony-wide loudspeakers and alarm triggers for warning the colony of danger.</description>
+		<baseCost>1000</baseCost>
+		<techLevel>Industrial</techLevel>
+		<researchViewX>1</researchViewX>
+		<researchViewY>2</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef>
+		<defName>SS_WalkieTalkies</defName>
+		<label>walkie talkies</label>
+		<description>Develop portable short-range radios that allow colonists to report threats across the colony.</description>
+		<baseCost>1000</baseCost>
+		<techLevel>Industrial</techLevel>
+		<prerequisites>
+			<li>Fabrication</li>
+		</prerequisites>
+		<researchViewX>1</researchViewX>
+		<researchViewY>3</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef>
+		<defName>SS_RemoteSurveillance</defName>
+		<label>remote surveillance</label>
+		<description>Manufacture technology capable of transmitting camera feeds to portable remote devices.</description>
+		<baseCost>4000</baseCost>
+		<techLevel>Spacer</techLevel>
+		<prerequisites>
+			<li>SS_VideoSurveillance</li>
+		</prerequisites>
+		<requiredResearchFacilities>
+			<li>MultiAnalyzer</li>
+		</requiredResearchFacilities>
+		<researchViewX>3</researchViewX>
+		<researchViewY>3</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef>
+		<defName>SS_Watchtower</defName>
+		<label>watchtower</label>
+		<description>Develop elevated observation platforms that allow a sentry to monitor a wide area around the colony.</description>
+		<baseCost>1200</baseCost>
+		<techLevel>Industrial</techLevel>
+		<prerequisites>
+			<li>Machining</li>
+		</prerequisites>
+		<researchViewX>1</researchViewX>
+		<researchViewY>4</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+</Defs>

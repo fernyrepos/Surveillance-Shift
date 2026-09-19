@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<loadFolders>
+	<v1.6>
+		<li>/</li>
+		<li>1.6</li>
+		<li IfModActive="Krkr.rule56">Mods and Shit/CAI-5000</li>
+	</v1.6>
+</loadFolders>

@@ -20,6 +20,9 @@
 	<ThingDef ParentName="BuildingBase">
 		<defName>SS_VideoCable</defName>
 		<label>video cable</label>
+		<researchPrerequisites>
+			<li>SS_VideoSurveillance</li>
+		</researchPrerequisites>
 		<description>text.todo.</description>
 		<thingClass>PipeSystem.Building_Pipe</thingClass>
 		<drawStyleCategory>Conduits</drawStyleCategory>

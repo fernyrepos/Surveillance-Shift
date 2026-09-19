@@ -20,6 +20,9 @@
 	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_WallCamera</defName>
 		<label>wall-mounted camera</label>
+		<researchPrerequisites>
+			<li>SS_VideoSurveillance</li>
+		</researchPrerequisites>
 		<description>A surveillance camera mounted on a wall. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<rotatable>true</rotatable>
 		<thingClass>SurveillanceShift.Building_WallCamera</thingClass>
@@ -88,6 +91,9 @@
 	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_CameraTower</defName>
 		<label>camera tower</label>
+		<researchPrerequisites>
+			<li>SS_CameraTower</li>
+		</researchPrerequisites>
 		<description>A pillar with four mounted cameras, allowing for a full view of the surrounding area. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<thingClass>SurveillanceShift.Building_Camera</thingClass>
 		<thingCategories>
@@ -145,6 +151,9 @@
 	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_SurveillanceStation</defName>
 		<label>surveillance station</label>
+		<researchPrerequisites>
+			<li>SS_VideoSurveillance</li>
+		</researchPrerequisites>
 		<description>A central hub for managing and viewing footage from multiple surveillance cameras.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceStation</thingClass>
 		<thingCategories>
@@ -196,6 +205,9 @@
 	<ThingDef ParentName="SS_PoweredBuildingBase">
 		<defName>SS_SurveillanceRouter</defName>
 		<label>surveillance router</label>
+		<researchPrerequisites>
+			<li>SS_RemoteSurveillance</li>
+		</researchPrerequisites>
 		<description>A hardware that manages and routes surveillance footage from multiple video sources onto a private bandwidth usable by remote surveillance devices.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceRouter</thingClass>
 		<graphicData>
@@ -242,6 +254,9 @@
 	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_DominionTower</defName>
 		<label>watchtower</label>
+		<researchPrerequisites>
+			<li>SS_Watchtower</li>
+		</researchPrerequisites>
 		<description>An elevated structure used for large-range surveillance of the surrounding area.</description>
 		<thingClass>SurveillanceShift.Building_Watchtower</thingClass>
 		<size>(4,4)</size>
@@ -311,7 +326,10 @@
 	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_AlarmTrigger</defName>
 		<label>alarm trigger</label>
-		<description>text.todo.</description>
+		<researchPrerequisites>
+			<li>SS_Loudspeaker</li>
+		</researchPrerequisites>
+		<description>A button pressed in distress that triggers linked alarm systems and lights.</description>
 		<thingClass>SurveillanceShift.Building_AlarmTrigger</thingClass>
 		<category>Building</category>
 		<minifiedDef>MinifiedThing</minifiedDef>
@@ -351,7 +369,10 @@
 
 	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_Loudspeaker</defName>
-		<label>colony loudspeaker</label>
+		<label>loudspeaker</label>
+		<researchPrerequisites>
+			<li>SS_Loudspeaker</li>
+		</researchPrerequisites>
 		<description>text.todo.</description>
 		<thingClass>SurveillanceShift.Building_Loudspeaker</thingClass>
 		<category>Building</category>

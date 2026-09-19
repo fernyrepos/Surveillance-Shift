@@ -39,8 +39,8 @@
   <SS_HideColonistBarDesc>While limited awareness is active in authentic mode, hide the colonist bar and its toggle button in the play settings.</SS_HideColonistBarDesc>
   <SS_PushAlarm>Push alarm trigger</SS_PushAlarm>
   <SS_ResetAlarm>Reset alarm trigger</SS_ResetAlarm>
-  <SS_LinkAlarmBuilding>Link alarm building</SS_LinkAlarmBuilding>
-  <SS_LinkAlarmBuildingDesc>Link this alarm trigger to electric lights, power switches, or colony loudspeakers.</SS_LinkAlarmBuildingDesc>
+  <SS_LinkAlarmBuilding>Link to (select multiple)</SS_LinkAlarmBuilding>
+  <SS_LinkAlarmBuildingDesc>Link this alarm trigger to electric lights, power switches, or loudspeakers.</SS_LinkAlarmBuildingDesc>
   <SS_LinkedToAlarm>Linked {0} to alarm system.</SS_LinkedToAlarm>
   <SS_UnlinkedFromAlarm>Unlinked {0} from alarm system.</SS_UnlinkedFromAlarm>
   <SS_RadarActive>Radar operational (minimap telemetry online)</SS_RadarActive>

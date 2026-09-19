@@ -11,6 +11,9 @@
 	<ThingDef ParentName="ResourceBase">
 		<defName>SS_RemoteSurveillanceDevice</defName>
 		<label>remote surveillance device</label>
+		<researchPrerequisites>
+			<li>SS_RemoteSurveillance</li>
+		</researchPrerequisites>
 		<description>A miniaturised computing device with a touch screen and wireless connectivity. Useful for watching video feeds on the go.</description>
 		<graphicData>
 			<texPath>Things/Item/Special/RemoteSurveillanceDevice</texPath>
@@ -47,6 +50,9 @@
 	<ThingDef ParentName="ResourceBase">
 		<defName>SS_WalkieTalkie</defName>
 		<label>walkie talkie</label>
+		<researchPrerequisites>
+			<li>SS_WalkieTalkies</li>
+		</researchPrerequisites>
 		<description>A small, portable device that allows radio-communications at short to moderate range.</description>
 		<graphicData>
 			<texPath>Things/Item/Special/WalkieTalkie</texPath>
@@ -54,12 +60,24 @@
 			<drawSize>0.8</drawSize>
 		</graphicData>
 		<statBases>
+			<WorkToMake>1200</WorkToMake>
 			<MarketValue>200</MarketValue>
 			<MaxHitPoints>60</MaxHitPoints>
 			<Mass>0.5</Mass>
 			<Flammability>0.5</Flammability>
 			<DeteriorationRate>6</DeteriorationRate>
 		</statBases>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>2</ComponentIndustrial>
+		</costList>
+		<recipeMaker>
+			<researchPrerequisite>SS_WalkieTalkies</researchPrerequisite>
+			<recipeUsers>
+				<li>FabricationBench</li>
+			</recipeUsers>
+			<displayPriority>310</displayPriority>
+		</recipeMaker>
 		<tickerType>Rare</tickerType>
 		<techLevel>Industrial</techLevel>
 		<stackLimit>1</stackLimit>
