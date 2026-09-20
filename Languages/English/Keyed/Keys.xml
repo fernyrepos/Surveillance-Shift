@@ -29,11 +29,11 @@
   <SS_AccessFeedsRemote>Access feeds</SS_AccessFeedsRemote>
   <SS_AccessFeedsRemoteDesc>Connect to a local surveillance router to view camera feeds remotely.</SS_AccessFeedsRemoteDesc>
   <SS_NoSurveillanceRouter>No operational surveillance router found on the network.</SS_NoSurveillanceRouter>
-  <SS_UseRemoteSurveillanceDevice>Use remote surveillance device</SS_UseRemoteSurveillanceDevice>
+  <SS_UseRemoteSurveillanceDevice>Start monitoring</SS_UseRemoteSurveillanceDevice>
   <SS_LinkDeviceToRouter>Link device to router</SS_LinkDeviceToRouter>
   <SS_DeviceNotLinked>This device has not been linked to a router. Select this colonist and right-click a router to link it.</SS_DeviceNotLinked>
   <SS_LinkedRouterOffline>The linked surveillance router is offline.</SS_LinkedRouterOffline>
-  <SS_AbortMonitoring>Abort monitoring</SS_AbortMonitoring>
+  <SS_AbortMonitoring>Stop monitoring</SS_AbortMonitoring>
   <SS_AbortMonitoringDesc>Stop monitoring the surveillance feeds through the linked router.</SS_AbortMonitoringDesc>
   <SS_HideColonistBar>Hide colonist bar in authentic mode</SS_HideColonistBar>
   <SS_HideColonistBarDesc>While limited awareness is active in authentic mode, hide the colonist bar and its toggle button in the play settings.</SS_HideColonistBarDesc>
@@ -79,7 +79,7 @@
   <SS_HostileSpottedMote>Hostile spotted!</SS_HostileSpottedMote>
   <SS_None>None</SS_None>
   <SS_ReportInPerson>Report in person</SS_ReportInPerson>
-  <SS_ReportViaRadio>Report via radio</SS_ReportViaRadio>
+  <SS_ReportViaRadio>Report via walkie</SS_ReportViaRadio>
   <SS_ReportViaButton>Report via button</SS_ReportViaButton>
   <SS_ReportDoNotReport>Do not report</SS_ReportDoNotReport>
   <SS_ThreatReportReactionDesc>Threat report reaction: {0}</SS_ThreatReportReactionDesc>

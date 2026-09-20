@@ -10,6 +10,7 @@ namespace SurveillanceShift
         public static ThingDef SS_Mote_PingFriendly;
         public static ThingDef SS_Mote_Binoculars;
         public static SoundDef SS_Sound_Alarm;
+        public static SoundDef SS_Sound_SignalHorn;
         public static SoundDef SS_Sound_LoudspeakerHostile;
         public static SoundDef SS_Sound_LoudspeakerNeutral;
         public static SoundDef SS_Sound_PingHostile;

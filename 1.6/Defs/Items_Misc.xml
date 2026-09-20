@@ -4,17 +4,17 @@
 
 	<OrderedTakeGroupDef>
 		<defName>SS_RemoteSurveillanceDevice</defName>
-		<label>remote surveillance device</label>
+		<label>remote surveillance tablet</label>
 		<max>1</max>
 	</OrderedTakeGroupDef>
 
 	<ThingDef ParentName="ResourceBase">
 		<defName>SS_RemoteSurveillanceDevice</defName>
-		<label>remote surveillance device</label>
+		<label>remote surveillance tablet</label>
 		<researchPrerequisites>
 			<li>SS_RemoteSurveillance</li>
 		</researchPrerequisites>
-		<description>A miniaturised computing device with a touch screen and wireless connectivity. Useful for watching video feeds on the go.</description>
+		<description>A small touchscreen data streaming tablet with wireless fucntionality. Requires a linked router to permit network surveillance.</description>
 		<graphicData>
 			<texPath>Things/Item/Special/RemoteSurveillanceDevice</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -53,7 +53,7 @@
 		<researchPrerequisites>
 			<li>SS_WalkieTalkies</li>
 		</researchPrerequisites>
-		<description>A small, portable device that allows radio-communications at short to moderate range.</description>
+		<description>A small, portable radio that permits important communication between colonists at notable distances.</description>
 		<graphicData>
 			<texPath>Things/Item/Special/WalkieTalkie</texPath>
 			<graphicClass>Graphic_Single</graphicClass>

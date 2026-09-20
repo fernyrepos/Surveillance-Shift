@@ -37,7 +37,7 @@ namespace SurveillanceShift
         {
             if (CanBlowNow is false) return;
             lastBlownTick = Find.TickManager.TicksGame;
-            SoundDefOf.PsychicPulseGlobal.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
+            DefsOf.SS_Sound_SignalHorn.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
             var letter = LetterMaker.MakeLetter("SS_SignalHornLetterLabel".Translate(), "SS_SignalHornLetterText".Translate(pawn.LabelShort), LetterDefOf.ThreatBig, new LookTargets(pawn));
             State.ReceiveLetterUnmuted(letter);
         }

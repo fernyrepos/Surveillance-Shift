@@ -79,4 +79,21 @@
       </li>
     </subSounds>
   </SoundDef>
+
+  <SoundDef>
+    <defName>SS_Sound_SignalHorn</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>SurveillanceShift/SignalHorn</clipPath>
+          </li>
+        </grains>
+        <volumeRange>70~70</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
 </Defs>
