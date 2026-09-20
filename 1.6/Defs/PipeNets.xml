@@ -27,7 +27,7 @@
 		<thingClass>PipeSystem.Building_Pipe</thingClass>
 		<drawStyleCategory>Conduits</drawStyleCategory>
 		<graphicData>
-			<texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
+			<texPath>Things/Building/Linked/VideoCable_Atlas</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 			<linkType>Basic</linkType>
 			<linkFlags>

@@ -339,7 +339,7 @@
 		<graphicData>
 			<texPath>Things/Building/AlarmTrigger/AlarmTrigger</texPath>
 			<graphicClass>Graphic_Multi</graphicClass>
-			<drawSize>(1,1)</drawSize>
+			<drawSize>(1.4,1.4)</drawSize>
 		</graphicData>
 		<altitudeLayer>BuildingOnTop</altitudeLayer>
 		<passability>Standable</passability>
