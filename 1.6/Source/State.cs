@@ -115,6 +115,7 @@ namespace SurveillanceShift
             cachedMap = null;
             cachedComp = null;
             ClearActiveFeed();
+            BinocularView.Clear();
             pendingFactionDebts.Clear();
             retaliationMultipliers.Clear();
             factionKnownWealth.Clear();

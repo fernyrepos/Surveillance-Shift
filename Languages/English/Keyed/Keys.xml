@@ -86,4 +86,10 @@
   <SS_NoAlarmTriggerFound>{0} could not find an operational alarm trigger to push.</SS_NoAlarmTriggerFound>
   <SS_Name>Name</SS_Name>
   <SS_AlreadyLinkedToTablet>Already linked to an existing tablet</SS_AlreadyLinkedToTablet>
+  <SS_UseBinoculars>Use binoculars</SS_UseBinoculars>
+  <SS_UseBinocularsDesc>Raise the binoculars and scan the distance. The camera is freed to roam the map at any range, but you will only see a small circle around it, and only where this pawn has a clear line of sight.</SS_UseBinocularsDesc>
+  <SS_StopUsingBinoculars>Lower binoculars</SS_StopUsingBinoculars>
+  <SS_StopUsingBinocularsDesc>Stop looking through the binoculars and return to normal view.</SS_StopUsingBinocularsDesc>
+  <SS_BinocularsUnusable>Cannot use binoculars right now.</SS_BinocularsUnusable>
+  <SS_BinocularsNeedsLimitedAwareness>Binoculars only do something under limited awareness.</SS_BinocularsNeedsLimitedAwareness>
 </LanguageData>

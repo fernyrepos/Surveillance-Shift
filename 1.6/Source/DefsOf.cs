@@ -20,6 +20,7 @@ namespace SurveillanceShift
         public static JobDef SS_ViewCameraFeeds;
         public static JobDef SS_ManWatchtower;
         public static JobDef SS_MonitorRemoteDevice;
+        public static JobDef SS_UseBinoculars;
         public static JobDef SS_LinkDeviceToRouter;
         public static JobDef SS_PushAlarmTrigger;
         public static JobDef SS_ResetAlarmTrigger;

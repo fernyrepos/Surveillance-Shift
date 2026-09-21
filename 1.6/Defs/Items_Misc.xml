@@ -149,4 +149,52 @@
 		</comps>
 	</ThingDef>
 
+	<OrderedTakeGroupDef>
+		<defName>SS_Binoculars</defName>
+		<label>binoculars</label>
+		<max>1</max>
+	</OrderedTakeGroupDef>
+
+	<ThingDef ParentName="ResourceBase">
+		<defName>SS_Binoculars</defName>
+		<label>binoculars</label>
+		<description>A pair of prismatic field glasses. Held to the eye, they let the user pick out fine detail at great distance, though only across a narrow slice of the horizon - and never through a wall.</description>
+		<graphicData>
+			<texPath>Things/Mote/Binoculars/Binoculars_south</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>0.8</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToMake>1500</WorkToMake>
+			<MarketValue>180</MarketValue>
+			<MaxHitPoints>60</MaxHitPoints>
+			<Mass>0.6</Mass>
+			<Flammability>0.5</Flammability>
+			<DeteriorationRate>4</DeteriorationRate>
+		</statBases>
+		<costList>
+			<Steel>25</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+		</costList>
+		<recipeMaker>
+			<recipeUsers>
+				<li>FabricationBench</li>
+			</recipeUsers>
+			<displayPriority>311</displayPriority>
+		</recipeMaker>
+		<tickerType>Rare</tickerType>
+		<techLevel>Industrial</techLevel>
+		<stackLimit>1</stackLimit>
+		<soundInteract>Standard_Drop</soundInteract>
+		<soundDrop>Standard_Drop</soundDrop>
+		<thingCategories>
+			<li>Manufactured</li>
+		</thingCategories>
+		<tradeability>Sellable</tradeability>
+		<orderedTakeGroup>SS_Binoculars</orderedTakeGroup>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_Binoculars" />
+		</comps>
+	</ThingDef>
+
 </Defs>

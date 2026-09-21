@@ -71,4 +71,12 @@
 		<casualInterruptible>false</casualInterruptible>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_UseBinoculars</defName>
+		<driverClass>SurveillanceShift.JobDriver_UseBinoculars</driverClass>
+		<reportString>looking through binoculars.</reportString>
+		<playerInterruptible>false</playerInterruptible>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
 </Defs>

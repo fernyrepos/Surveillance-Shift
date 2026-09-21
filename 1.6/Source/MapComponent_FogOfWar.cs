@@ -126,6 +126,8 @@ namespace SurveillanceShift
             Pawn_DrawGUIOverlay_Patch.RenderQueued();
             if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected) return;
 
+            RefreshBinocularOverlay();
+
             if (SoftFogRenderer.Enabled)
             {
                 SoftFog.Draw();
@@ -263,8 +265,19 @@ namespace SurveillanceShift
                     }
                 }
 
+                BinocularView.ApplyFieldOfView(map, visibleCells);
+
                 ApplyFog();
             }
+        }
+
+        public void RefreshBinocularOverlay()
+        {
+            if (BinocularView.ScopeMoved(map) is false) return;
+            if (visibleCells.Length != map.cellIndices.NumGridCells) return;
+            BinocularView.ApplyFieldOfView(map, visibleCells);
+            firstPass = true;
+            ApplyFog();
         }
 
         private void ApplyFog()

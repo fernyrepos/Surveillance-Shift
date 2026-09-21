@@ -24,6 +24,12 @@ namespace SurveillanceShift
                     var hornGizmo = horn.GetGizmo(pawn);
                     if (hornGizmo != null) yield return hornGizmo;
                 }
+                var binoculars = twc.GetComp<CompBinoculars>();
+                if (binoculars != null)
+                {
+                    var binocularGizmo = binoculars.GetGizmo(pawn);
+                    if (binocularGizmo != null) yield return binocularGizmo;
+                }
                 var device = twc.GetComp<CompRemoteSurveillanceDevice>();
                 if (device != null)
                 {
