@@ -325,7 +325,7 @@
 
 	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_AlarmTrigger</defName>
-		<label>alarm trigger</label>
+		<label>alert button</label>
 		<researchPrerequisites>
 			<li>SS_Loudspeaker</li>
 		</researchPrerequisites>

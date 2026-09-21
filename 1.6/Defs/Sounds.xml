@@ -96,4 +96,21 @@
       </li>
     </subSounds>
   </SoundDef>
+
+  <SoundDef>
+    <defName>SS_Sound_LoudspeakerSiren</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <onCamera>True</onCamera>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>SurveillanceShift/AlarmSiren</clipPath>
+          </li>
+        </grains>
+        <volumeRange>60~60</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
 </Defs>

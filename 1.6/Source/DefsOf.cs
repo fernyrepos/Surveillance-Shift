@@ -12,6 +12,7 @@ namespace SurveillanceShift
         public static SoundDef SS_Sound_Alarm;
         public static SoundDef SS_Sound_SignalHorn;
         public static SoundDef SS_Sound_LoudspeakerHostile;
+        public static SoundDef SS_Sound_LoudspeakerSiren;
         public static SoundDef SS_Sound_LoudspeakerNeutral;
         public static SoundDef SS_Sound_PingHostile;
         public static SoundDef SS_Sound_PingFriendly;

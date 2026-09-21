@@ -68,7 +68,7 @@ namespace SurveillanceShift
                 {
                     if (speaker.IsPowered)
                     {
-                        speaker.Alert(true);
+                        speaker.Alert(true, true);
                     }
                 }
                 else

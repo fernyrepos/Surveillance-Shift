@@ -17,12 +17,12 @@ namespace SurveillanceShift
             powerComp = GetComp<CompPowerTrader>();
         }
 
-        public void Alert(bool isHostile)
+        public void Alert(bool isHostile, bool siren = false)
         {
             if (IsPowered is false) return;
             if (isHostile)
             {
-                DefsOf.SS_Sound_LoudspeakerHostile.PlayOneShotOnCamera(Map);
+                (siren ? DefsOf.SS_Sound_LoudspeakerSiren : DefsOf.SS_Sound_LoudspeakerHostile).PlayOneShotOnCamera(Map);
                 foreach (var colonist in Map.mapPawns.FreeColonistsSpawned.ToList())
                 {
                     if (colonist.Awake() is false)
