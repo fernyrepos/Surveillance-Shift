@@ -27,6 +27,7 @@ namespace SurveillanceShift
                 defaultLabel = "SS_BlowSignalHorn".Translate(),
                 defaultDesc = "SS_BlowSignalHornDesc".Translate(),
                 icon = parent.def.uiIcon,
+                defaultIconColor = parent.DrawColor,
                 disabled = CanBlowNow is false,
                 disabledReason = "SS_SignalHornCooldown".Translate(),
                 action = () => Blow(pawn)

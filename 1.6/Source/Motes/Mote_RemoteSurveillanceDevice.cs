@@ -13,17 +13,28 @@ namespace SurveillanceShift
             {
                 Rotation = p.Rotation;
                 exactRotation = p.Rotation.AsAngle;
-                var pos = p.DrawPos + p.Rotation.FacingCell.ToVector3() * 0.5f;
-                yOffset = p.Rotation == Rot4.North ? -5f : 0;
+                Vector3 offset;
                 if (p.Rotation == Rot4.North)
                 {
-                    pos.z += 0.20f;
+                    offset = new Vector3(0f, 0f, 0.65f);
+                    yOffset = -5f;
+                }
+                else if (p.Rotation == Rot4.South)
+                {
+                    offset = new Vector3(0f, 0f, -0.22f);
+                    yOffset = 0f;
+                }
+                else if (p.Rotation == Rot4.East)
+                {
+                    offset = new Vector3(0.4f, 0f, -0.05f);
+                    yOffset = 0f;
                 }
                 else
                 {
-                    pos.z -= 0.20f;
+                    offset = new Vector3(-0.4f, 0f, -0.05f);
+                    yOffset = 0f;
                 }
-                exactPosition = pos;
+                exactPosition = p.DrawPos + offset;
             }
         }
     }

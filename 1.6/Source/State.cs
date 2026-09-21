@@ -247,7 +247,7 @@ namespace SurveillanceShift
         public static void CheckForThreatsAndReact(Pawn pawn, ColonistSurveillanceData data)
         {
             data.UpdateWalkieStatus(pawn);
-            if (AlertsActive is false || data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
+            if (IsLimitedAwareness is false || AlertsActive is false || data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
             var map = pawn.Map;
             var hostile = FindHostile(pawn, map, surveying: true);
             if (hostile == null) return;
@@ -257,7 +257,7 @@ namespace SurveillanceShift
 
         public static Job TryGetReactionJob(Pawn pawn, ColonistSurveillanceData data)
         {
-            if (AlertsActive is false || data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return null;
+            if (IsLimitedAwareness is false || AlertsActive is false || data.reportReaction == ThreatReportReaction.DoNotReport || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return null;
             var map = pawn.Map;
             var hostile = FindHostile(pawn, map, surveying: false);
             return hostile == null ? null : GetReactionJob(pawn, data, hostile);
@@ -318,7 +318,7 @@ namespace SurveillanceShift
             Pawn hostile = null;
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
-                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && pawn.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, p.Position, map, skipFirstCell: true))
+                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && p.Position.Fogged(map) is false && pawn.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, p.Position, map, skipFirstCell: true))
                 {
                     hostile = p;
                     break;
@@ -341,7 +341,7 @@ namespace SurveillanceShift
 
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
-                if (target.Thing is Pawn hostile && hostile.Spawned && hostile.Dead is false && hostile.Downed is false)
+                if (target.Thing is Pawn hostile && hostile.Spawned && hostile.Dead is false && hostile.Downed is false && hostile.Position.Fogged(map) is false)
                 {
                     if (watchtower != null)
                     {

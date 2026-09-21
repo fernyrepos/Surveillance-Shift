@@ -34,7 +34,7 @@ namespace SurveillanceShift
 
         public Gizmo GetGizmo(Pawn pawn)
         {
-            if (pawn.Spawned is false || pawn.Faction != Faction.OfPlayer) return null;
+            if (State.IsLimitedAwareness is false || pawn.Spawned is false || pawn.Faction != Faction.OfPlayer) return null;
             var avatar = pawn == ModCompatibility.GetPerspectiveShiftAvatar();
             string disabledReason = null;
             if (linkedRouter is null) disabledReason = "SS_DeviceNotLinked".Translate();

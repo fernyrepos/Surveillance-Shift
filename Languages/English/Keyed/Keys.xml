@@ -85,4 +85,5 @@
   <SS_ThreatReportReactionDesc>Threat report reaction: {0}</SS_ThreatReportReactionDesc>
   <SS_NoAlarmTriggerFound>{0} could not find an operational alarm trigger to push.</SS_NoAlarmTriggerFound>
   <SS_Name>Name</SS_Name>
+  <SS_AlreadyLinkedToTablet>Already linked to an existing tablet</SS_AlreadyLinkedToTablet>
 </LanguageData>

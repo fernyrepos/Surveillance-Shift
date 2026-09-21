@@ -8,7 +8,7 @@ namespace SurveillanceShift
     {
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
-            if (pawn == ModCompatibility.GetPerspectiveShiftAvatar() || pawn.Faction != Faction.OfPlayer) return true;
+            if (State.IsLimitedAwareness is false || pawn == ModCompatibility.GetPerspectiveShiftAvatar() || pawn.Faction != Faction.OfPlayer) return true;
             var router = CompRemoteSurveillanceDevice.FindLinkedRouter(pawn);
             return router is null || router.IsActive is false || router.HasCameras is false;
         }

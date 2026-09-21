@@ -39,10 +39,14 @@ namespace SurveillanceShift
                 yield return opt;
             }
 
-            if (linkedDevice != null) yield break;
+            if (State.IsLimitedAwareness is false) yield break;
             var device = CompRemoteSurveillanceDevice.FindDevice(myPawn);
             if (device is null) yield break;
-            if (myPawn.CanReach(this, PathEndMode.Touch, Danger.Some) is false)
+            if (linkedDevice != null && linkedDevice != device)
+            {
+                yield return new FloatMenuOption("SS_AlreadyLinkedToTablet".Translate(), null);
+            }
+            else if (myPawn.CanReach(this, PathEndMode.Touch, Danger.Some) is false)
             {
                 yield return new FloatMenuOption("CannotUseNoPath".Translate(), null);
             }

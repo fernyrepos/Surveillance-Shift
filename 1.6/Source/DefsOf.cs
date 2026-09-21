@@ -22,12 +22,14 @@ namespace SurveillanceShift
         public static JobDef SS_MonitorRemoteDevice;
         public static JobDef SS_LinkDeviceToRouter;
         public static JobDef SS_PushAlarmTrigger;
+        public static JobDef SS_ResetAlarmTrigger;
         public static JobDef SS_AnimalReportThreat;
         public static JobDef SS_ReportThreatInPerson;
         public static JobDef SS_NegotiateWithScout;
         public static IncidentDef SS_FriendlyScouts;
         public static IncidentDef SS_EnemyScouts;
         public static ThingDef SS_SurveillanceStation;
+        public static ThingDef SS_AlarmTrigger;
         public static ThingDef SS_Mote_RemoteSurveillanceDevice;
         public static ThingDef SS_WalkieTalkie;
         [MayRequire("dubwise.dubsmintminimap")]

@@ -20,8 +20,7 @@ namespace SurveillanceShift
         private bool alarmActive;
         private List<Thing> linkedTargets = new();
         private Dictionary<int, ColorInt> originalLightColors = new();
-
-        public List<Thing> LinkedTargets => linkedTargets;
+        public int LastTriggeredTick => lastTriggeredTick;
         public bool CanTriggerNow => powerComp.PowerOn && Map.gameConditionManager.ElectricityDisabled(Map) is false;
         public bool AlarmActive => alarmActive;
 
@@ -162,7 +161,8 @@ namespace SurveillanceShift
                 var label = alarmActive ? "SS_ResetAlarm".Translate() : "SS_PushAlarm".Translate();
                 yield return new FloatMenuOption(label, () =>
                 {
-                    var job = JobMaker.MakeJob(DefsOf.SS_PushAlarmTrigger, this);
+                    var jobDef = alarmActive ? DefsOf.SS_ResetAlarmTrigger : DefsOf.SS_PushAlarmTrigger;
+                    var job = JobMaker.MakeJob(jobDef, this);
                     myPawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
                 });
             }

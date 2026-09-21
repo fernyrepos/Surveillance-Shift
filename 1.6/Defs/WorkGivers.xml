@@ -44,4 +44,17 @@
 		<canBeDoneByMechs>false</canBeDoneByMechs>
 	</WorkGiverDef>
 
+	<WorkGiverDef>
+		<defName>SS_ResetAlarmTrigger</defName>
+		<label>reset alarm trigger</label>
+		<giverClass>SurveillanceShift.WorkGiver_ResetAlarmTrigger</giverClass>
+		<workType>BasicWorker</workType>
+		<priorityInType>50</priorityInType>
+		<verb>reset</verb>
+		<gerund>resetting</gerund>
+		<requiredCapacities>
+			<li>Manipulation</li>
+		</requiredCapacities>
+	</WorkGiverDef>
+
 </Defs>

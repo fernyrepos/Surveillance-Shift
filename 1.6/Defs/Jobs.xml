@@ -64,4 +64,11 @@
 		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_ResetAlarmTrigger</defName>
+		<driverClass>SurveillanceShift.JobDriver_ResetAlarmTrigger</driverClass>
+		<reportString>resetting alarm trigger.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
 </Defs>
