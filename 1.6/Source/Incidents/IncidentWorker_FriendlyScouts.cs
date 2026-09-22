@@ -11,7 +11,7 @@ namespace SurveillanceShift
         private const int MinScouts = 1;
         private const int MaxScouts = 3;
 
-        public override bool CanFireNowSub(IncidentParms parms) => SurveillanceShiftMod.settings.enableScouts && State.IsLimitedAwareness && base.CanFireNowSub(parms) && CandidateFactions().Any();
+        public override bool CanFireNowSub(IncidentParms parms) => SurveillanceShiftMod.settings.enableScouts && State.IsLimitedAwareness && Faction.OfPlayer.def.techLevel != TechLevel.Animal && base.CanFireNowSub(parms) && CandidateFactions().Any();
 
         private static IEnumerable<Faction> CandidateFactions() =>
             Find.FactionManager.AllFactions.Where(f => f.IsPlayer is false && f.defeated is false && f.Hidden is false && f.HostileTo(Faction.OfPlayer) is false && f.temporary is false && f.def.humanlikeFaction);
