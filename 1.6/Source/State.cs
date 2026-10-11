@@ -38,8 +38,6 @@ namespace SurveillanceShift
             return pawn.health.capacities.GetLevel(PawnCapacityDefOf.Sight);
         }
 
-        public static readonly bool GuardingPawnsActive = LoadedModManager.RunningMods.Any(m => m.PackageIdPlayerFacing == "Thek.GuardingP");
-
         private static Map cachedMap;
         private static MapComponent_FogOfWar cachedComp;
 
@@ -115,7 +113,7 @@ namespace SurveillanceShift
             cachedMap = null;
             cachedComp = null;
             ClearActiveFeed();
-            BinocularView.Clear();
+            ScopeView.Clear();
             pendingFactionDebts.Clear();
             retaliationMultipliers.Clear();
             factionKnownWealth.Clear();
@@ -311,11 +309,11 @@ namespace SurveillanceShift
             return job;
         }
 
-        public static Job TryGetAnimalReactionJob(Pawn pawn, AnimalSurveillanceData data)
+        public static Job TryGetAnimalReactionJob(Pawn pawn, AnimalSurveillanceData data, float minRadius = 0f)
         {
             if (AlertsActive is false) return null;
             var map = pawn.Map;
-            var sightRadius = SightRadius(pawn);
+            var sightRadius = Mathf.Max(SightRadius(pawn), minRadius);
             Pawn hostile = null;
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
@@ -326,14 +324,34 @@ namespace SurveillanceShift
                 }
             }
             if (hostile == null) return null;
-            data.lastThreatReportTick = Find.TickManager.TicksGame;
-            SpawnPing(hostile.Position, map, true);
             if (data.alertResponse == AnimalAlertResponse.ReportToHandler)
             {
-                var master = pawn.playerSettings.Master;
-                return master != null && master.Spawned && master.Map == pawn.Map ? JobMaker.MakeJob(DefsOf.SS_AnimalReportThreat, master, hostile) : null;
+                var recipient = ReportRecipient(pawn);
+                if (recipient == null) return null;
+                data.lastThreatReportTick = Find.TickManager.TicksGame;
+                return JobMaker.MakeJob(DefsOf.SS_AnimalReportThreat, recipient, hostile);
             }
-            return GetButtonReactionJob(pawn);
+            data.lastThreatReportTick = Find.TickManager.TicksGame;
+            var alarmJob = GetButtonReactionJob(pawn);
+            if (alarmJob != null) alarmJob.targetB = hostile;
+            return alarmJob;
+        }
+
+        private static Pawn ReportRecipient(Pawn animal)
+        {
+            var master = animal.playerSettings?.Master;
+            if (master != null && master.Spawned && master.Map == animal.Map && master.Downed is false && animal.CanReach(master, PathEndMode.Touch, Danger.Deadly)) return master;
+            Pawn best = null;
+            var bestDistance = int.MaxValue;
+            foreach (var colonist in animal.Map.mapPawns.FreeColonistsSpawned)
+            {
+                if (colonist.Downed || colonist.InMentalState) continue;
+                var distance = animal.Position.DistanceToSquared(colonist.Position);
+                if (distance >= bestDistance || animal.CanReach(colonist, PathEndMode.Touch, Danger.Deadly) is false) continue;
+                best = colonist;
+                bestDistance = distance;
+            }
+            return best;
         }
 
         private static Pawn FindHostile(Pawn pawn, Map map, bool surveying)

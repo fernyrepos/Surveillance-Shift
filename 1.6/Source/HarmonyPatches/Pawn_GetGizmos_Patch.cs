@@ -15,35 +15,21 @@ namespace SurveillanceShift
                 yield return gizmo;
             }
 
-            if (__instance.Faction == Faction.OfPlayer && __instance.RaceProps.Animal && State.GuardingPawnsActive && __instance.training.HasLearned(DefsOf.SS_KeepWatch))
-            {
-                var data = __instance.GetSurveillanceData();
-                yield return new Command_Toggle
-                {
-                    defaultLabel = "SS_EnablePatrol".Translate(),
-                    defaultDesc = "SS_EnablePatrolDesc".Translate(),
-                    icon = DefsOf.SS_KeepWatch.Icon,
-                    isActive = () => data.patrolEnabled,
-                    toggleAction = () => data.patrolEnabled = data.patrolEnabled is false
-                };
+            if (__instance.Faction != Faction.OfPlayer || __instance.Spawned is false || __instance.RaceProps.Animal is false || __instance.CanGuard() is false) yield break;
 
-                yield return new Command_Action
+            var assignment = __instance.GetGuardAssignment();
+            yield return new Command_Toggle
+            {
+                defaultLabel = "SS_KeepWatch".Translate(),
+                defaultDesc = "SS_KeepWatchDesc".Translate(),
+                icon = GuardTextures.AnimalWatch,
+                isActive = () => assignment.keepWatch,
+                toggleAction = () =>
                 {
-                    defaultLabel = "SS_AlertResponse".Translate(("SS_" + data.alertResponse.ToString()).Translate()),
-                    defaultDesc = "SS_AlertResponseDesc".Translate(),
-                    icon = DefsOf.SS_KeepWatch.Icon,
-                    action = () =>
-                    {
-                        var options = new List<FloatMenuOption>
-                        {
-                            new FloatMenuOption("SS_None".Translate(), () => data.alertResponse = AnimalAlertResponse.None),
-                            new FloatMenuOption("SS_ReportToHandler".Translate(), () => data.alertResponse = AnimalAlertResponse.ReportToHandler),
-                            new FloatMenuOption("SS_UseAlarmTrigger".Translate(), () => data.alertResponse = AnimalAlertResponse.UseAlarmTrigger)
-                        };
-                        Find.WindowStack.Add(new FloatMenu(options));
-                    }
-                };
-            }
+                    assignment.keepWatch = assignment.keepWatch is false;
+                    if (assignment.keepWatch && assignment.IsActive is false) GuardMenus.OpenDutyMenu(__instance);
+                }
+            };
         }
     }
 }

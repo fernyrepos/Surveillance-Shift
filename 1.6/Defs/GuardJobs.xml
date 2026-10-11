@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<JobDef>
+		<defName>SS_GuardPostDuty</defName>
+		<driverClass>SurveillanceShift.JobDriver_GuardPostDuty</driverClass>
+		<reportString>standing guard.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
+	<JobDef>
+		<defName>SS_PatrolDuty</defName>
+		<driverClass>SurveillanceShift.JobDriver_PatrolDuty</driverClass>
+		<reportString>patrolling.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
+	<JobDef>
+		<defName>SS_BodyguardDuty</defName>
+		<driverClass>SurveillanceShift.JobDriver_BodyguardDuty</driverClass>
+		<reportString>guarding TargetA.</reportString>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
+	<JobDef>
+		<defName>SS_GuardEngage</defName>
+		<driverClass>SurveillanceShift.JobDriver_GuardEngage</driverClass>
+		<reportString>engaging TargetA.</reportString>
+		<alwaysShowWeapon>true</alwaysShowWeapon>
+		<neverShowWeapon>false</neverShowWeapon>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+
+</Defs>

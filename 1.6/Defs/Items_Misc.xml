@@ -90,6 +90,29 @@
 		<orderedTakeGroup>SS_WalkieTalkie</orderedTakeGroup>
 	</ThingDef>
 
+	<ThingDef ParentName="ResourceBase">
+		<defName>SS_AnimalHorn</defName>
+		<label>horn</label>
+		<description>A hollow keratin horn taken from an animal. It can be shaped into a primitive signaling instrument.</description>
+		<graphicData>
+			<texPath>Things/Item/Equipment/WeaponMelee/SignalHorn</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>0.65</drawSize>
+		</graphicData>
+		<statBases>
+			<MarketValue>12</MarketValue>
+			<MaxHitPoints>50</MaxHitPoints>
+			<Mass>0.25</Mass>
+			<Flammability>0.5</Flammability>
+			<DeteriorationRate>2</DeteriorationRate>
+		</statBases>
+		<stackLimit>25</stackLimit>
+		<thingCategories>
+			<li>Manufactured</li>
+		</thingCategories>
+		<tradeability>Sellable</tradeability>
+	</ThingDef>
+
 	<ThingDef ParentName="BaseMeleeWeapon_Blunt">
 		<defName>SS_SignalHorn</defName>
 		<label>signal horn</label>
@@ -106,12 +129,9 @@
 		</statBases>
 		<tickerType>Rare</tickerType>
 		<techLevel>Neolithic</techLevel>
-		<costStuffCount>40</costStuffCount>
-		<stuffCategories>
-			<li>Metallic</li>
-			<li>Woody</li>
-			<li>Stony</li>
-		</stuffCategories>
+		<costList>
+			<SS_AnimalHorn>1</SS_AnimalHorn>
+		</costList>
 		<recipeMaker>
 			<recipeUsers>
 				<li>CraftingSpot</li>
@@ -158,7 +178,7 @@
 	<ThingDef ParentName="ResourceBase">
 		<defName>SS_Binoculars</defName>
 		<label>binoculars</label>
-		<description>A pair of prismatic field glasses. Held to the eye, they let the user pick out fine detail at great distance, though only across a narrow slice of the horizon - and never through a wall.</description>
+		<description>A pair of prismatic field glasses. Held to the eye, they let the user pick out fine detail at great distance through its two lenses.</description>
 		<graphicData>
 			<texPath>Things/Mote/Binoculars/Binoculars_south</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -181,6 +201,7 @@
 				<li>FabricationBench</li>
 			</recipeUsers>
 			<displayPriority>311</displayPriority>
+			<researchPrerequisite>SS_Binoculars</researchPrerequisite>
 		</recipeMaker>
 		<tickerType>Rare</tickerType>
 		<techLevel>Industrial</techLevel>
@@ -194,6 +215,55 @@
 		<orderedTakeGroup>SS_Binoculars</orderedTakeGroup>
 		<comps>
 			<li Class="SurveillanceShift.CompProperties_Binoculars" />
+		</comps>
+	</ThingDef>
+
+	<OrderedTakeGroupDef>
+		<defName>SS_Telescope</defName>
+		<label>spyglass</label>
+		<max>1</max>
+	</OrderedTakeGroupDef>
+
+	<ThingDef ParentName="ResourceBase">
+		<defName>SS_Telescope</defName>
+		<label>spyglass</label>
+		<description>A single-tube optic on a steadying grip. Its narrow, deeply magnified view allows a user to see far distances.</description>
+		<graphicData>
+			<texPath>Things/Mote/Spyglass/Spyglass_east</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>0.8</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToMake>1500</WorkToMake>
+			<MarketValue>180</MarketValue>
+			<MaxHitPoints>60</MaxHitPoints>
+			<Mass>0.6</Mass>
+			<Flammability>0.5</Flammability>
+			<DeteriorationRate>4</DeteriorationRate>
+		</statBases>
+		<costList>
+			<Steel>25</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+		</costList>
+		<recipeMaker>
+			<recipeUsers>
+				<li>FabricationBench</li>
+			</recipeUsers>
+			<displayPriority>312</displayPriority>
+			<researchPrerequisite>SS_Spyglass</researchPrerequisite>
+		</recipeMaker>
+		<tickerType>Rare</tickerType>
+		<techLevel>Industrial</techLevel>
+		<stackLimit>1</stackLimit>
+		<soundInteract>Standard_Drop</soundInteract>
+		<soundDrop>Standard_Drop</soundDrop>
+		<thingCategories>
+			<li>Manufactured</li>
+		</thingCategories>
+		<tradeability>Sellable</tradeability>
+		<orderedTakeGroup>SS_Telescope</orderedTakeGroup>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_Telescope" />
 		</comps>
 	</ThingDef>
 

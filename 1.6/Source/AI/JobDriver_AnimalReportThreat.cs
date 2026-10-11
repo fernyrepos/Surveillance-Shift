@@ -19,9 +19,9 @@ namespace SurveillanceShift
             report.initAction = () =>
             {
                 MoteMaker.ThrowText(pawn.DrawPos, pawn.Map, "SS_HostileSpottedMote".Translate());
-                DefsOf.SS_Sound_PingHostile.PlayOneShotOnCamera(pawn.Map);
                 var hostile = job.targetB.Thing as Pawn;
-                var letterText = "SS_HostileSpottedDesc".Translate(pawn.LabelShort, hostile.LabelShort);
+                State.SpawnPing(hostile.Position, pawn.Map, true);
+                var letterText = "SS_HostileSpottedInPersonDesc".Translate(pawn.LabelShort, hostile.LabelShort);
                 State.ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), letterText, LetterDefOf.ThreatSmall, new LookTargets(hostile)));
             };
             yield return report;

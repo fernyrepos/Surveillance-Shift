@@ -156,6 +156,9 @@
 		</researchPrerequisites>
 		<description>A robust set of monitors for viewing live feeds from surveillance cameras on a video cable network.</description>
 		<thingClass>SurveillanceShift.Building_SurveillanceStation</thingClass>
+		<inspectorTabs>
+			<li>SurveillanceShift.ITab_Priority</li>
+		</inspectorTabs>
 		<thingCategories>
 			<li>BuildingsMisc</li>
 		</thingCategories>
@@ -259,6 +262,9 @@
 		</researchPrerequisites>
 		<description>An elevated structure used for large-range surveillance of the surrounding area.</description>
 		<thingClass>SurveillanceShift.Building_Watchtower</thingClass>
+		<inspectorTabs>
+			<li>SurveillanceShift.ITab_Priority</li>
+		</inspectorTabs>
 		<size>(4,4)</size>
 		<rotatable>false</rotatable>
 		<graphicData>

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
@@ -10,6 +12,8 @@ namespace SurveillanceShift
     {
         public static readonly bool PerspectiveShiftAvailable;
         public static readonly bool CAIAvailable;
+
+        private static readonly HashSet<ThingDef> SeeThroughWallDefs = new();
 
         private static FieldInfo psStateAvatarField;
         private static FieldInfo psStateCameraLockPositionField;
@@ -51,6 +55,39 @@ namespace SurveillanceShift
 
                 DisableCAIFog(caiSettingsField.GetValue(null));
             }
+        }
+
+        private static bool seeThroughBuilt;
+
+        private static void BuildSeeThroughWallDefs()
+        {
+            var rebuildGlassCompType = AccessTools.TypeByName("ReBuildDoorsAndCorners.CompProperties_GlassWall");
+            var stevesWallsExtType = AccessTools.TypeByName("StevesWalls.GlassWallsExtension");
+            if (rebuildGlassCompType == null && stevesWallsExtType == null) return;
+
+            foreach (var def in DefDatabase<ThingDef>.AllDefsListForReading)
+            {
+                if (rebuildGlassCompType != null && def.comps != null && def.comps.Exists(c => rebuildGlassCompType.IsInstanceOfType(c)))
+                {
+                    SeeThroughWallDefs.Add(def);
+                    continue;
+                }
+                if (stevesWallsExtType != null && def.modExtensions != null && def.modExtensions.Exists(e => stevesWallsExtType.IsInstanceOfType(e)))
+                {
+                    SeeThroughWallDefs.Add(def);
+                }
+            }
+            Log.Message($"[SurveillanceShift] Found {SeeThroughWallDefs.Count} see-through wall defs: {string.Join(", ", SeeThroughWallDefs.Select(d => d.defName))}");
+        }
+
+        public static bool IsSeeThroughWall(Building ed)
+        {
+            if (seeThroughBuilt is false)
+            {
+                seeThroughBuilt = true;
+                BuildSeeThroughWallDefs();
+            }
+            return ed != null && SeeThroughWallDefs.Contains(ed.def);
         }
 
         public static void CAISettings_ExposeData_Postfix(object __instance)
@@ -110,6 +147,12 @@ namespace SurveillanceShift
         {
             if (PerspectiveShiftAvailable is false) return;
             psStateCameraLockPositionField.SetValue(null, pos);
+        }
+
+        public static bool HasPerspectiveShiftCameraLock()
+        {
+            if (PerspectiveShiftAvailable is false) return false;
+            return psStateCameraLockPositionField.GetValue(null) as Vector3? != null;
         }
 
         public static bool IsPerspectiveShiftAuthentic()

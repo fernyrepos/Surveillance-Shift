@@ -25,7 +25,7 @@ namespace SurveillanceShift
 
         private const int WorkerFrameMs = 8;
         private const int WorkerIdleMs = 40;
-        private const int RenderQueue = 3900;
+        private const int RenderQueue = 4300;
 
         private readonly Map map;
         private readonly int mapX;
@@ -70,7 +70,7 @@ namespace SurveillanceShift
             mapX = map.Size.x;
             mapZ = map.Size.z;
             cellCount = mapX * mapZ;
-            altitude = AltitudeLayer.Weather.AltitudeFor() + 0.05f;
+            altitude = AltitudeLayer.MapDataOverlay.AltitudeFor() + 0.05f;
 
             pending = new bool[cellCount];
             barriers = new bool[cellCount];
@@ -131,7 +131,7 @@ namespace SurveillanceShift
             for (var i = 0; i < cellCount; i++)
             {
                 var ed = edifices[i];
-                barrierScratch[i] = ed != null && ed.CanBeSeenOver() is false;
+                barrierScratch[i] = ed != null && ed.CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(ed) is false;
             }
 
             Array.Clear(hardScratch, 0, cellCount);

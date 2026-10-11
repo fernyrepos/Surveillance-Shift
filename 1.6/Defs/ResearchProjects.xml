@@ -91,4 +91,33 @@
 		<tab>SS_SurveillanceTab</tab>
 	</ResearchProjectDef>
 
+	<ResearchProjectDef>
+		<defName>SS_Spyglass</defName>
+		<label>spyglasses</label>
+		<description>Grind precision lenses and mount them in a single steadied tube, giving a lone observer a narrow but deeply magnified view.</description>
+		<baseCost>600</baseCost>
+		<techLevel>Medieval</techLevel>
+		<prerequisites>
+			<li>Smithing</li>
+		</prerequisites>
+		<researchViewX>1</researchViewX>
+		<researchViewY>5</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
+	<ResearchProjectDef>
+		<defName>SS_Binoculars</defName>
+		<label>binoculars</label>
+		<description>Pair matched prisms and lenses into field glasses that give a wide, comfortable view of distant ground.</description>
+		<baseCost>900</baseCost>
+		<techLevel>Industrial</techLevel>
+		<prerequisites>
+			<li>SS_Spyglass</li>
+			<li>Machining</li>
+		</prerequisites>
+		<researchViewX>3</researchViewX>
+		<researchViewY>5</researchViewY>
+		<tab>SS_SurveillanceTab</tab>
+	</ResearchProjectDef>
+
 </Defs>

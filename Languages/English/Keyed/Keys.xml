@@ -17,12 +17,17 @@
   <SS_ManWatchtower>Man watchtower</SS_ManWatchtower>
   <SS_WatchtowerManned>Sentry on duty</SS_WatchtowerManned>
   <SS_WatchtowerUnmanned>Unmanned</SS_WatchtowerUnmanned>
+  <SS_UseWalkie>Use walkie talkie</SS_UseWalkie>
+  <SS_UseWalkieDesc>Radio a colonist who is carrying a walkie talkie and see through their eyes. The camera follows them until you stop.</SS_UseWalkieDesc>
+  <SS_NoWalkieContacts>No other colonists are carrying a walkie talkie.</SS_NoWalkieContacts>
+  <SS_StopUsingWalkie>Stop using walkie</SS_StopUsingWalkie>
   <SS_StopViewing>Stop viewing</SS_StopViewing>
   <SS_BlowSignalHorn>Blow signal horn</SS_BlowSignalHorn>
   <SS_BlowSignalHornDesc>Blow the signal horn to alert the entire colony to danger.</SS_BlowSignalHornDesc>
   <SS_SignalHornCooldown>Resting</SS_SignalHornCooldown>
   <SS_SignalHornLetterLabel>Signal horn sounded</SS_SignalHornLetterLabel>
   <SS_SignalHornLetterText>{0} has sounded the signal horn!</SS_SignalHornLetterText>
+  <SS_TabPriority>Priority</SS_TabPriority>
   <SS_HostileSpotted>Hostile spotted</SS_HostileSpotted>
   <SS_HostileSpottedDesc>{0} has reported spotting a hostile ({1}) over the radio.</SS_HostileSpottedDesc>
   <SS_HostileSpottedInPersonDesc>{0} has reported spotting a hostile ({1}) in person.</SS_HostileSpottedInPersonDesc>
@@ -70,8 +75,58 @@
   <SS_RelationsIgnorePenalty>Relations hit on ignoring sharing information</SS_RelationsIgnorePenalty>
   <SS_RelationsTruthBoost>Relations boost on sharing information</SS_RelationsTruthBoost>
   <SS_FogViewDistance>View distance for fog of war</SS_FogViewDistance>
-  <SS_EnablePatrol>Enable patrol</SS_EnablePatrol>
-  <SS_EnablePatrolDesc>If enabled, this animal will wander between patrol spots.</SS_EnablePatrolDesc>
+  <SS_GuardDuty>Guard duty:\n{0}</SS_GuardDuty>
+  <SS_GuardDutyDesc>Assign this pawn to stand at a guard spot, walk a patrol route, or protect a colonist. Guards engage hostiles that come near their duty and return to it afterward.</SS_GuardDutyDesc>
+  <SS_GuardDutyTooltip>Guard duty: {0}\nClick to change where this pawn serves.</SS_GuardDutyTooltip>
+  <SS_ShowGuardPosts>Show guard spots</SS_ShowGuardPosts>
+  <SS_ShowPatrolWaypoints>Show patrol waypoints</SS_ShowPatrolWaypoints>
+  <SS_GuardStance>Behavior:\n{0}</SS_GuardStance>
+  <SS_DutyNone>No duty</SS_DutyNone>
+  <SS_DutyRoute>Patrol: {0}</SS_DutyRoute>
+  <SS_DutyBodyguard>Protecting {0}</SS_DutyBodyguard>
+  <SS_MenuPost>Guard spot: {0}</SS_MenuPost>
+  <SS_MenuPostTaken>Guard spot: {0} (held by {1})</SS_MenuPostTaken>
+  <SS_MenuRoute>Patrol: {0} ({1} stops)</SS_MenuRoute>
+  <SS_MenuBodyguard>Protect {0}</SS_MenuBodyguard>
+  <SS_StanceHold>Hold</SS_StanceHold>
+  <SS_StanceDefend>Defend</SS_StanceDefend>
+  <SS_StancePursue>Pursue</SS_StancePursue>
+  <SS_StanceHoldDesc>Stay close to the duty and only fight hostiles within {0} tiles of it.</SS_StanceHoldDesc>
+  <SS_StanceDefendDesc>Fight hostiles within {0} tiles of the duty, then return.</SS_StanceDefendDesc>
+  <SS_StancePursueDesc>Chase hostiles up to {0} tiles away from the duty before returning.</SS_StancePursueDesc>
+  <SS_DutyColumnTip>Click to change where this guard serves.</SS_DutyColumnTip>
+  <SS_Unarmed>Unarmed</SS_Unarmed>
+  <SS_NaturalWeapons>Natural weapons</SS_NaturalWeapons>
+  <SS_GuardSkills>{0} / {1}</SS_GuardSkills>
+  <SS_GuardSkillsTip>Shooting / melee skill.</SS_GuardSkillsTip>
+  <SS_RenamePost>Rename spot</SS_RenamePost>
+  <SS_RenamePostDesc>Give this guard spot a name.</SS_RenamePostDesc>
+  <SS_AssignGuardToPost>Assign guard</SS_AssignGuardToPost>
+  <SS_AssignGuardToPostDesc>Choose who stands guard at this spot. A spot holds up to {0} guards.</SS_AssignGuardToPostDesc>
+  <SS_NoEligibleGuards>No pawns can guard right now</SS_NoEligibleGuards>
+  <SS_PostUnmanned>Nobody is guarding here.</SS_PostUnmanned>
+  <SS_PostMannedBy>Guarded by: {0}</SS_PostMannedBy>
+  <SS_RouteDefaultName>Route {0}</SS_RouteDefaultName>
+  <SS_WaypointRoute>Route:\n{0}</SS_WaypointRoute>
+  <SS_WaypointRouteDesc>Move the selected waypoints to another route, or start a new one.</SS_WaypointRouteDesc>
+  <SS_NewRoute>New route</SS_NewRoute>
+  <SS_RenameRoute>Rename route</SS_RenameRoute>
+  <SS_RenameRouteDesc>Give this patrol route a name.</SS_RenameRouteDesc>
+  <SS_WaypointEarlier>Visit earlier</SS_WaypointEarlier>
+  <SS_WaypointEarlierDesc>Move this waypoint one step earlier in the route.</SS_WaypointEarlierDesc>
+  <SS_WaypointLater>Visit later</SS_WaypointLater>
+  <SS_WaypointLaterDesc>Move this waypoint one step later in the route.</SS_WaypointLaterDesc>
+  <SS_WaypointDwell>Linger:\n{0}</SS_WaypointDwell>
+  <SS_WaypointDwellDesc>How long a patrolling guard waits at this waypoint before moving on. Click to cycle.</SS_WaypointDwellDesc>
+  <SS_RouteModeLoop>Mode: loop</SS_RouteModeLoop>
+  <SS_RouteModePingPong>Mode: back and forth</SS_RouteModePingPong>
+  <SS_RouteModeDesc>Loop returns from the last waypoint to the first. Back and forth walks the route in reverse. Click to switch.</SS_RouteModeDesc>
+  <SS_SelectRoute>Select route</SS_SelectRoute>
+  <SS_SelectRouteDesc>Select every waypoint on this route.</SS_SelectRouteDesc>
+  <SS_WaypointInspect>{0}: stop {1} of {2}, linger {3}</SS_WaypointInspect>
+  <SS_KeepWatch>Keep watch</SS_KeepWatch>
+  <SS_KeepWatchDesc>Whether this animal carries out its guard duty. Turn off to pause it without losing the assignment.</SS_KeepWatchDesc>
+  <SS_AlertResponseTooltip>Alert response: {0}\nClick to change how this animal reacts when it spots a hostile.</SS_AlertResponseTooltip>
   <SS_AlertResponse>Alert response:\n{0}</SS_AlertResponse>
   <SS_AlertResponseDesc>How this animal reacts when spotting a hostile.</SS_AlertResponseDesc>
   <SS_ReportToHandler>Report to handler</SS_ReportToHandler>
@@ -92,4 +147,12 @@
   <SS_StopUsingBinocularsDesc>Stop looking through the binoculars and return to normal view.</SS_StopUsingBinocularsDesc>
   <SS_BinocularsUnusable>Cannot use binoculars right now.</SS_BinocularsUnusable>
   <SS_BinocularsNeedsLimitedAwareness>Binoculars only do something under limited awareness.</SS_BinocularsNeedsLimitedAwareness>
+  <SS_UseTelescope>Use spyglass</SS_UseTelescope>
+  <SS_UseTelescopeDesc>Peer through the spyglass. The camera is freed to roam the map at any range, but you will only see a tight pinhole around it, and only where this pawn has a clear line of sight.</SS_UseTelescopeDesc>
+  <SS_StopUsingTelescope>Lower spyglass</SS_StopUsingTelescope>
+  <SS_StopUsingTelescopeDesc>Stop looking through the spyglass and return to normal view.</SS_StopUsingTelescopeDesc>
+  <SS_TelescopeUnusable>Cannot use spyglass right now.</SS_TelescopeUnusable>
+  <SS_TelescopeNeedsLimitedAwareness>Spyglass only does something under limited awareness.</SS_TelescopeNeedsLimitedAwareness>
+  <SS_PrioritizeGuarding>Prioritize guarding {0}</SS_PrioritizeGuarding>
+  <SS_GuardDutyJob>guarding</SS_GuardDutyJob>
 </LanguageData>

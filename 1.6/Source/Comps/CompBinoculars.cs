@@ -19,7 +19,7 @@ namespace SurveillanceShift
         {
             if (pawn.Spawned is false || pawn.Faction != Faction.OfPlayer) return null;
 
-            if (BinocularView.IsActive(pawn))
+            if (ScopeView.IsActiveKind(pawn, ScopeKind.Binoculars))
             {
                 return new Command_Action
                 {
@@ -29,7 +29,7 @@ namespace SurveillanceShift
                     action = () =>
                     {
                         SoundDefOf.Click.PlayOneShotOnCamera();
-                        BinocularView.Stop(pawn);
+                        ScopeView.Stop(pawn);
                     }
                 };
             }

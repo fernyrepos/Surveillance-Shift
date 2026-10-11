@@ -9,7 +9,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix()
         {
-            return BinocularView.BlocksWorldInteraction is false;
+            return ScopeView.BlocksWorldInteraction is false;
         }
     }
 
@@ -18,7 +18,7 @@ namespace SurveillanceShift
     {
         public static bool Prefix()
         {
-            return BinocularView.BlocksWorldInteraction is false;
+            return ScopeView.BlocksWorldInteraction is false;
         }
     }
 }

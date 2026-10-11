@@ -102,6 +102,7 @@ namespace SurveillanceShift
         private void AccessFeed(Building_Camera cam)
         {
             SoundDefOf.Click.PlayOneShotOnCamera();
+            WalkieView.End();
             State.ActiveFeedCamera = cam;
             State.ActiveFeedMap = map;
             State.ActiveFeedPipeNet = pipeNet;

@@ -22,7 +22,7 @@ namespace SurveillanceShift
         private const int WalkieTalkieSightingRadiusSq = 676;
         private const float ArrowEdgeDistance = 7f;
         private const float ArrowCenterRadiusSq = 9f * 9f;
-        private const int ArrowRenderQueue = 3960;
+        private const int ArrowRenderQueue = 4400;
         private static readonly float FogAltitude = AltitudeLayer.Weather.AltitudeFor() + 0.05f;
 
         private static readonly Material DarkFogMat = MaterialPool.MatFrom(BaseContent.WhiteTex, ShaderDatabase.Transparent, new ColorInt(25, 25, 25).ToColor, 3900);
@@ -123,10 +123,11 @@ namespace SurveillanceShift
 
         public override void MapComponentUpdate()
         {
+            WalkieView.Update();
             Pawn_DrawGUIOverlay_Patch.RenderQueued();
             if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected) return;
 
-            RefreshBinocularOverlay();
+            RefreshScopeOverlay();
 
             if (SoftFogRenderer.Enabled)
             {
@@ -199,6 +200,16 @@ namespace SurveillanceShift
                 prevCells = new bool[count];
                 firstPass = true;
             }
+            if (map.mapPawns.FreeColonistsSpawned.Any() is false)
+            {
+                (visibleCells, prevCells) = (prevCells, visibleCells);
+                for (var i = 0; i < count; i++)
+                {
+                    visibleCells[i] = true;
+                }
+                ApplyFog();
+                return;
+            }
             if (gravshipReveal || Find.GravshipController.LandingAreaConfirmationInProgress || WorldComponent_GravshipController.CutsceneInProgress || Find.CurrentGravship != null)
             {
                 (visibleCells, prevCells) = (prevCells, visibleCells);
@@ -227,6 +238,7 @@ namespace SurveillanceShift
                         var radius = avatar.SightRadius();
                         ShadowCaster.ComputeFieldOfView(avatar.Position, radius, map, visibleCells);
                     }
+                    WalkieView.ApplyFieldOfView(map, visibleCells);
                     foreach (var b in map.listerBuildings.allBuildingsColonist)
                     {
                         if (b is Building_Camera cam)
@@ -265,17 +277,17 @@ namespace SurveillanceShift
                     }
                 }
 
-                BinocularView.ApplyFieldOfView(map, visibleCells);
+                ScopeView.ApplyFieldOfView(map, visibleCells);
 
                 ApplyFog();
             }
         }
 
-        public void RefreshBinocularOverlay()
+        public void RefreshScopeOverlay()
         {
-            if (BinocularView.ScopeMoved(map) is false) return;
+            if (ScopeView.ScopeMoved(map) is false) return;
             if (visibleCells.Length != map.cellIndices.NumGridCells) return;
-            BinocularView.ApplyFieldOfView(map, visibleCells);
+            ScopeView.ApplyFieldOfView(map, visibleCells);
             firstPass = true;
             ApplyFog();
         }

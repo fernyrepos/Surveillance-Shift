@@ -34,7 +34,7 @@ namespace SurveillanceShift
             if (def.graphicData.Graphic is Graphic_Single graphic)
             {
                 graphic.MatSingle.mainTexture = texture;
-                graphic.MatSingle.renderQueue = 3950;
+                graphic.MatSingle.renderQueue = 4400;
             }
         }
 

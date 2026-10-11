@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<MainButtonDef>
+		<defName>SS_GuardsTab</defName>
+		<label>guards</label>
+		<description>Assign colonists, animals and mechanoids to guard spots, patrol routes or bodyguard duty.</description>
+		<tabWindowClass>SurveillanceShift.MainTabWindow_Guards</tabWindowClass>
+		<order>51</order>
+		<closesWorldView>true</closesWorldView>
+		<iconPath>UI/Guard/Guards</iconPath>
+	</MainButtonDef>
+
+	<PawnColumnDef>
+		<defName>SS_GuardWeapon</defName>
+		<label>weapon</label>
+		<workerClass>SurveillanceShift.PawnColumnWorker_GuardWeapon</workerClass>
+		<sortable>true</sortable>
+		<headerTip>The weapon the guard will fight with.</headerTip>
+	</PawnColumnDef>
+
+	<PawnColumnDef>
+		<defName>SS_GuardSkills</defName>
+		<label>shoot / melee</label>
+		<workerClass>SurveillanceShift.PawnColumnWorker_GuardSkills</workerClass>
+		<sortable>true</sortable>
+		<headerTip>Shooting and melee skill levels.</headerTip>
+	</PawnColumnDef>
+
+	<PawnColumnDef>
+		<defName>SS_GuardDuty</defName>
+		<label>duty</label>
+		<workerClass>SurveillanceShift.PawnColumnWorker_GuardDuty</workerClass>
+		<sortable>true</sortable>
+		<headerTip>Where this guard serves: a spot, a patrol route, or a person to protect.</headerTip>
+	</PawnColumnDef>
+
+	<PawnColumnDef>
+		<defName>SS_GuardStance</defName>
+		<label>behavior</label>
+		<workerClass>SurveillanceShift.PawnColumnWorker_GuardStance</workerClass>
+		<sortable>true</sortable>
+		<headerTip>How far the guard will chase hostiles away from its duty.</headerTip>
+	</PawnColumnDef>
+
+	<PawnColumnDef>
+		<defName>SS_GuardThreatReport</defName>
+		<label>threat report</label>
+		<workerClass>SurveillanceShift.PawnColumnWorker_GuardThreatReport</workerClass>
+		<sortable>true</sortable>
+		<headerTip>How this pawn reacts when it spots a hostile: report it, sound an alarm, or ignore it.</headerTip>
+	</PawnColumnDef>
+
+	<PawnTableDef>
+		<defName>SS_GuardsTable</defName>
+		<workerClass>PawnTable_PlayerPawns</workerClass>
+		<columns>
+			<li>LabelWithIcon</li>
+			<li>SS_GuardWeapon</li>
+			<li>SS_GuardSkills</li>
+			<li>SS_GuardDuty</li>
+			<li>SS_GuardStance</li>
+			<li>SS_GuardThreatReport</li>
+		</columns>
+	</PawnTableDef>
+
+</Defs>

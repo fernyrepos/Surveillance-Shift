@@ -9,7 +9,7 @@ using Verse.AI;
 namespace SurveillanceShift
 {
     [HotSwappable]
-    public class Building_Watchtower : Building
+    public class Building_Watchtower : Building, IPriorityTabTarget
     {
         private StoragePriority priority = StoragePriority.Normal;
         private WatchtowerExtension extension;
@@ -114,26 +114,6 @@ namespace SurveillanceShift
             foreach (var gizmo in base.GetGizmos())
             {
                 yield return gizmo;
-            }
-
-            if (Faction == Faction.OfPlayer)
-            {
-                yield return new Command_Action
-                {
-                    defaultLabel = "Priority".Translate() + ": " + priority.Label().CapitalizeFirst(),
-                    icon = ContentFinder<Texture2D>.Get("UI/Commands/SetTargetFuelLevel"),
-                    action = () =>
-                    {
-                        var options = new List<FloatMenuOption>();
-                        foreach (StoragePriority pr in Enum.GetValues(typeof(StoragePriority)))
-                        {
-                            if (pr == StoragePriority.Unstored) continue;
-                            var localPr = pr;
-                            options.Add(new FloatMenuOption(localPr.Label().CapitalizeFirst(), () => priority = localPr));
-                        }
-                        Find.WindowStack.Add(new FloatMenu(options));
-                    }
-                };
             }
         }
 

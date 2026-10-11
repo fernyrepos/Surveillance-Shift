@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
-  <TrainableDef MayRequire="Thek.GuardingP">
+  <TrainableDef>
     <defName>SS_KeepWatch</defName>
     <label>keep watch</label>
-    <description>The animal can be assigned to patrol areas and report or react to hostiles.</description>
-    <icon>UI/Icons/Trainables/Rescue</icon>
+    <description>The animal can be assigned to guard spots, patrol routes or bodyguard duty, and report or react to hostiles.</description>
+    <icon>UI/Guard/AnimalWatch</icon>
     <listPriority>500</listPriority>
     <difficulty>250</difficulty>
     <requiredTrainability>Advanced</requiredTrainability>
@@ -12,8 +12,7 @@
     <prerequisites>
       <li>Obedience</li>
     </prerequisites>
-    <minBodySize>0.5</minBodySize>
-    <defaultTrainable>false</defaultTrainable>
+    <defaultTrainable>true</defaultTrainable>
     <tags>
       <li>Combat</li>
       <li>Security</li>

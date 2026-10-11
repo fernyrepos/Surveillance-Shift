@@ -8,11 +8,17 @@
   </Operation>
 
   <Operation Class="PatchOperationInsert">
-    <xpath>Defs/ThinkTreeDef[defName="Animal"]/thinkRoot/subNodes/li[@Class="ThinkNode_ConditionalOfPlayerFaction"]/subNodes/li[tagToGive="TrainedAnimalBehavior"]/subNodes/li[trainable="Obedience"]</xpath>
+    <xpath>Defs/ThinkTreeDef[defName="Mechanoid"]/thinkRoot/subNodes/li[@Class="ThinkNode_ConditionalPlayerControlledMech"][1]</xpath>
     <value>
-      <li Class="SurveillanceShift.ThinkNode_ConditionalAnimalPatrolling" MayRequire="Thek.GuardingP">
+      <li Class="SurveillanceShift.ThinkNode_ConditionalGuardDuty">
         <subNodes>
-          <li Class="SurveillanceShift.JobGiver_AnimalPatrol" />
+          <li Class="ThinkNode_Tagger">
+            <tagToGive>Misc</tagToGive>
+            <subNodes>
+              <li Class="SurveillanceShift.JobGiver_GuardEngage" />
+              <li Class="SurveillanceShift.JobGiver_GuardDuty" />
+            </subNodes>
+          </li>
         </subNodes>
       </li>
     </value>

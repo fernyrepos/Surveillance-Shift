@@ -9,8 +9,9 @@ namespace SurveillanceShift
     [HotSwappable]
     public class JobDriver_UseBinoculars : JobDriver
     {
-        private const int FaceIntervalTicks = 30;
         private Mote binocularMote;
+        private IntVec3 lastFacedCell = IntVec3.Invalid;
+        private Rot4 lastMoteRotation = Rot4.Invalid;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -26,29 +27,40 @@ namespace SurveillanceShift
             watch.defaultCompleteMode = ToilCompleteMode.Never;
             watch.initAction = () =>
             {
-                BinocularView.Begin(pawn);
-                binocularMote = MoteMaker.MakeAttachedOverlay(pawn, DefsOf.SS_Mote_Binoculars, Vector3.zero);
+                ScopeView.Begin(pawn, ScopeKind.Binoculars, DefsOf.SS_UseBinoculars);
+                lastMoteRotation = pawn.Rotation;
+                binocularMote = MoteMaker.MakeAttachedOverlay(pawn, DefsOf.SS_Mote_Binoculars, ScopeView.MoteOffsetFor(lastMoteRotation));
             };
             watch.tickAction = () =>
             {
-                if (BinocularView.IsActive(pawn) is false)
+                if (ScopeView.IsActive(pawn) is false)
                 {
-                    BinocularView.Begin(pawn);
+                    ScopeView.Begin(pawn, ScopeKind.Binoculars, DefsOf.SS_UseBinoculars);
                 }
-                if (pawn.IsHashIntervalTick(FaceIntervalTicks) && Find.CurrentMap == pawn.Map)
+                if (Find.CurrentMap == pawn.Map)
                 {
-                    var center = BinocularView.ScopeCenter(pawn.Map);
-                    if (center != pawn.Position)
+                    var center = ScopeView.ScopeCenter(pawn.Map);
+                    if (center != pawn.Position && center != lastFacedCell)
                     {
+                        lastFacedCell = center;
                         pawn.rotationTracker.FaceCell(center);
                     }
+                }
+                if (pawn.Rotation != lastMoteRotation)
+                {
+                    lastMoteRotation = pawn.Rotation;
+                    if (binocularMote != null && binocularMote.Destroyed is false)
+                    {
+                        binocularMote.Destroy();
+                    }
+                    binocularMote = MoteMaker.MakeAttachedOverlay(pawn, DefsOf.SS_Mote_Binoculars, ScopeView.MoteOffsetFor(lastMoteRotation));
                 }
             };
             yield return watch;
 
             AddFinishAction(_ =>
             {
-                BinocularView.End(pawn);
+                ScopeView.End(pawn);
                 if (binocularMote != null && binocularMote.Destroyed is false)
                 {
                     binocularMote.Destroy();

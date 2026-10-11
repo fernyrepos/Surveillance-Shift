@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
@@ -241,7 +242,11 @@ namespace SurveillanceShift
         private void AttachObservationMote()
         {
             CleanupObservationMote();
-            scanningMote = MoteMaker.MakeAttachedOverlay(pawn, Watchtower.Extension.moteDef, Vector3.zero);
+            var moteDef = Watchtower.Extension.moteDef;
+            if (moteDef == null) return;
+            var requiredItem = ScopeView.RequiredItemFor(moteDef);
+            if (requiredItem != null && pawn.inventory.innerContainer.Any(t => t.def == requiredItem) is false) return;
+            scanningMote = MoteMaker.MakeAttachedOverlay(pawn, moteDef, Vector3.zero);
         }
 
         private void CleanupObservationMote()

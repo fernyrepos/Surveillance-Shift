@@ -110,7 +110,7 @@ namespace SurveillanceShift
                     var dz = cz - originZ;
 
                     var ed = edifices[idx];
-                    var isWall = seeOverMountains is false && ed != null && ed.CanBeSeenOver() is false;
+                    var isWall = seeOverMountains is false && ed != null && ed.CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(ed) is false;
                     var isRoofed = roofGrid != null && roofGrid.Roofed(idx);
 
                     var isPinched = false;
@@ -120,8 +120,8 @@ namespace SurveillanceShift
                         var sz = dz > 0 ? 1 : -1;
                         var idx1 = cz * mapSizeX + (cx - sx);
                         var idx2 = (cz - sz) * mapSizeX + cx;
-                        var block1 = edifices[idx1] != null && edifices[idx1].CanBeSeenOver() is false && seeOverMountains is false;
-                        var block2 = edifices[idx2] != null && edifices[idx2].CanBeSeenOver() is false && seeOverMountains is false;
+                        var block1 = edifices[idx1] != null && edifices[idx1].CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(edifices[idx1]) is false && seeOverMountains is false;
+                        var block2 = edifices[idx2] != null && edifices[idx2].CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(edifices[idx2]) is false && seeOverMountains is false;
                         if (block1 && block2)
                         {
                             isPinched = true;

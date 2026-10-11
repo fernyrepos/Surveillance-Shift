@@ -13,6 +13,11 @@ namespace SurveillanceShift
 
         public static bool Prefix()
         {
+            if (WalkieView.Active)
+            {
+                WalkieView.DrawStopButton();
+                return false;
+            }
             if (State.ActiveFeedCamera != null)
             {
                 State.DrawFeedReturnButton();

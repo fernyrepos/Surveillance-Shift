@@ -18,6 +18,11 @@ namespace SurveillanceShift
             foreach (var thing in __instance.innerContainer)
             {
                 if (thing is not ThingWithComps twc) continue;
+                if (twc.def == DefsOf.SS_WalkieTalkie)
+                {
+                    var walkieGizmo = WalkieView.GetGizmo(pawn);
+                    if (walkieGizmo != null) yield return walkieGizmo;
+                }
                 var horn = twc.GetComp<CompSignalHorn>();
                 if (horn != null)
                 {
@@ -29,6 +34,12 @@ namespace SurveillanceShift
                 {
                     var binocularGizmo = binoculars.GetGizmo(pawn);
                     if (binocularGizmo != null) yield return binocularGizmo;
+                }
+                var telescope = twc.GetComp<CompTelescope>();
+                if (telescope != null)
+                {
+                    var telescopeGizmo = telescope.GetGizmo(pawn);
+                    if (telescopeGizmo != null) yield return telescopeGizmo;
                 }
                 var device = twc.GetComp<CompRemoteSurveillanceDevice>();
                 if (device != null)

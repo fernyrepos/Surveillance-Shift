@@ -24,6 +24,7 @@ namespace SurveillanceShift
             {
                 pawn.rotationTracker.FaceTarget(Trigger);
                 Trigger.ToggleAlarm();
+                if (job.targetB.Thing is Pawn { Spawned: true } hostile) State.SpawnPing(hostile.Position, pawn.Map, true);
             };
             push.handlingFacing = true;
             yield return push;

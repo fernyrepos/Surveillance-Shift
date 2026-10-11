@@ -57,4 +57,18 @@
 		</requiredCapacities>
 	</WorkGiverDef>
 
+	<WorkGiverDef>
+		<defName>SS_GuardDutyGiver</defName>
+		<label>guard duty</label>
+		<giverClass>SurveillanceShift.WorkGiver_GuardDuty</giverClass>
+		<workType>SS_Guarding</workType>
+		<priorityInType>100</priorityInType>
+		<verb>guard</verb>
+		<gerund>guarding</gerund>
+		<requiredCapacities>
+			<li>Moving</li>
+		</requiredCapacities>
+		<canBeDoneByMechs>false</canBeDoneByMechs>
+	</WorkGiverDef>
+
 </Defs>

@@ -1,3 +1,4 @@
+using System.Linq;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -10,16 +11,22 @@ namespace SurveillanceShift
     {
         private IntVec3 spot;
         private int duration;
+        private ScopeKind opticKind;
         private int ticksPassed;
         private Effecter progressBar;
         private Pawn currentLeadScout;
         private Mote scanningMote;
 
-        public LordToil_EnemyScoutObserve(IntVec3 spot, int duration)
+        public LordToil_EnemyScoutObserve(IntVec3 spot, int duration, ScopeKind opticKind)
         {
             this.spot = spot;
             this.duration = duration;
+            this.opticKind = opticKind;
         }
+
+        private ThingDef OpticMoteDef => opticKind == ScopeKind.Telescope ? DefsOf.SS_Mote_Spyglass : DefsOf.SS_Mote_Binoculars;
+
+        private ThingDef OpticItemDef => opticKind == ScopeKind.Telescope ? DefsOf.SS_Telescope : DefsOf.SS_Binoculars;
 
         public override void UpdateAllDuties()
         {
@@ -39,6 +46,7 @@ namespace SurveillanceShift
                 {
                     currentLeadScout = leadScout;
                     UpdateAllDuties();
+                    EquipOptic(leadScout);
                 }
                 leadScout.rotationTracker.FaceCell(leadScout.Map.Center);
                 progressBar ??= EffecterDefOf.ProgressBarAlwaysVisible.Spawn();
@@ -49,7 +57,7 @@ namespace SurveillanceShift
                 mote.alwaysShow = true;
                 if (scanningMote == null || scanningMote.Destroyed || scanningMote.link1.Target.Thing != leadScout)
                 {
-                    scanningMote = MoteMaker.MakeAttachedOverlay(leadScout, DefsOf.SS_Mote_Binoculars, Vector3.zero);
+                    scanningMote = MoteMaker.MakeAttachedOverlay(leadScout, OpticMoteDef, Vector3.zero);
                 }
                 scanningMote.Maintain();
             }
@@ -57,6 +65,14 @@ namespace SurveillanceShift
             {
                 Cleanup();
             }
+        }
+
+        private void EquipOptic(Pawn scout)
+        {
+            var itemDef = OpticItemDef;
+            if (scout.inventory.innerContainer.Any(t => t.def == itemDef)) return;
+            var item = ThingMaker.MakeThing(itemDef);
+            scout.inventory.innerContainer.TryAdd(item);
         }
 
         public override void Cleanup()

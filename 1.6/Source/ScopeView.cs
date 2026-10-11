@@ -6,12 +6,21 @@ using Verse.AI;
 
 namespace SurveillanceShift
 {
+    public enum ScopeKind
+    {
+        Binoculars,
+        Telescope
+    }
+
     [HotSwappable]
-    public static class BinocularView
+    public static class ScopeView
     {
         public static int ScopeRadius = 4;
+        public static int BinocularOffset = 5;
 
         private static Pawn activePawn;
+        private static ScopeKind activeKind;
+        private static JobDef activeJobDef;
         private static IntVec3 lastScopeCell = IntVec3.Invalid;
         private static bool dollyOverridden;
 
@@ -21,17 +30,21 @@ namespace SurveillanceShift
 
         public static bool IsActive(Pawn pawn) => pawn != null && activePawn == pawn;
 
+        public static bool IsActiveKind(Pawn pawn, ScopeKind kind) => IsActive(pawn) && activeKind == kind;
+
         public static bool BlocksWorldInteraction => activePawn != null && activePawn.Spawned && activePawn.Dead is false && activePawn.Map == Find.CurrentMap;
 
         public static bool FreeCameraActive => activePawn != null && activePawn == ModCompatibility.GetPerspectiveShiftAvatar() && activePawn.Spawned && activePawn.Map == Find.CurrentMap;
 
-        public static void Begin(Pawn pawn)
+        public static void Begin(Pawn pawn, ScopeKind kind, JobDef jobDef)
         {
             if (activePawn != null && activePawn != pawn)
             {
                 Stop(activePawn);
             }
             activePawn = pawn;
+            activeKind = kind;
+            activeJobDef = jobDef;
             lastScopeCell = IntVec3.Invalid;
             ModCompatibility.ClearPerspectiveShiftCameraLock();
         }
@@ -45,6 +58,7 @@ namespace SurveillanceShift
         public static void Clear()
         {
             activePawn = null;
+            activeJobDef = null;
             lastScopeCell = IntVec3.Invalid;
             RestoreCameraDolly();
         }
@@ -72,7 +86,7 @@ namespace SurveillanceShift
 
         public static void Stop(Pawn pawn)
         {
-            if (pawn.CurJobDef == DefsOf.SS_UseBinoculars)
+            if (activePawn == pawn && activeJobDef != null && pawn.CurJobDef == activeJobDef)
             {
                 pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
             }
@@ -105,9 +119,24 @@ namespace SurveillanceShift
             lastScopeCell = center;
 
             var origin = activePawn.Position;
+            var radius = Mathf.Max(1, ScopeRadius);
+
+            if (activeKind == ScopeKind.Binoculars)
+            {
+                var offset = Mathf.Max(0, BinocularOffset);
+                ApplyCircle(map, origin, new IntVec3(center.x - offset, 0, center.z), radius, visibleCells);
+                ApplyCircle(map, origin, new IntVec3(center.x + offset, 0, center.z), radius, visibleCells);
+            }
+            else
+            {
+                ApplyCircle(map, origin, center, radius, visibleCells);
+            }
+        }
+
+        private static void ApplyCircle(Map map, IntVec3 origin, IntVec3 center, int radius, bool[] visibleCells)
+        {
             var mapX = map.Size.x;
             var mapZ = map.Size.z;
-            var radius = Mathf.Max(1, ScopeRadius);
             var radiusSq = radius * radius;
 
             var zMin = Mathf.Max(center.z - radius, 0);
@@ -121,9 +150,10 @@ namespace SurveillanceShift
                 var row = z * mapX;
                 for (var x = xMin; x <= xMax; x++)
                 {
+                    var idx = row + x;
+                    if (visibleCells[idx]) continue;
                     var dx = x - center.x;
                     if (dx * dx + dz * dz > radiusSq) continue;
-                    var idx = row + x;
                     if (HasSightTo(origin, new IntVec3(x, 0, z), map))
                     {
                         visibleCells[idx] = true;
@@ -132,11 +162,26 @@ namespace SurveillanceShift
             }
         }
 
+        public static Vector3 MoteOffsetFor(Rot4 rotation)
+        {
+            var facing = rotation.FacingCell;
+            return new Vector3(facing.x, 0f, facing.z) * 0.65f;
+        }
+
+        public static ThingDef RequiredItemFor(ThingDef moteDef)
+        {
+            if (moteDef == DefsOf.SS_Mote_Binoculars) return DefsOf.SS_Binoculars;
+            if (moteDef == DefsOf.SS_Mote_Spyglass) return DefsOf.SS_Telescope;
+            return null;
+        }
+
         private static bool HasSightTo(IntVec3 origin, IntVec3 target, Map map)
         {
             foreach (var cell in GenSight.PointsOnLineOfSight(origin, target))
             {
                 if (cell == origin || cell == target) continue;
+                var ed = cell.GetEdifice(map);
+                if (ed != null && ModCompatibility.IsSeeThroughWall(ed)) continue;
                 if (cell.CanBeSeenOver(map) is false) return false;
             }
             return true;
@@ -145,11 +190,13 @@ namespace SurveillanceShift
         public static void DrawStopButton()
         {
             if (activePawn == null) return;
-            if (activePawn.Spawned is false || activePawn.Dead || activePawn.CurJobDef != DefsOf.SS_UseBinoculars)
+            if (activePawn.Spawned is false || activePawn.Dead || activeJobDef == null || activePawn.CurJobDef != activeJobDef)
             {
                 Clear();
                 return;
             }
+
+            var labelKey = activeKind == ScopeKind.Telescope ? "SS_StopUsingTelescope" : "SS_StopUsingBinoculars";
 
             const float btnW = 220f;
             const float btnH = 50f;
@@ -158,7 +205,7 @@ namespace SurveillanceShift
 
             Find.WindowStack.ImmediateWindow(StopButtonId, panelRect, WindowLayer.GameUI, () =>
             {
-                if (Widgets.ButtonText(new Rect(pad, pad, btnW, btnH), "SS_StopUsingBinoculars".Translate()))
+                if (Widgets.ButtonText(new Rect(pad, pad, btnW, btnH), labelKey.Translate()))
                 {
                     Stop(activePawn);
                 }

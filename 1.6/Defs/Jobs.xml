@@ -79,4 +79,12 @@
 		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
 	</JobDef>
 
+	<JobDef>
+		<defName>SS_UseTelescope</defName>
+		<driverClass>SurveillanceShift.JobDriver_UseTelescope</driverClass>
+		<reportString>looking through telescope.</reportString>
+		<playerInterruptible>false</playerInterruptible>
+		<allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+	</JobDef>
+
 </Defs>

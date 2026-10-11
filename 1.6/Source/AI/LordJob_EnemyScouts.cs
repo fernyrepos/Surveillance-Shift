@@ -9,6 +9,7 @@ namespace SurveillanceShift
     {
         private Faction faction;
         private IntVec3 scoutSpot;
+        private ScopeKind opticKind;
         private bool retaliationTriggered;
         private bool scanCompleted;
         private const int ScanDurationTicks = 2500 * 3;
@@ -19,6 +20,7 @@ namespace SurveillanceShift
         {
             this.faction = faction;
             this.scoutSpot = scoutSpot;
+            opticKind = Rand.Bool ? ScopeKind.Binoculars : ScopeKind.Telescope;
         }
 
         public override StateGraph CreateGraph()
@@ -27,7 +29,7 @@ namespace SurveillanceShift
             var travel = new LordToil_Travel(scoutSpot);
             graph.StartingToil = travel;
 
-            var scanToil = new LordToil_EnemyScoutObserve(scoutSpot, ScanDurationTicks);
+            var scanToil = new LordToil_EnemyScoutObserve(scoutSpot, ScanDurationTicks, opticKind);
             graph.AddToil(scanToil);
 
             var exit = new LordToil_ExitMap(LocomotionUrgency.Walk, true);
@@ -82,6 +84,7 @@ namespace SurveillanceShift
             base.ExposeData();
             Scribe_References.Look(ref faction, "faction");
             Scribe_Values.Look(ref scoutSpot, "scoutSpot");
+            Scribe_Values.Look(ref opticKind, "opticKind", ScopeKind.Binoculars);
             Scribe_Values.Look(ref retaliationTriggered, "retaliationTriggered");
             Scribe_Values.Look(ref scanCompleted, "scanCompleted");
         }

@@ -20,4 +20,23 @@
 		</workTags>
 	</WorkTypeDef>
 
+	<WorkTypeDef>
+		<defName>SS_Guarding</defName>
+		<labelShort>Guard</labelShort>
+		<pawnLabel>Guard</pawnLabel>
+		<gerundLabel>guarding</gerundLabel>
+		<verb>Guard</verb>
+		<description>Stand at an assigned guard spot, walk a patrol route, or protect a colonist, engaging hostiles that come near. Assign duties in the Guards tab.</description>
+		<alwaysStartActive>false</alwaysStartActive>
+		<naturalPriority>1130</naturalPriority>
+		<requireCapableColonist>true</requireCapableColonist>
+		<relevantSkills>
+			<li>Shooting</li>
+			<li>Melee</li>
+		</relevantSkills>
+		<workTags>
+			<li>Violent</li>
+		</workTags>
+	</WorkTypeDef>
+
 </Defs>

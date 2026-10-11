@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<ThingDef ParentName="BuildingBase" Name="SS_GuardMarkerBase" Abstract="True">
+		<altitudeLayer>FloorEmplacement</altitudeLayer>
+		<statBases>
+			<WorkToBuild>0</WorkToBuild>
+		</statBases>
+		<scatterableOnMapGen>false</scatterableOnMapGen>
+		<useHitPoints>false</useHitPoints>
+		<designationCategory>Security</designationCategory>
+		<passability>Standable</passability>
+		<drawGUIOverlay>true</drawGUIOverlay>
+		<drawerType>MapMeshOnly</drawerType>
+		<selectable>true</selectable>
+		<building>
+			<isEdifice>false</isEdifice>
+			<canPlaceOverImpassablePlant>false</canPlaceOverImpassablePlant>
+			<ai_chillDestination>false</ai_chillDestination>
+			<wakeDormantPawnsOnConstruction>false</wakeDormantPawnsOnConstruction>
+			<artificialForMeditationPurposes>false</artificialForMeditationPurposes>
+		</building>
+		<placeWorkers>
+			<li>PlaceWorker_PreventInteractionSpotOverlap</li>
+		</placeWorkers>
+	</ThingDef>
+
+	<ThingDef ParentName="SS_GuardMarkerBase">
+		<defName>SS_GuardPost</defName>
+		<label>guard spot</label>
+		<description>Marks a spot where an assigned guard will stand watch, facing the direction the spot points. The guard engages hostiles that come into range and returns to the spot afterward.</description>
+		<thingClass>SurveillanceShift.Building_GuardPost</thingClass>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_GuardPostAssignable">
+				<maxAssignedPawnsCount>4</maxAssignedPawnsCount>
+			</li>
+		</comps>
+		<rotatable>true</rotatable>
+		<uiOrder>2100</uiOrder>
+		<graphicData>
+			<texPath>Things/Building/Guard/GuardPost</texPath>
+			<graphicClass>Graphic_Multi</graphicClass>
+		</graphicData>
+	</ThingDef>
+
+	<ThingDef ParentName="SS_GuardMarkerBase">
+		<defName>SS_PatrolWaypoint</defName>
+		<label>patrol waypoint</label>
+		<description>Marks a stop on a patrol route. New waypoints join the route you last worked on, in the order they are placed. Use the gizmos to reorder, rename or split routes, and to set how long guards linger.</description>
+		<thingClass>SurveillanceShift.Building_PatrolWaypoint</thingClass>
+		<rotatable>false</rotatable>
+		<uiOrder>2101</uiOrder>
+		<graphicData>
+			<texPath>Things/Building/Guard/PatrolWaypoint</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+		</graphicData>
+	</ThingDef>
+
+</Defs>

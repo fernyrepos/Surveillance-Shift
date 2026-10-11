@@ -13,12 +13,12 @@ namespace SurveillanceShift
 
         public static bool Prefix()
         {
-            if (BinocularView.FreeCameraActive is false)
+            if (ScopeView.FreeCameraActive is false)
             {
-                BinocularView.RestoreCameraDolly();
+                ScopeView.RestoreCameraDolly();
                 return true;
             }
-            BinocularView.EnableCameraDolly();
+            ScopeView.EnableCameraDolly();
             return false;
         }
     }

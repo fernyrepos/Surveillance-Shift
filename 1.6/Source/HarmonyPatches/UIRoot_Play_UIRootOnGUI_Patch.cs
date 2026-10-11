@@ -9,7 +9,8 @@ namespace SurveillanceShift
     {
         public static void Postfix()
         {
-            BinocularView.DrawStopButton();
+            ScopeView.DrawStopButton();
+            MapSwitchBar.Draw();
             if (Event.current.type != EventType.Repaint) return;
             if (State.ActiveFeedCamera != null && ModCompatibility.HasPerspectiveShiftAvatar() is false)
             {
