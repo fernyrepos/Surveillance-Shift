@@ -395,7 +395,7 @@
 		<researchPrerequisites>
 			<li>SS_Loudspeaker</li>
 		</researchPrerequisites>
-		<description>text.todo.</description>
+		<description>An elevated sound system for broadcasting alerts across the colony. Must be triggered by an existing linked alert button.</description>
 		<thingClass>SurveillanceShift.Building_Loudspeaker</thingClass>
 		<category>Building</category>
 		<minifiedDef>MinifiedThing</minifiedDef>

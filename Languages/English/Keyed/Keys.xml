@@ -23,8 +23,8 @@
   <SS_NoWalkieContacts>No other colonists are carrying a walkie talkie.</SS_NoWalkieContacts>
   <SS_StopUsingWalkie>Stop using walkie</SS_StopUsingWalkie>
   <SS_StopViewing>Stop viewing</SS_StopViewing>
-  <SS_BlowSignalHorn>Blow signal horn</SS_BlowSignalHorn>
-  <SS_BlowSignalHornDesc>Blow the signal horn to alert the entire colony to danger.</SS_BlowSignalHornDesc>
+  <SS_BlowSignalHorn>Sound blowhorn</SS_BlowSignalHorn>
+  <SS_BlowSignalHornDesc>Sound the blowhorn to alert the entire colony to danger.</SS_BlowSignalHornDesc>
   <SS_SignalHornCooldown>Resting</SS_SignalHornCooldown>
   <SS_SignalHornLetterLabel>Signal horn sounded</SS_SignalHornLetterLabel>
   <SS_SignalHornLetterText>{0} has sounded the signal horn!</SS_SignalHornLetterText>
