@@ -90,29 +90,6 @@
 		<orderedTakeGroup>SS_WalkieTalkie</orderedTakeGroup>
 	</ThingDef>
 
-	<ThingDef ParentName="ResourceBase">
-		<defName>SS_AnimalHorn</defName>
-		<label>horn</label>
-		<description>A hollow keratin horn taken from an animal. It can be shaped into a primitive signaling instrument.</description>
-		<graphicData>
-			<texPath>Things/Item/Equipment/WeaponMelee/SignalHorn</texPath>
-			<graphicClass>Graphic_Single</graphicClass>
-			<drawSize>0.65</drawSize>
-		</graphicData>
-		<statBases>
-			<MarketValue>12</MarketValue>
-			<MaxHitPoints>50</MaxHitPoints>
-			<Mass>0.25</Mass>
-			<Flammability>0.5</Flammability>
-			<DeteriorationRate>2</DeteriorationRate>
-		</statBases>
-		<stackLimit>25</stackLimit>
-		<thingCategories>
-			<li>Manufactured</li>
-		</thingCategories>
-		<tradeability>Sellable</tradeability>
-	</ThingDef>
-
 	<ThingDef ParentName="BaseMeleeWeapon_Blunt">
 		<defName>SS_SignalHorn</defName>
 		<label>signal horn</label>
@@ -122,22 +99,12 @@
 			<graphicClass>Graphic_Single</graphicClass>
 		</graphicData>
 		<statBases>
-			<WorkToMake>1800</WorkToMake>
 			<MarketValue>70</MarketValue>
 			<Mass>1</Mass>
 			<DeteriorationRate>2</DeteriorationRate>
 		</statBases>
 		<tickerType>Rare</tickerType>
 		<techLevel>Neolithic</techLevel>
-		<costList>
-			<SS_AnimalHorn>1</SS_AnimalHorn>
-		</costList>
-		<recipeMaker>
-			<recipeUsers>
-				<li>CraftingSpot</li>
-			</recipeUsers>
-			<displayPriority>310</displayPriority>
-		</recipeMaker>
 		<stackLimit>1</stackLimit>
 		<soundInteract>Standard_Drop</soundInteract>
 		<soundDrop>Standard_Drop</soundDrop>

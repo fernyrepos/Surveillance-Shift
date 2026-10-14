@@ -99,6 +99,7 @@ namespace SurveillanceShift
         public override void FinalizeInit()
         {
             base.FinalizeInit();
+            State.PlayStartRealtime = Time.realtimeSinceStartup;
             if (State.IsLimitedAwareness)
             {
                 LongEventHandler.ExecuteWhenFinished(() => RecalculateVisibility());

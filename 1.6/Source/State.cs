@@ -82,8 +82,13 @@ namespace SurveillanceShift
             return target.Map.IsVisible(target.Cell) is false;
         }
 
+        private const float PingStartupDelaySeconds = 5f;
+
+        public static float PlayStartRealtime;
+
         public static void SpawnPing(IntVec3 cell, Map map, bool hostile)
         {
+            if (Time.realtimeSinceStartup - PlayStartRealtime < PingStartupDelaySeconds) return;
             var def = hostile ? DefsOf.SS_Mote_PingHostile : DefsOf.SS_Mote_PingFriendly;
             var mote = (Mote_Ping)ThingMaker.MakeThing(def);
             mote.exactPosition = cell.ToVector3Shifted();

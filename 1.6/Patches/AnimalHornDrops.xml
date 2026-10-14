@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Patch>
 	<Operation Class="PatchOperationAdd">
-		<xpath>Defs/ThingDef[defName="Yak"]</xpath>
+		<success>Always</success>
+		<xpath>Defs/ThingDef[(defName="MA_Aminox" or defName="ERN_Argali" or defName="Aurochs" or defName="VDE_AwakenedDryad_Carrier" or defName="Bison" or defName="AEXP_BlackRhino" or defName="AA_Bobeene" or defName="Boomalope" or defName="GR_ParagonBoomalope" or defName="GR_Boomffalo" or defName="GR_Boomhorse" or defName="GR_Boomnotherium" or defName="GR_Boomsquirrel" or defName="MA_Capryak" or defName="Caribou" or defName="AA_ChameleonYak" or defName="DankPyon_Daer" or defName="Daeodon" or defName="AA_Darkbeast" or defName="Deer" or defName="MA_Deermoss" or defName="AA_DevilSheep" or defName="DankPyon_DireBoar" or defName="MA_Duskhorn" or defName="DA_DwarvenMuffton" or defName="GR_Elasmobearium" or defName="Elasmotherium" or defName="Elephant" or defName="Elk" or defName="FEB_Ferrohorn" or defName="Goat" or defName="MA_Gnaut" or defName="DA_Goldilox" or defName="AA_GreyCoatedMouflon" or defName="GR_Groundffalo" or defName="RG_Hemolope" or defName="Ibex" or defName="GR_Manffalo" or defName="Mastodon" or defName="Megaloceros" or defName="Moose" or defName="GR_ParagonMuffalo" or defName="GR_Muffalohorse" or defName="GR_Muffalokomodo" or defName="GR_Muffaloman" or defName="RBSFE_Muffalope" or defName="Muskox" or defName="DankPyon_Ghoul_Stage_One" or defName="DankPyon_Ghoul_Stage_Three" or defName="RG_Neutrolope" or defName="DankPyon_NorthernBoar" or defName="DA_NorthernDrog" or defName="MA_Plastemmoth" or defName="MA_PlastemmothAlpha" or defName="DankPyon_Ravelder" or defName="Rhinoceros" or defName="RG_Rimclaw" or defName="SC_Rockbull" or defName="SC_RockbullAlbino" or defName="Abrolo_Sarcho" or defName="Sheep" or defName="AA_SpinedGow" or defName="VAEWaste_Wastedeer" or defName="WildBoar" or defName="AEXP_Wildebeest" or defName="GR_WoolyWolf" or defName="MA_Worhin" or defName="Yak") and not(butcherProducts)]</xpath>
 		<value>
 			<butcherProducts>
-				<SS_AnimalHorn>2</SS_AnimalHorn>
+				<SS_SignalHorn>1</SS_SignalHorn>
 			</butcherProducts>
+		</value>
+	</Operation>
+	<Operation Class="PatchOperationAdd">
+		<success>Always</success>
+		<xpath>Defs/ThingDef[defName="MA_Aminox" or defName="ERN_Argali" or defName="Aurochs" or defName="VDE_AwakenedDryad_Carrier" or defName="Bison" or defName="AEXP_BlackRhino" or defName="AA_Bobeene" or defName="Boomalope" or defName="GR_ParagonBoomalope" or defName="GR_Boomffalo" or defName="GR_Boomhorse" or defName="GR_Boomnotherium" or defName="GR_Boomsquirrel" or defName="MA_Capryak" or defName="Caribou" or defName="AA_ChameleonYak" or defName="DankPyon_Daer" or defName="Daeodon" or defName="AA_Darkbeast" or defName="Deer" or defName="MA_Deermoss" or defName="AA_DevilSheep" or defName="DankPyon_DireBoar" or defName="MA_Duskhorn" or defName="DA_DwarvenMuffton" or defName="GR_Elasmobearium" or defName="Elasmotherium" or defName="Elephant" or defName="Elk" or defName="FEB_Ferrohorn" or defName="Goat" or defName="MA_Gnaut" or defName="DA_Goldilox" or defName="AA_GreyCoatedMouflon" or defName="GR_Groundffalo" or defName="RG_Hemolope" or defName="Ibex" or defName="GR_Manffalo" or defName="Mastodon" or defName="Megaloceros" or defName="Moose" or defName="GR_ParagonMuffalo" or defName="GR_Muffalohorse" or defName="GR_Muffalokomodo" or defName="GR_Muffaloman" or defName="RBSFE_Muffalope" or defName="Muskox" or defName="DankPyon_Ghoul_Stage_One" or defName="DankPyon_Ghoul_Stage_Three" or defName="RG_Neutrolope" or defName="DankPyon_NorthernBoar" or defName="DA_NorthernDrog" or defName="MA_Plastemmoth" or defName="MA_PlastemmothAlpha" or defName="DankPyon_Ravelder" or defName="Rhinoceros" or defName="RG_Rimclaw" or defName="SC_Rockbull" or defName="SC_RockbullAlbino" or defName="Abrolo_Sarcho" or defName="Sheep" or defName="AA_SpinedGow" or defName="VAEWaste_Wastedeer" or defName="WildBoar" or defName="AEXP_Wildebeest" or defName="GR_WoolyWolf" or defName="MA_Worhin" or defName="Yak"]/butcherProducts</xpath>
+		<value>
+			<SS_SignalHorn>1</SS_SignalHorn>
 		</value>
 	</Operation>
 </Patch>
