@@ -375,6 +375,16 @@
 				<basePowerConsumption>15</basePowerConsumption>
 			</li>
 			<li Class="CompProperties_Flickable" />
+			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
+				<randomGraphics>
+					<li>Things/Building/AlarmTrigger/AlarmTrigger</li>
+					<li>Things/Building/AlarmTrigger/AlarmTrigger_Classic</li>
+				</randomGraphics>
+				<optionalNames>
+					<li>Standard</li>
+					<li>Classic</li>
+				</optionalNames>
+			</li>
 		</comps>
 		<uiOrder>2020</uiOrder>
 	</ThingDef>
@@ -428,10 +438,21 @@
 				<basePowerConsumption>30</basePowerConsumption>
 			</li>
 			<li Class="CompProperties_Flickable" />
+			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
+				<randomGraphics>
+					<li>Things/Building/Loudspeaker/Loudspeaker</li>
+					<li>Things/Building/Loudspeaker/Loudspeaker_Classic</li>
+				</randomGraphics>
+				<optionalNames>
+					<li>Standard</li>
+					<li>Classic</li>
+				</optionalNames>
+			</li>
 		</comps>
 		<uiOrder>2021</uiOrder>
 	</ThingDef>
 
+	<!--
 	<ThingDef ParentName="SS_BuildingBase">
 		<defName>SS_ColonyRadar</defName>
 		<label>colony radar</label>
@@ -467,5 +488,6 @@
 		</comps>
 		<uiOrder>2022</uiOrder>
 	</ThingDef>
+	-->
 
 </Defs>

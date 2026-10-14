@@ -7,7 +7,7 @@ namespace SurveillanceShift
     [StaticConstructorOnStartup]
     public class Mote_Ping : Mote
     {
-        private const float DetectionRadiusSq = 5f * 5f;
+        private const float DetectionRadiusSq = 10f * 10f;
         private const float GraceDelaySeconds = 2f;
         private const float MaxLifespanSeconds = 30f;
         private const float TargetMaxScale = 5f;

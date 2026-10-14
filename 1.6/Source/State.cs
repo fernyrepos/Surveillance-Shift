@@ -118,7 +118,6 @@ namespace SurveillanceShift
             retaliationMultipliers.Clear();
             factionKnownWealth.Clear();
             ModCompatibility.ResetCache();
-            DubsMinimap_Radar_Patch.ResetCache();
         }
 
         public static bool SuppressCameraLock(IntVec3 cell)

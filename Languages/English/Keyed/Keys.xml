@@ -19,6 +19,7 @@
   <SS_WatchtowerUnmanned>Unmanned</SS_WatchtowerUnmanned>
   <SS_UseWalkie>Use walkie talkie</SS_UseWalkie>
   <SS_UseWalkieDesc>Radio a colonist who is carrying a walkie talkie and see through their eyes. The camera follows them until you stop.</SS_UseWalkieDesc>
+  <SS_GiveOrdersTo>Give orders to {0}</SS_GiveOrdersTo>
   <SS_NoWalkieContacts>No other colonists are carrying a walkie talkie.</SS_NoWalkieContacts>
   <SS_StopUsingWalkie>Stop using walkie</SS_StopUsingWalkie>
   <SS_StopViewing>Stop viewing</SS_StopViewing>

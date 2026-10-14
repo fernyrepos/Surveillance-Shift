@@ -19,7 +19,6 @@ namespace SurveillanceShift
         public static void Draw()
         {
             if (SurveillanceShiftMod.settings.HideColonistBar is false) return;
-            if (WorldRendererUtility.WorldSelected) return;
             var maps = Find.Maps;
             if (maps.Count <= 1) return;
 
@@ -45,7 +44,7 @@ namespace SurveillanceShift
             if (string.IsNullOrEmpty(label)) label = null; else label = label.CapitalizeFirst();
             if (icon == null) icon = Faction.OfPlayer.def.FactionIcon;
 
-            var current = map == Find.CurrentMap;
+            var current = map == Find.CurrentMap && WorldRendererUtility.WorldSelected is false;
             Widgets.DrawRectFast(rect, new Color(0.5f, 0.5f, 0.5f, current ? 0.55f : 0.3f));
 
             var iconColor = GUI.color;
@@ -73,6 +72,7 @@ namespace SurveillanceShift
             {
                 SoundDefOf.MapSelected.PlayOneShotOnCamera();
                 Current.Game.CurrentMap = map;
+                if (WorldRendererUtility.WorldSelected) CameraJumper.TryJump(map.Center, map);
             }
         }
     }

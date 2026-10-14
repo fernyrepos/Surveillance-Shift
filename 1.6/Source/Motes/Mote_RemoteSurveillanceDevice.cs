@@ -9,6 +9,17 @@ namespace SurveillanceShift
         public override void TimeInterval(float deltaTime)
         {
             base.TimeInterval(deltaTime);
+            Follow();
+        }
+
+        public override void DrawAt(Vector3 drawLoc, bool flip = false)
+        {
+            Follow();
+            base.DrawAt(exactPosition, flip);
+        }
+
+        private void Follow()
+        {
             if (link1.Linked && link1.Target.Thing is Pawn p)
             {
                 Rotation = p.Rotation;

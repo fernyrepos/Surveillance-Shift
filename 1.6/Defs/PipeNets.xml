@@ -38,7 +38,6 @@
 			</damageData>
 		</graphicData>
 		<uiIconPath>Things/Building/Linked/PowerConduit_MenuIcon</uiIconPath>
-		<uiIconColor>(80, 160, 240)</uiIconColor>
 		<building>
 			<ai_chillDestination>false</ai_chillDestination>
 			<isInert>true</isInert>

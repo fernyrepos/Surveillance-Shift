@@ -55,7 +55,7 @@ namespace SurveillanceShift
             foreach (var contact in Contacts(avatar))
             {
                 var chosen = contact;
-                options.Add(new FloatMenuOption(chosen.LabelShortCap, () => Begin(avatar, chosen), chosen, Color.white));
+                options.Add(new FloatMenuOption("SS_GiveOrdersTo".Translate(chosen.LabelShortCap), () => Begin(avatar, chosen), chosen, Color.white));
             }
             if (options.Count == 0) options.Add(new FloatMenuOption("SS_NoWalkieContacts".Translate(), null));
             Find.WindowStack.Add(new FloatMenu(options));
