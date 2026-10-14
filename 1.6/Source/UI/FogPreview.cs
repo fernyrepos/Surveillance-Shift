@@ -15,12 +15,13 @@ namespace SurveillanceShift
         private const float VisionCenterY = 224f;
         private const float VisionRadius = 168f;
         private const float VisionSoftness = 20f;
+        private const float UndiscoveredStart = 400f;
+        private const float UndiscoveredSoftness = 40f;
 
         private static readonly Color Outline = new(0.06f, 0.06f, 0.06f);
         private static readonly Color ColonistBody = new(0.2f, 0.45f, 0.85f);
         private static readonly Color RaiderBody = new(0.75f, 0.14f, 0.12f);
         private static readonly Color Animal = new(0.5f, 0.34f, 0.2f);
-        private static readonly Color FogColor = new(25f / 255f, 25f / 255f, 25f / 255f);
 
         private readonly float[] withColonist = new float[Pixels * 3];
         private readonly float[] withAll = new float[Pixels * 3];
@@ -79,6 +80,8 @@ namespace SurveillanceShift
         private void Compose()
         {
             var graded = FogStyle.UsesGrade;
+            var level = FogStyle.HardcoreLevel;
+            var undiscovered = FogStyle.UsesUndiscoveredFog;
             if (graded)
             {
                 var source = FogStyle.PawnsVisibleInFog ? withAll : withColonist;
@@ -97,7 +100,12 @@ namespace SurveillanceShift
                     for (var c = 0; c < 3; c++)
                     {
                         var visible = withAll[i * 3 + c];
-                        var fogged = graded ? blurA[i * 3 + c] : FogColor[c];
+                        var fogged = graded ? blurA[i * 3 + c] : level;
+                        if (graded && undiscovered)
+                        {
+                            var unseen = Mathf.Clamp01((x - UndiscoveredStart) / UndiscoveredSoftness);
+                            fogged = Mathf.Lerp(fogged, level, unseen);
+                        }
                         bytes[o + c] = (byte)(Mathf.Clamp01(Mathf.Lerp(visible, fogged, m)) * 255f + 0.5f);
                     }
                     bytes[o + 3] = 255;

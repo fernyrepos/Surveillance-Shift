@@ -156,7 +156,7 @@
   <SS_TabBehavior>Pursuit</SS_TabBehavior>
 
   <SS_FogStyleTitle>Limited awareness</SS_FogStyleTitle>
-  <SS_FogHardcore>Hardcore fog</SS_FogHardcore>
+  <SS_FogHardcore>Hardcore mode</SS_FogHardcore>
   <SS_FogHardcoreDesc>Unseen ground is covered in solid darkness. Turn this off to see a muted, blurred view of the real map beneath the fog.</SS_FogHardcoreDesc>
   <SS_FogPawnsVisible>Pawns visible in the fog</SS_FogPawnsVisible>
   <SS_FogPawnsVisibleDesc>Show pawns standing in fogged areas, blurred and dimmed along with the rest of the map. When off, pawns in fogged areas are hidden until you see them. Needs hardcore fog off.</SS_FogPawnsVisibleDesc>
@@ -170,6 +170,8 @@
   <SS_FogSaturationDesc>How much color survives under the fog. Zero is black and white.</SS_FogSaturationDesc>
   <SS_FogBrightness>Brightness</SS_FogBrightness>
   <SS_FogBrightnessDesc>How bright the map looks under the fog.</SS_FogBrightnessDesc>
+  <SS_FogHardcoreUndiscovered>Utilize hardcore fog for undiscovered areas</SS_FogHardcoreUndiscovered>
+  <SS_FogHardcoreUndiscoveredDesc>Ground you have never seen stays covered in solid darkness. Only areas you have already seen get the blurred view of the real map.</SS_FogHardcoreUndiscoveredDesc>
   <SS_FogReset>Reset to defaults</SS_FogReset>
   <SS_FogPreview>Preview</SS_FogPreview>
   <SS_FogPreviewCaption>The clear area is what your colonists can see. Everything outside it is fogged with the settings on the left.</SS_FogPreviewCaption>

@@ -32,6 +32,7 @@ namespace SurveillanceShift
 
         private bool[] visibleCells;
         private bool[] prevCells;
+        private bool[] discovered;
         private readonly Dictionary<int, Mesh> sectionMeshes = new();
         private readonly List<Vector3> sectionVertices = new(SectionSize * SectionSize * 4);
         private readonly List<Vector2> sectionUVs = new(SectionSize * SectionSize * 4);
@@ -68,6 +69,7 @@ namespace SurveillanceShift
         {
             visibleCells = new bool[map.cellIndices.NumGridCells];
             prevCells = new bool[map.cellIndices.NumGridCells];
+            discovered = new bool[map.cellIndices.NumGridCells];
         }
 
         public bool IsVisible(IntVec3 cell)
@@ -306,7 +308,14 @@ namespace SurveillanceShift
             }
             if (SoftFogRenderer.Enabled)
             {
-                SoftFog.Submit(visibleCells);
+                for (var i = 0; i < visibleCells.Length; i++)
+                {
+                    if (visibleCells[i])
+                    {
+                        discovered[i] = true;
+                    }
+                }
+                SoftFog.Submit(visibleCells, discovered);
             }
             else
             {
@@ -643,12 +652,17 @@ namespace SurveillanceShift
             Scribe_Collections.Look(ref mutedLetters, "SS_MutedLetters", LookMode.Deep);
             Scribe_Collections.Look(ref sightedHostileIDs, "SS_SightedHostileIDs", LookMode.Value);
             Scribe_Values.Look(ref lastSignalHornTick, "SS_lastSignalHornTick", -SignalHornMapCooldownTicks);
+            DataExposeUtility.LookBoolArray(ref discovered, map.cellIndices.NumGridCells, "SS_DiscoveredCells");
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 mutedArrivals ??= new List<MutedArrival>();
                 mutedMessages ??= new List<Message>();
                 mutedLetters ??= new List<Letter>();
                 sightedHostileIDs ??= new HashSet<int>();
+                if (discovered == null || discovered.Length != map.cellIndices.NumGridCells)
+                {
+                    discovered = new bool[map.cellIndices.NumGridCells];
+                }
             }
         }
     }

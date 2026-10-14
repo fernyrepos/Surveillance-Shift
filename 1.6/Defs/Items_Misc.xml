@@ -103,6 +103,8 @@
 			<Mass>1</Mass>
 			<DeteriorationRate>2</DeteriorationRate>
 		</statBases>
+		<recipeMaker IsNull="True" />
+		<smeltable>false</smeltable>
 		<tickerType>Rare</tickerType>
 		<techLevel>Neolithic</techLevel>
 		<stackLimit>1</stackLimit>

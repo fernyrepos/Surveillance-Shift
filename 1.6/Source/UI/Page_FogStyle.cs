@@ -60,12 +60,23 @@ namespace SurveillanceShift
                 FogStyle.Touch();
             }
 
-            var editable = hardcore is false;
+            if (hardcore)
+            {
+                listing.Gap(10f);
+                var level = Slider(listing, "SS_FogBrightness".Translate(), FogStyle.Brightness, 0f, FogStyle.BrightnessMax, FogStyle.Brightness.ToString("0.00"), "SS_FogBrightnessDesc".Translate(), true);
+                if (level != FogStyle.Brightness)
+                {
+                    FogStyle.Brightness = level;
+                    FogStyle.Touch();
+                }
+                listing.End();
+                return;
+            }
 
             var pawnsVisible = FogStyle.PawnsVisibleInFog;
             row = listing.GetRect(RowHeight);
             before = pawnsVisible;
-            Widgets.CheckboxLabeled(row, "SS_FogPawnsVisible".Translate(), ref pawnsVisible, disabled: editable is false);
+            Widgets.CheckboxLabeled(row, "SS_FogPawnsVisible".Translate(), ref pawnsVisible);
             TooltipHandler.TipRegion(row, "SS_FogPawnsVisibleDesc".Translate());
             if (pawnsVisible != before)
             {
@@ -75,30 +86,28 @@ namespace SurveillanceShift
 
             listing.Gap(10f);
 
-            if (shaderReady is false)
-            {
-                listing.Label("SS_FogShaderUnavailable".Translate());
-                listing.Gap(6f);
-            }
-            else if (editable is false)
-            {
-                GUI.color = ColoredText.SubtleGrayColor;
-                listing.Label("SS_FogSlidersLocked".Translate());
-                GUI.color = Color.white;
-                listing.Gap(6f);
-            }
+            var blur = Slider(listing, "SS_FogBlur".Translate(), FogStyle.Blur, 0f, FogStyle.BlurMax, FogStyle.Blur.ToString("0.00"), "SS_FogBlurDesc".Translate(), true);
+            var contrast = Slider(listing, "SS_FogContrast".Translate(), FogStyle.Contrast, FogStyle.ContrastMin, FogStyle.ContrastMax, FogStyle.Contrast.ToString("0.00"), "SS_FogContrastDesc".Translate(), true);
+            var saturation = Slider(listing, "SS_FogSaturation".Translate(), FogStyle.Saturation, 0f, FogStyle.SaturationMax, FogStyle.Saturation.ToString("0.00"), "SS_FogSaturationDesc".Translate(), true);
+            var brightness = Slider(listing, "SS_FogBrightness".Translate(), FogStyle.Brightness, 0f, FogStyle.BrightnessMax, FogStyle.Brightness.ToString("0.00"), "SS_FogBrightnessDesc".Translate(), true);
 
-            var blur = Slider(listing, "SS_FogBlur".Translate(), FogStyle.Blur, 0f, FogStyle.BlurMax, FogStyle.Blur.ToString("0.00"), "SS_FogBlurDesc".Translate(), editable);
-            var contrast = Slider(listing, "SS_FogContrast".Translate(), FogStyle.Contrast, FogStyle.ContrastMin, FogStyle.ContrastMax, FogStyle.Contrast.ToString("0.00"), "SS_FogContrastDesc".Translate(), editable);
-            var saturation = Slider(listing, "SS_FogSaturation".Translate(), FogStyle.Saturation, 0f, FogStyle.SaturationMax, FogStyle.Saturation.ToString("0.00"), "SS_FogSaturationDesc".Translate(), editable);
-            var brightness = Slider(listing, "SS_FogBrightness".Translate(), FogStyle.Brightness, 0f, FogStyle.BrightnessMax, FogStyle.Brightness.ToString("0.00"), "SS_FogBrightnessDesc".Translate(), editable);
-
-            if (editable && (blur != FogStyle.Blur || contrast != FogStyle.Contrast || saturation != FogStyle.Saturation || brightness != FogStyle.Brightness))
+            if (blur != FogStyle.Blur || contrast != FogStyle.Contrast || saturation != FogStyle.Saturation || brightness != FogStyle.Brightness)
             {
                 FogStyle.Blur = blur;
                 FogStyle.Contrast = contrast;
                 FogStyle.Saturation = saturation;
                 FogStyle.Brightness = brightness;
+                FogStyle.Touch();
+            }
+
+            var undiscovered = FogStyle.HardcoreUndiscovered;
+            row = listing.GetRect(RowHeight);
+            before = undiscovered;
+            Widgets.CheckboxLabeled(row, "SS_FogHardcoreUndiscovered".Translate(), ref undiscovered);
+            TooltipHandler.TipRegion(row, "SS_FogHardcoreUndiscoveredDesc".Translate());
+            if (undiscovered != before)
+            {
+                FogStyle.HardcoreUndiscovered = undiscovered;
                 FogStyle.Touch();
             }
 
@@ -145,9 +154,10 @@ namespace SurveillanceShift
             var imageTop = rect.y + 40f;
             var width = rect.width;
             var height = width * FogPreview.Height / FogPreview.Width;
-            var imageRect = new Rect(rect.x, imageTop, width, height);
+            var frameRect = new Rect(rect.x, imageTop, width, height);
+            var imageRect = frameRect.ContractedBy(2f);
 
-            Widgets.DrawBoxSolid(imageRect.ExpandedBy(2f), new Color(0.25f, 0.25f, 0.25f));
+            Widgets.DrawBoxSolid(frameRect, new Color(0.25f, 0.25f, 0.25f));
             GUI.DrawTexture(imageRect, preview.Texture, ScaleMode.StretchToFill);
 
             GUI.color = ColoredText.SubtleGrayColor;

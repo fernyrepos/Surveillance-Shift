@@ -21,7 +21,6 @@ namespace SurveillanceShift
         public static int BarrierRefreshTicks = 120;
         public static float EdgeWidth = 0.22f;
         public static float EdgeCenter = 0.52f;
-        public static Color FogColor = new ColorInt(25, 25, 25).ToColor;
 
         private const int WorkerFrameMs = 8;
         private const int WorkerIdleMs = 40;
@@ -41,6 +40,8 @@ namespace SurveillanceShift
         private readonly bool[] hardCells;
         private readonly bool[] hardScratch;
         private readonly bool[] hardView;
+        private readonly bool[] pendingDiscovered;
+        private readonly bool[] discoveredView;
         private bool hasPending;
         private int lastBarrierTick = -99999;
         private byte[] readyBuffer;
@@ -49,6 +50,8 @@ namespace SurveillanceShift
 
         private byte[] writeBuffer;
         private byte[] hardWriteBuffer;
+        private byte[] undiscReadyBuffer;
+        private byte[] undiscWriteBuffer;
         private float[] current;
         private float[] target;
         private float[] blurA;
@@ -57,9 +60,13 @@ namespace SurveillanceShift
 
         private Thread worker;
         private volatile bool running;
+        private volatile bool restyle;
+        private int seenStyleVersion = -1;
 
         private Texture2D texture;
         private Texture2D hardTexture;
+        private Texture2D undiscTexture;
+        private Material undiscMaterial;
         private Material material;
         private Material hardMaterial;
         private Material gradeMaterial;
@@ -81,6 +88,10 @@ namespace SurveillanceShift
             hardCells = new bool[cellCount];
             hardScratch = new bool[cellCount];
             hardView = new bool[cellCount];
+            pendingDiscovered = new bool[cellCount];
+            discoveredView = new bool[cellCount];
+            undiscWriteBuffer = new byte[cellCount * 4];
+            undiscReadyBuffer = new byte[cellCount * 4];
             current = new float[cellCount];
             target = new float[cellCount];
             blurA = new float[cellCount];
@@ -106,13 +117,17 @@ namespace SurveillanceShift
             worker.Start();
         }
 
-        public void Submit(bool[] visibleCells)
+        public void Submit(bool[] visibleCells, bool[] discoveredCells = null)
         {
             if (visibleCells.Length != cellCount) return;
             var refreshed = RefreshBarrierScratch();
             lock (sync)
             {
                 Array.Copy(visibleCells, pending, cellCount);
+                if (discoveredCells != null && discoveredCells.Length == cellCount)
+                {
+                    Array.Copy(discoveredCells, pendingDiscovered, cellCount);
+                }
                 if (refreshed)
                 {
                     Array.Copy(barrierScratch, barriers, cellCount);
@@ -180,15 +195,23 @@ namespace SurveillanceShift
         {
             EnsureResources();
 
+            if (seenStyleVersion != FogStyle.Version)
+            {
+                seenStyleVersion = FogStyle.Version;
+                restyle = true;
+            }
+
             lock (sync)
             {
                 if (readyDirty)
                 {
                     texture.SetPixelData(readyBuffer, 0);
                     hardTexture.SetPixelData(hardReadyBuffer, 0);
+                    undiscTexture.SetPixelData(undiscReadyBuffer, 0);
                     readyDirty = false;
                     texture.Apply(false, false);
                     hardTexture.Apply(false, false);
+                    undiscTexture.Apply(false, false);
                 }
             }
 
@@ -205,6 +228,10 @@ namespace SurveillanceShift
             if (HardOcclusion)
             {
                 Graphics.DrawMesh(mesh, new Vector3(0f, 0.001f, 0f), Quaternion.identity, graded ? gradeHardMaterial : hardMaterial, 0);
+            }
+            if (FogStyle.UsesUndiscoveredFog)
+            {
+                Graphics.DrawMesh(mesh, new Vector3(0f, 0.002f, 0f), Quaternion.identity, undiscMaterial, 0);
             }
         }
 
@@ -240,6 +267,26 @@ namespace SurveillanceShift
                     filterMode = FilterMode.Point,
                     wrapMode = TextureWrapMode.Clamp,
                     anisoLevel = 0
+                };
+            }
+            if (undiscTexture == null)
+            {
+                undiscTexture = new Texture2D(mapX, mapZ, TextureFormat.RGBA32, false, true)
+                {
+                    name = "SS_UndiscoveredFog_" + map.uniqueID,
+                    filterMode = FilterMode.Bilinear,
+                    wrapMode = TextureWrapMode.Clamp,
+                    anisoLevel = 0
+                };
+            }
+            if (undiscMaterial == null)
+            {
+                undiscMaterial = new Material(ShaderDatabase.Transparent)
+                {
+                    name = "SS_UndiscoveredFogMat",
+                    mainTexture = undiscTexture,
+                    color = Color.white,
+                    renderQueue = RenderQueue + 2
                 };
             }
             if (material == null)
@@ -308,6 +355,7 @@ namespace SurveillanceShift
                         }
                         Array.Copy(barriers, barrierView, cellCount);
                         Array.Copy(hardCells, hardView, cellCount);
+                        Array.Copy(pendingDiscovered, discoveredView, cellCount);
                         rebuilt = true;
                     }
                 }
@@ -319,13 +367,15 @@ namespace SurveillanceShift
 
                 var moved = Step(dt);
 
-                if (moved || rebuilt)
+                if (moved || rebuilt || restyle)
                 {
+                    restyle = false;
                     Rasterize();
                     lock (sync)
                     {
                         (writeBuffer, readyBuffer) = (readyBuffer, writeBuffer);
                         (hardWriteBuffer, hardReadyBuffer) = (hardReadyBuffer, hardWriteBuffer);
+                        (undiscWriteBuffer, undiscReadyBuffer) = (undiscReadyBuffer, undiscWriteBuffer);
                         readyDirty = true;
                     }
                     Thread.Sleep(WorkerFrameMs);
@@ -496,9 +546,9 @@ namespace SurveillanceShift
 
         private void Rasterize()
         {
-            var r = (byte)Mathf.Clamp(Mathf.RoundToInt(FogColor.r * 255f), 0, 255);
-            var g = (byte)Mathf.Clamp(Mathf.RoundToInt(FogColor.g * 255f), 0, 255);
-            var b = (byte)Mathf.Clamp(Mathf.RoundToInt(FogColor.b * 255f), 0, 255);
+            var r = (byte)Mathf.Clamp(Mathf.RoundToInt(FogStyle.HardcoreLevel * 255f), 0, 255);
+            var g = r;
+            var b = r;
             var hard = HardOcclusion;
             var sharpness = Mathf.Max(1, HardSharpness);
 
@@ -515,6 +565,11 @@ namespace SurveillanceShift
                 hardWriteBuffer[o + 1] = g;
                 hardWriteBuffer[o + 2] = b;
                 hardWriteBuffer[o + 3] = hard && hardView[i] ? (byte)(Sharpen(a, sharpness) * 255f) : (byte)0;
+
+                undiscWriteBuffer[o] = r;
+                undiscWriteBuffer[o + 1] = g;
+                undiscWriteBuffer[o + 2] = b;
+                undiscWriteBuffer[o + 3] = discoveredView[i] ? (byte)0 : (byte)(a * 255f);
             }
         }
 
@@ -546,6 +601,16 @@ namespace SurveillanceShift
             {
                 UnityEngine.Object.Destroy(hardTexture);
                 hardTexture = null;
+            }
+            if (undiscTexture != null)
+            {
+                UnityEngine.Object.Destroy(undiscTexture);
+                undiscTexture = null;
+            }
+            if (undiscMaterial != null)
+            {
+                UnityEngine.Object.Destroy(undiscMaterial);
+                undiscMaterial = null;
             }
             if (material != null)
             {

@@ -1,3 +1,4 @@
+using UnityEngine;
 using Verse;
 
 namespace SurveillanceShift
@@ -12,6 +13,7 @@ namespace SurveillanceShift
 
         public const bool DefaultHardcore = false;
         public const bool DefaultPawnsVisible = false;
+        public const bool DefaultHardcoreUndiscovered = true;
         public const float DefaultBlur = 0.75f;
         public const float DefaultContrast = 1.65f;
         public const float DefaultSaturation = 1.5f;
@@ -19,6 +21,7 @@ namespace SurveillanceShift
 
         public static bool HardcoreFog = DefaultHardcore;
         public static bool PawnsVisibleInFog = DefaultPawnsVisible;
+        public static bool HardcoreUndiscovered = DefaultHardcoreUndiscovered;
         public static float Blur = DefaultBlur;
         public static float Contrast = DefaultContrast;
         public static float Saturation = DefaultSaturation;
@@ -26,7 +29,11 @@ namespace SurveillanceShift
 
         public static int Version;
 
+        public static float HardcoreLevel => Mathf.Clamp01(25f / 255f * Brightness / DefaultBrightness);
+
         public static bool UsesGrade => HardcoreFog is false && FogShader.Available;
+
+        public static bool UsesUndiscoveredFog => UsesGrade && HardcoreUndiscovered;
 
         public static bool HidesFoggedPawns => State.IsLimitedAwareness && UsesGrade && PawnsVisibleInFog is false;
 
@@ -39,6 +46,7 @@ namespace SurveillanceShift
         {
             HardcoreFog = DefaultHardcore;
             PawnsVisibleInFog = DefaultPawnsVisible;
+            HardcoreUndiscovered = DefaultHardcoreUndiscovered;
             ResetSliders();
         }
 
@@ -55,6 +63,7 @@ namespace SurveillanceShift
         {
             Scribe_Values.Look(ref HardcoreFog, "SS_FogHardcore", true);
             Scribe_Values.Look(ref PawnsVisibleInFog, "SS_FogPawnsVisible", DefaultPawnsVisible);
+            Scribe_Values.Look(ref HardcoreUndiscovered, "SS_FogHardcoreUndiscovered", DefaultHardcoreUndiscovered);
             Scribe_Values.Look(ref Blur, "SS_FogBlur", DefaultBlur);
             Scribe_Values.Look(ref Contrast, "SS_FogContrast", DefaultContrast);
             Scribe_Values.Look(ref Saturation, "SS_FogSaturation", DefaultSaturation);
