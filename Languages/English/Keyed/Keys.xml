@@ -154,4 +154,23 @@
   <SS_UnassignBodyguard>Unassign {0} as {1}'s bodyguard</SS_UnassignBodyguard>
   <SS_SelectedGuards>{0} selected pawns</SS_SelectedGuards>
   <SS_TabBehavior>Pursuit</SS_TabBehavior>
+
+  <SS_FogStyleTitle>Limited awareness</SS_FogStyleTitle>
+  <SS_FogHardcore>Hardcore fog</SS_FogHardcore>
+  <SS_FogHardcoreDesc>Unseen ground is covered in solid darkness. Turn this off to see a muted, blurred view of the real map beneath the fog.</SS_FogHardcoreDesc>
+  <SS_FogPawnsVisible>Pawns visible in the fog</SS_FogPawnsVisible>
+  <SS_FogPawnsVisibleDesc>Show pawns standing in fogged areas, blurred and dimmed along with the rest of the map. When off, pawns in fogged areas are hidden until you see them. Needs hardcore fog off.</SS_FogPawnsVisibleDesc>
+  <SS_FogSlidersLocked>The sliders only apply when hardcore fog is off.</SS_FogSlidersLocked>
+  <SS_FogShaderUnavailable>The fog shader could not be loaded in this game version, so the fog stays hardcore.</SS_FogShaderUnavailable>
+  <SS_FogBlur>Blur</SS_FogBlur>
+  <SS_FogBlurDesc>How blurred the map looks under the fog, in cells. Scales with zoom.</SS_FogBlurDesc>
+  <SS_FogContrast>Contrast</SS_FogContrast>
+  <SS_FogContrastDesc>How strongly light and dark areas under the fog are pushed apart.</SS_FogContrastDesc>
+  <SS_FogSaturation>Saturation</SS_FogSaturation>
+  <SS_FogSaturationDesc>How much color survives under the fog. Zero is black and white.</SS_FogSaturationDesc>
+  <SS_FogBrightness>Brightness</SS_FogBrightness>
+  <SS_FogBrightnessDesc>How bright the map looks under the fog.</SS_FogBrightnessDesc>
+  <SS_FogReset>Reset to defaults</SS_FogReset>
+  <SS_FogPreview>Preview</SS_FogPreview>
+  <SS_FogPreviewCaption>The clear area is what your colonists can see. Everything outside it is fogged with the settings on the left.</SS_FogPreviewCaption>
 </LanguageData>

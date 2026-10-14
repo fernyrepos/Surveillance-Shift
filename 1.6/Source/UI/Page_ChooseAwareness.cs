@@ -52,6 +52,34 @@ namespace SurveillanceShift
             DrawOption(rightRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, SelectLimitedAwareness);
         }
 
+        public override void DoNext()
+        {
+            var fogPage = next as Page_FogStyle;
+            if (State.IsLimitedAwareness)
+            {
+                if (fogPage is null)
+                {
+                    fogPage = new Page_FogStyle { prev = this, next = next, nextAct = nextAct };
+                    if (next != null)
+                    {
+                        next.prev = fogPage;
+                    }
+                    next = fogPage;
+                    nextAct = null;
+                }
+            }
+            else if (fogPage != null)
+            {
+                next = fogPage.next;
+                nextAct = fogPage.nextAct;
+                if (next != null)
+                {
+                    next.prev = this;
+                }
+            }
+            base.DoNext();
+        }
+
         private void SelectLimitedAwareness()
         {
             if (State.AwarenessMode == AwarenessMode.LimitedAwareness) return;

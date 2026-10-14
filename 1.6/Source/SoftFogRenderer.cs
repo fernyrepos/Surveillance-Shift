@@ -62,6 +62,8 @@ namespace SurveillanceShift
         private Texture2D hardTexture;
         private Material material;
         private Material hardMaterial;
+        private Material gradeMaterial;
+        private Material gradeHardMaterial;
         private Mesh mesh;
 
         public SoftFogRenderer(Map map)
@@ -190,10 +192,31 @@ namespace SurveillanceShift
                 }
             }
 
-            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, material, 0);
+            var graded = FogStyle.UsesGrade;
+            if (graded)
+            {
+                EnsureGradeMaterials();
+                var blur = FogShader.CurrentBlurRadius();
+                FogShader.Apply(gradeMaterial, blur);
+                FogShader.Apply(gradeHardMaterial, blur);
+            }
+
+            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, graded ? gradeMaterial : material, 0);
             if (HardOcclusion)
             {
-                Graphics.DrawMesh(mesh, new Vector3(0f, 0.001f, 0f), Quaternion.identity, hardMaterial, 0);
+                Graphics.DrawMesh(mesh, new Vector3(0f, 0.001f, 0f), Quaternion.identity, graded ? gradeHardMaterial : hardMaterial, 0);
+            }
+        }
+
+        private void EnsureGradeMaterials()
+        {
+            if (gradeMaterial == null)
+            {
+                gradeMaterial = FogShader.CreateMaterial("SS_FogGradeMat", texture, RenderQueue);
+            }
+            if (gradeHardMaterial == null)
+            {
+                gradeHardMaterial = FogShader.CreateMaterial("SS_FogGradeHardMat", hardTexture, RenderQueue + 1);
             }
         }
 
@@ -533,6 +556,16 @@ namespace SurveillanceShift
             {
                 UnityEngine.Object.Destroy(hardMaterial);
                 hardMaterial = null;
+            }
+            if (gradeMaterial != null)
+            {
+                UnityEngine.Object.Destroy(gradeMaterial);
+                gradeMaterial = null;
+            }
+            if (gradeHardMaterial != null)
+            {
+                UnityEngine.Object.Destroy(gradeHardMaterial);
+                gradeHardMaterial = null;
             }
             if (mesh != null)
             {

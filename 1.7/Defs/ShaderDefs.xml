@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <ShaderDef>
+    <defName>SS_FogGrade</defName>
+    <shaderProgram>
+      <vertexShaderFileName>SS_FogGrade.vert.glsl</vertexShaderFileName>
+      <fragmentShaderFileName>SS_FogGrade.frag.glsl</fragmentShaderFileName>
+      <transparent>true</transparent>
+      <depthWrite>false</depthWrite>
+      <renderQueue>4300</renderQueue>
+      <sceneGrab>
+        <name>SurveillanceFog</name>
+        <queue>4300</queue>
+      </sceneGrab>
+      <textureWrapOverrides>
+        <li>
+          <key>_MainTex</key>
+          <value>Clamp</value>
+        </li>
+      </textureWrapOverrides>
+    </shaderProgram>
+  </ShaderDef>
+
+</Defs>

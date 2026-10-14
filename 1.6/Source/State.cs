@@ -208,6 +208,7 @@ namespace SurveillanceShift
         public static void ExposeData()
         {
             Scribe_Values.Look(ref AwarenessMode, "SS_AwarenessMode", AwarenessMode.AreaOmniscience);
+            FogStyle.ExposeData();
             Scribe_Collections.Look(ref pendingFactionDebts, "SS_pendingFactionDebts", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref retaliationMultipliers, "SS_retaliationMultipliers", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref factionKnownWealth, "SS_factionKnownWealth", LookMode.Value, LookMode.Value);
