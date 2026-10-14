@@ -11,7 +11,7 @@ namespace SurveillanceShift
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            return pawn.Reserve(job.targetA, job, Post?.GetComp<CompAssignableToPawn_GuardPost>()?.MaxAssignedPawnsCount ?? 1, -1, null, errorOnFailed);
+            return pawn.Reserve(job.targetA, job, Post?.GuardSlots ?? 1, 0, null, errorOnFailed);
         }
 
         public override IEnumerable<Toil> MakeNewToils()

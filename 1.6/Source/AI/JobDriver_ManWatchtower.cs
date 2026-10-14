@@ -80,7 +80,7 @@ namespace SurveillanceShift
             };
             yield return stepToPlatform;
 
-            var watch = ToilMaker.MakeToil("MakeNewToils");
+            var watch = ToilMaker.MakeToil("Watch");
             watch.handlingFacing = true;
             watch.defaultCompleteMode = ToilCompleteMode.Delay;
             watch.initAction = () =>
@@ -106,7 +106,7 @@ namespace SurveillanceShift
             };
             yield return watch;
 
-            var pace = ToilMaker.MakeToil("MakeNewToils");
+            var pace = ToilMaker.MakeToil("Pace");
             pace.handlingFacing = true;
             pace.defaultCompleteMode = ToilCompleteMode.Delay;
             pace.initAction = () =>

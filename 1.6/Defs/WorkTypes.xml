@@ -26,7 +26,7 @@
 		<pawnLabel>Guard</pawnLabel>
 		<gerundLabel>guarding</gerundLabel>
 		<verb>Guard</verb>
-		<description>Stand at an assigned guard spot, walk a patrol route, or protect a colonist, engaging hostiles that come near. Assign duties in the Guards tab.</description>
+		<description>Man assigned guard spots and watchtowers, walk assigned patrol routes, or protect a colonist, engaging hostiles that come near. Guards choose between their assignments by priority.</description>
 		<alwaysStartActive>false</alwaysStartActive>
 		<naturalPriority>1130</naturalPriority>
 		<requireCapableColonist>true</requireCapableColonist>

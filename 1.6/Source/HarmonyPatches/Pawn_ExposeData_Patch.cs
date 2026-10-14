@@ -30,7 +30,7 @@ namespace SurveillanceShift
         private static void ExposeGuardAssignment(Pawn pawn, bool saving)
         {
             var assignment = saving ? pawn.GetGuardAssignment() : null;
-            if (saving && assignment.IsActive is false) return;
+            if (saving && assignment.NeedsSaving is false) return;
             Scribe_Deep.Look(ref assignment, "SS_guardAssignment");
             if (saving is false && assignment != null) GuardUtility.ReplaceAssignment(pawn, assignment);
         }

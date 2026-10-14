@@ -16,12 +16,26 @@ namespace SurveillanceShift
         public int relationsTruthBoost = 10;
         public int fogViewDistance = 30;
 
+        private bool barForcedHidden;
+
         public bool HideColonistBar
         {
             get
             {
                 var hide = hideColonistBarAuthentic && State.IsLimitedAwareness && ModCompatibility.IsPerspectiveShiftAuthentic();
-                if (hide) Find.PlaySettings.showColonistBar = false;
+                if (hide)
+                {
+                    if (Find.PlaySettings.showColonistBar)
+                    {
+                        Find.PlaySettings.showColonistBar = false;
+                        barForcedHidden = true;
+                    }
+                }
+                else if (barForcedHidden)
+                {
+                    barForcedHidden = false;
+                    Find.PlaySettings.showColonistBar = true;
+                }
                 return hide;
             }
         }

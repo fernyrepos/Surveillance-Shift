@@ -48,8 +48,6 @@ namespace SurveillanceShift
         public static JobDef SS_PatrolDuty;
         public static JobDef SS_BodyguardDuty;
         public static JobDef SS_GuardEngage;
-        public static MainButtonDef SS_GuardsTab;
-        public static PawnTableDef SS_GuardsTable;
 
         static DefsOf()
         {

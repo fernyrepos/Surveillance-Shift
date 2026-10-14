@@ -16,6 +16,7 @@ namespace SurveillanceShift
         private Effecter progressBar;
         private Pawn currentLeadScout;
         private Mote scanningMote;
+        private Rot4 moteRotation = Rot4.Invalid;
 
         public LordToil_EnemyScoutObserve(IntVec3 spot, int duration, ScopeKind opticKind)
         {
@@ -55,9 +56,11 @@ namespace SurveillanceShift
                 mote.progress = Mathf.Clamp01((float)ticksPassed / duration);
                 mote.offsetZ = -0.5f;
                 mote.alwaysShow = true;
-                if (scanningMote == null || scanningMote.Destroyed || scanningMote.link1.Target.Thing != leadScout)
+                if (scanningMote == null || scanningMote.Destroyed || scanningMote.link1.Target.Thing != leadScout || moteRotation != leadScout.Rotation)
                 {
-                    scanningMote = MoteMaker.MakeAttachedOverlay(leadScout, OpticMoteDef, Vector3.zero);
+                    if (scanningMote != null && scanningMote.Destroyed is false) scanningMote.Destroy();
+                    moteRotation = leadScout.Rotation;
+                    scanningMote = MoteMaker.MakeAttachedOverlay(leadScout, OpticMoteDef, ScopeView.MoteOffsetFor(moteRotation));
                 }
                 scanningMote.Maintain();
             }

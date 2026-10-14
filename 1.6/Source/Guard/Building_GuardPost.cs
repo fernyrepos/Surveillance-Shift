@@ -6,9 +6,12 @@ using Verse;
 
 namespace SurveillanceShift
 {
-    public class Building_GuardPost : Building, IRenameable
+    public class Building_GuardPost : Building, IRenameable, IPriorityTabTarget, IBehaviorTabTarget
     {
         private string customName;
+        private StoragePriority priority = StoragePriority.Normal;
+        public GuardStance stance = GuardStance.Defend;
+        public bool hideVisual;
 
         public string RenamableLabel
         {
@@ -20,27 +23,59 @@ namespace SurveillanceShift
         public string InspectLabel => RenamableLabel;
         public override string Label => customName.NullOrEmpty() ? base.Label : customName;
 
-        public IEnumerable<Pawn> Occupants
+        public StoragePriority Priority
         {
-            get
-            {
-                if (Spawned is false) return Enumerable.Empty<Pawn>();
-                return Map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.GetGuardAssignment() is { mode: GuardDutyMode.Post } a && a.post == this);
-            }
+            get => priority;
+            set => priority = value;
         }
+
+        public GuardStance Stance
+        {
+            get => stance;
+            set => stance = value;
+        }
+
+        public CompAssignableToPawn_GuardPost AssignComp => GetComp<CompAssignableToPawn_GuardPost>();
+
+        public virtual int GuardSlots => AssignComp?.MaxAssignedPawnsCount ?? 1;
+
+        public virtual bool IsMarker => true;
+
+        public IReadOnlyList<Pawn> AssignedGuards => (IReadOnlyList<Pawn>)AssignComp?.AssignedPawnsForReading ?? System.Array.Empty<Pawn>();
+
+        public bool IsAssigned(Pawn pawn) => AssignComp?.AssignedPawnsForReading.Contains(pawn) ?? false;
+
+        public virtual bool VisualHidden => hideVisual;
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {
             base.SpawnSetup(map, respawningAfterLoad);
+            map.GetComponent<MapComponent_Guarding>().Register(this);
             if (respawningAfterLoad || customName.NullOrEmpty() is false) return;
             var pending = map.GetComponent<MapComponent_Guarding>().TakePendingPostName(Position);
             if (pending.NullOrEmpty() is false) customName = pending;
+        }
+
+        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+        {
+            var guarding = Map.GetComponent<MapComponent_Guarding>();
+            base.DeSpawn(mode);
+            guarding.Unregister(this);
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref customName, "SS_customName");
+            Scribe_Values.Look(ref priority, "priority", StoragePriority.Normal);
+            Scribe_Values.Look(ref stance, "SS_stance", GuardStance.Defend);
+            Scribe_Values.Look(ref hideVisual, "SS_hideVisual");
+        }
+
+        public void SetVisualHidden(bool hidden)
+        {
+            hideVisual = hidden;
+            if (Spawned) Map.mapDrawer.MapMeshDirty(Position, MapMeshFlagDefOf.Things);
         }
 
         public override IEnumerable<Gizmo> GetGizmos()
@@ -57,32 +92,41 @@ namespace SurveillanceShift
                 icon = TexButton.Rename,
                 action = () => Find.WindowStack.Add(new Dialog_RenameGuardThing(this))
             };
+
+            if (IsMarker is false) yield break;
+
+            yield return GuardMenus.HideVisualGizmo(this);
         }
 
         public override string GetInspectString()
         {
             var text = base.GetInspectString();
-            var names = Occupants.Select(p => p.LabelShortCap).ToList();
-            var line = names.Count == 0 ? "SS_PostUnmanned".Translate().ToString() : "SS_PostMannedBy".Translate(names.ToCommaList()).ToString();
-            return text.NullOrEmpty() ? line : text + "\n" + line;
+            var lines = new List<string>();
+            if (text.NullOrEmpty() is false) lines.Add(text);
+            var names = AssignedGuards.Select(p => p.LabelShortCap).ToList();
+            lines.Add(names.Count == 0 ? "SS_PostUnmanned".Translate().ToString() : "SS_PostMannedBy".Translate(names.ToCommaList()).ToString());
+            lines.Add("Priority".Translate() + ": " + priority.Label().CapitalizeFirst());
+            if (IsMarker) lines.Add("SS_GuardStance".Translate(GuardMenus.StanceLabel(stance)).ToString().Replace("\n", " "));
+            return string.Join("\n", lines);
         }
 
         public override void DrawExtraSelectionOverlays()
         {
             base.DrawExtraSelectionOverlays();
+            if (IsMarker is false) return;
             var origin = Position.ToVector3Shifted();
             GenDraw.DrawArrowRotated(origin + Rotation.FacingCell.ToVector3() * 1.1f, Rotation.AsAngle, false);
         }
 
         public override void Print(SectionLayer layer)
         {
-            if (Map.GetComponent<MapComponent_Guarding>().showPosts) base.Print(layer);
+            if (VisualHidden is false) base.Print(layer);
         }
 
         public override void DrawGUIOverlay()
         {
             base.DrawGUIOverlay();
-            if (customName.NullOrEmpty() || Map.GetComponent<MapComponent_Guarding>().showPosts is false || Find.CameraDriver.CurrentZoom > CameraZoomRange.Close) return;
+            if (customName.NullOrEmpty() || VisualHidden || Find.CameraDriver.CurrentZoom > CameraZoomRange.Close) return;
             GenMapUI.DrawThingLabel(this, customName, Color.white);
         }
     }

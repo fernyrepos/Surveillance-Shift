@@ -28,8 +28,12 @@
 	<ThingDef ParentName="SS_GuardMarkerBase">
 		<defName>SS_GuardPost</defName>
 		<label>guard spot</label>
-		<description>Marks a spot where an assigned guard will stand watch, facing the direction the spot points. The guard engages hostiles that come into range and returns to the spot afterward.</description>
+		<description>Marks a spot where assigned guards will stand watch, facing the direction the spot points. Guards engage hostiles that come into range and return to the spot afterward. Guards can be assigned to several spots and routes and pick between them by priority.</description>
 		<thingClass>SurveillanceShift.Building_GuardPost</thingClass>
+		<inspectorTabs>
+			<li>SurveillanceShift.ITab_Priority</li>
+			<li>SurveillanceShift.ITab_Behavior</li>
+		</inspectorTabs>
 		<comps>
 			<li Class="SurveillanceShift.CompProperties_GuardPostAssignable">
 				<maxAssignedPawnsCount>4</maxAssignedPawnsCount>
@@ -48,6 +52,15 @@
 		<label>patrol waypoint</label>
 		<description>Marks a stop on a patrol route. New waypoints join the route you last worked on, in the order they are placed. Use the gizmos to reorder, rename or split routes, and to set how long guards linger.</description>
 		<thingClass>SurveillanceShift.Building_PatrolWaypoint</thingClass>
+		<inspectorTabs>
+			<li>SurveillanceShift.ITab_Priority</li>
+			<li>SurveillanceShift.ITab_Behavior</li>
+		</inspectorTabs>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_PatrolAssignable">
+				<maxAssignedPawnsCount>24</maxAssignedPawnsCount>
+			</li>
+		</comps>
 		<rotatable>false</rotatable>
 		<uiOrder>2101</uiOrder>
 		<graphicData>

@@ -22,7 +22,7 @@ namespace SurveillanceShift
         public static bool CanEngage(Pawn pawn)
         {
             if (pawn.Downed || pawn.WorkTagIsDisabled(WorkTags.Violent)) return false;
-            if (pawn.RaceProps.Humanlike) return pawn.equipment?.Primary != null;
+            if (pawn.RaceProps.Humanlike) return true;
             return pawn.kindDef.canMeleeAttack || pawn.equipment?.Primary != null || pawn.CurrentEffectiveVerb != null;
         }
 

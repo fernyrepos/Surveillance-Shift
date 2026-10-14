@@ -47,7 +47,7 @@ namespace SurveillanceShift
                 State.ApplyDebt(faction);
                 State.SetKnownWealth(faction, Map.wealthWatcher.WealthTotal);
                 State.ResetRetaliation(faction);
-                Messages.Message("SS_EnemyScoutsFinished".Translate(faction.Name), MessageTypeDefOf.ThreatSmall);
+                Messages.Message((faction.HostileTo(Faction.OfPlayer) ? "SS_EnemyScoutsFinished" : "SS_SpyScoutsFinished").Translate(faction.Name), MessageTypeDefOf.ThreatSmall);
             }));
             graph.AddTransition(scanToExit);
 

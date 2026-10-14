@@ -13,8 +13,6 @@ namespace SurveillanceShift
         public List<PatrolRoute> routes = new();
         public int activeRouteId = -1;
         private int nextRouteId = 1;
-        public bool showPosts = true;
-        public bool showWaypoints = true;
         private Dictionary<IntVec3, string> pendingPostNames = new();
         private List<IntVec3> pendingKeysScratch;
         private List<string> pendingValuesScratch;
@@ -91,33 +89,22 @@ namespace SurveillanceShift
             wp.NotifyRouteChanged();
         }
 
-        public void SetVisibility(bool posts, bool waypoints)
+        private readonly List<Building_GuardPost> posts = new();
+
+        public List<Building_GuardPost> Posts => posts;
+
+        public void Register(Building_GuardPost post)
         {
-            var postsChanged = posts != showPosts;
-            var waypointsChanged = waypoints != showWaypoints;
-            showPosts = posts;
-            showWaypoints = waypoints;
-            if (postsChanged) DirtyAll(map.listerThings.ThingsOfDef(DefsOf.SS_GuardPost));
-            if (waypointsChanged) DirtyAll(map.listerThings.ThingsOfDef(DefsOf.SS_PatrolWaypoint));
+            if (posts.Contains(post) is false) posts.Add(post);
         }
 
-        private void DirtyAll(List<Thing> things)
-        {
-            for (var i = 0; i < things.Count; i++)
-            {
-                map.mapDrawer.MapMeshDirty(things[i].Position, MapMeshFlagDefOf.Things);
-            }
-        }
-
-        public IEnumerable<Building_GuardPost> Posts => map.listerThings.ThingsOfDef(DefsOf.SS_GuardPost).OfType<Building_GuardPost>();
+        public void Unregister(Building_GuardPost post) => posts.Remove(post);
 
         public override void ExposeData()
         {
             Scribe_Collections.Look(ref routes, "routes", LookMode.Deep);
             Scribe_Values.Look(ref nextRouteId, "nextRouteId", 1);
             Scribe_Values.Look(ref activeRouteId, "activeRouteId", -1);
-            Scribe_Values.Look(ref showPosts, "showPosts", true);
-            Scribe_Values.Look(ref showWaypoints, "showWaypoints", true);
             Scribe_Collections.Look(ref pendingPostNames, "pendingPostNames", LookMode.Value, LookMode.Value, ref pendingKeysScratch, ref pendingValuesScratch);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
@@ -126,14 +113,29 @@ namespace SurveillanceShift
             }
         }
 
+        public override void FinalizeInit()
+        {
+            base.FinalizeInit();
+            foreach (var pawn in map.mapPawns.AllPawns)
+            {
+                if (pawn.Faction != Faction.OfPlayer) continue;
+                var assignment = pawn.GetGuardAssignment();
+                if (assignment.HasLegacy is false) continue;
+                if (assignment.legacyMode == GuardDutyMode.Post && assignment.legacyPost is { } post) post.AssignComp?.ForceAddPawn(pawn);
+                else if (assignment.legacyMode == GuardDutyMode.Route && GetRoute(assignment.legacyRouteId) is { } route && route.assignedPawns.Contains(pawn) is false) route.assignedPawns.Add(pawn);
+                assignment.ClearLegacy();
+            }
+        }
+
         public override void MapComponentUpdate()
         {
-            if (showWaypoints is false || routes.Count == 0 || Find.CurrentMap != map) return;
+            if (routes.Count == 0 || Find.CurrentMap != map) return;
             var overlayWanted = OverlayWanted(out var focus);
             if (overlayWanted is false) return;
             foreach (var route in routes)
             {
                 if (focus != null && focus.Contains(route.id) is false) continue;
+                if (route.waypoints.All(w => w.hideVisual)) continue;
                 DrawRoute(route);
             }
         }
@@ -141,7 +143,6 @@ namespace SurveillanceShift
         private bool OverlayWanted(out HashSet<int> focus)
         {
             focus = null;
-            if (Find.MainTabsRoot.OpenTab == DefsOf.SS_GuardsTab) return true;
             if (Find.DesignatorManager.SelectedDesignator is Designator_Build build && build.PlacingDef == DefsOf.SS_PatrolWaypoint) return true;
 
             var selected = Find.Selector.SelectedObjects;
@@ -153,10 +154,13 @@ namespace SurveillanceShift
                     focus ??= new HashSet<int>();
                     focus.Add(wp.routeId);
                 }
-                else if (obj is Pawn pawn && pawn.Map == map && pawn.GetGuardAssignment() is { mode: GuardDutyMode.Route } assignment)
+                else if (obj is Pawn pawn && pawn.Map == map)
                 {
-                    focus ??= new HashSet<int>();
-                    focus.Add(assignment.routeId);
+                    foreach (var assigned in GuardUtility.AssignedRoutes(pawn))
+                    {
+                        focus ??= new HashSet<int>();
+                        focus.Add(assigned.id);
+                    }
                 }
             }
             return focus != null;

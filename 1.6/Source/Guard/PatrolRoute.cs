@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -21,6 +22,9 @@ namespace SurveillanceShift
         public int id;
         public string name;
         public RouteLoopMode loopMode;
+        public StoragePriority priority = StoragePriority.Normal;
+        public GuardStance stance = GuardStance.Defend;
+        public List<Pawn> assignedPawns = new();
         public List<Building_PatrolWaypoint> waypoints = new();
 
         public Color Color => Palette[(id - 1 + Palette.Length * 4) % Palette.Length];
@@ -39,9 +43,14 @@ namespace SurveillanceShift
             Scribe_Values.Look(ref id, "id");
             Scribe_Values.Look(ref name, "name");
             Scribe_Values.Look(ref loopMode, "loopMode", RouteLoopMode.Loop);
+            Scribe_Values.Look(ref priority, "priority", StoragePriority.Normal);
+            Scribe_Values.Look(ref stance, "stance", GuardStance.Defend);
             Scribe_Collections.Look(ref waypoints, "waypoints", LookMode.Reference);
+            Scribe_Collections.Look(ref assignedPawns, "assignedPawns", LookMode.Reference);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
+                assignedPawns ??= new List<Pawn>();
+                assignedPawns.RemoveAll(p => p is null);
                 waypoints ??= new List<Building_PatrolWaypoint>();
                 waypoints.RemoveAll(w => w is null);
             }

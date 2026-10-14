@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
+using UnityEngine;
 using Verse;
 using Verse.AI.Group;
 
@@ -10,6 +11,15 @@ namespace SurveillanceShift
     {
         private const int MinScouts = 1;
         private const int MaxScouts = 3;
+        private const float MaxSpyChance = 0.7f;
+        private const int LowestNeutralGoodwill = -75;
+        private const int HighestGoodwill = 100;
+
+        public static float SpyChance(Faction faction)
+        {
+            var span = HighestGoodwill - LowestNeutralGoodwill;
+            return MaxSpyChance * Mathf.Clamp01((float)(HighestGoodwill - faction.PlayerGoodwill) / span);
+        }
 
         public override bool CanFireNowSub(IncidentParms parms) => SurveillanceShiftMod.settings.enableScouts && State.IsLimitedAwareness && Faction.OfPlayer.def.techLevel != TechLevel.Animal && base.CanFireNowSub(parms) && CandidateFactions().Any();
 
@@ -32,6 +42,13 @@ namespace SurveillanceShift
                 var loc = CellFinder.RandomClosewalkCellNear(parms.spawnCenter, map, 5);
                 GenSpawn.Spawn(p, loc, map);
                 list.Add(p);
+            }
+            if (Rand.Chance(SpyChance(parms.faction)))
+            {
+                var scoutSpot = CellFinder.RandomClosewalkCellNear(parms.spawnCenter, map, 8);
+                LordMaker.MakeNewLord(parms.faction, new LordJob_EnemyScouts(parms.faction, scoutSpot), map, list);
+                SendStandardLetter("SS_LetterSpyScoutsLabel".Translate(parms.faction.Name), "SS_LetterSpyScoutsText".Translate(parms.faction.NameColored), LetterDefOf.NeutralEvent, parms, list[0]);
+                return true;
             }
             if (RCellFinder.TryFindRandomSpotJustOutsideColony(list[0], out var result) is false)
             {

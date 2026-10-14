@@ -58,7 +58,6 @@ namespace SurveillanceShift
         public static void RimHudHookStart(Rect bounds, ref float offset)
         {
             if (Find.Selector.SingleSelectedThing is not Pawn pawn || GuardButtonsWanted(pawn) is false) return;
-            DrawDuty(RimHudRect(bounds, ref offset), pawn);
             if (pawn.RaceProps.Animal) DrawAlert(RimHudRect(bounds, ref offset), pawn);
         }
 
@@ -92,7 +91,6 @@ namespace SurveillanceShift
             if (ModsConfig.IsActive(RimHudId) || Find.Selector.SingleSelectedThing is not Pawn pawn) return;
             if (ThreatButtonWanted(pawn)) DrawThreatReport(VanillaRect(rect, ref lineEndWidth), pawn);
             if (GuardButtonsWanted(pawn) is false) return;
-            DrawDuty(VanillaRect(rect, ref lineEndWidth), pawn);
             if (pawn.RaceProps.Animal) DrawAlert(VanillaRect(rect, ref lineEndWidth), pawn);
         }
 
@@ -101,14 +99,6 @@ namespace SurveillanceShift
             var result = new Rect(rect.width - 24f - lineEndWidth - ButtonSize, 0f, ButtonSize, ButtonSize);
             lineEndWidth += ButtonSize;
             return result;
-        }
-
-        private static void DrawDuty(Rect rect, Pawn pawn)
-        {
-            Widgets.DrawHighlightIfMouseover(rect);
-            GUI.DrawTexture(rect, GuardTextures.Guards);
-            TooltipHandler.TipRegion(rect, "SS_GuardDutyTooltip".Translate(GuardUtility.DutyLabel(pawn)));
-            if (Widgets.ButtonInvisible(rect)) GuardMenus.OpenDutyMenu(pawn);
         }
 
         private static void DrawAlert(Rect rect, Pawn pawn)

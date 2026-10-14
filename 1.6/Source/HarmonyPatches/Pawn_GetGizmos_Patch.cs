@@ -27,7 +27,7 @@ namespace SurveillanceShift
                 toggleAction = () =>
                 {
                     assignment.keepWatch = assignment.keepWatch is false;
-                    if (assignment.keepWatch && assignment.IsActive is false) GuardMenus.OpenDutyMenu(__instance);
+                    GuardUtility.NotifyChanged(__instance);
                 }
             };
         }

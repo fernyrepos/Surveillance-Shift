@@ -16,7 +16,7 @@ namespace SurveillanceShift
     public static class ScopeView
     {
         public static int ScopeRadius = 4;
-        public static int BinocularOffset = 5;
+        public static int BinocularSeparation = 7;
 
         private static Pawn activePawn;
         private static ScopeKind activeKind;
@@ -123,9 +123,10 @@ namespace SurveillanceShift
 
             if (activeKind == ScopeKind.Binoculars)
             {
-                var offset = Mathf.Max(0, BinocularOffset);
-                ApplyCircle(map, origin, new IntVec3(center.x - offset, 0, center.z), radius, visibleCells);
-                ApplyCircle(map, origin, new IntVec3(center.x + offset, 0, center.z), radius, visibleCells);
+                var separation = Mathf.Max(0, BinocularSeparation);
+                var left = center.x - (separation + 1) / 2;
+                ApplyCircle(map, origin, new IntVec3(left, 0, center.z), radius, visibleCells);
+                ApplyCircle(map, origin, new IntVec3(left + separation, 0, center.z), radius, visibleCells);
             }
             else
             {
@@ -165,7 +166,7 @@ namespace SurveillanceShift
         public static Vector3 MoteOffsetFor(Rot4 rotation)
         {
             var facing = rotation.FacingCell;
-            return new Vector3(facing.x, 0f, facing.z) * 0.65f;
+            return new Vector3(facing.x, 0f, facing.z) * 0.8f;
         }
 
         public static ThingDef RequiredItemFor(ThingDef moteDef)

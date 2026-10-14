@@ -289,6 +289,9 @@
 			<ComponentIndustrial>5</ComponentIndustrial>
 		</costList>
 		<comps>
+			<li Class="SurveillanceShift.CompProperties_GuardPostAssignable">
+				<maxAssignedPawnsCount>4</maxAssignedPawnsCount>
+			</li>
 			<li Class="VEF.Buildings.CompProperties_RandomBuildingGraphic">
 				<randomGraphics>
 					<li>Things/Building/DominionTower/DominionTower</li>
@@ -323,6 +326,9 @@
 					<li>(-0.4, 9.0)</li>
 					<li>(0.8, 9.0)</li>
 					<li>(-1.8, 9.0)</li>
+					<li>(-1.8, 7.8)</li>
+					<li>(-0.4, 7.8)</li>
+					<li>(0.9, 7.8)</li>
 				</vantageOffsets>
 				<seeOverMountains>true</seeOverMountains>
 			</li>

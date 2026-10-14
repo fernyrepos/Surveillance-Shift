@@ -15,10 +15,18 @@ namespace SurveillanceShift
         }
     }
 
-    public class CompAssignableToPawn_GuardPost : CompAssignableToPawn
+    public class CompProperties_PatrolAssignable : CompProperties_AssignableToPawn
     {
-        private Building_GuardPost Post => parent as Building_GuardPost;
+        public CompProperties_PatrolAssignable()
+        {
+            compClass = typeof(CompAssignableToPawn_Patrol);
+            drawAssignmentOverlay = false;
+            drawUnownedAssignmentOverlay = false;
+        }
+    }
 
+    public abstract class CompAssignableToPawn_Guard : CompAssignableToPawn
+    {
         public override IEnumerable<Pawn> AssigningCandidates
         {
             get
@@ -27,39 +35,91 @@ namespace SurveillanceShift
             }
         }
 
-        public void SyncFromOccupants()
+        public override bool AssignedAnything(Pawn pawn) => false;
+
+        public override string GetAssignmentGizmoDesc() => "SS_AssignGuardsDesc".Translate(MaxAssignedPawnsCount);
+
+        public override string GetAssignmentGizmoLabel() => "SS_AssignGuards".Translate();
+    }
+
+    public class CompAssignableToPawn_GuardPost : CompAssignableToPawn_Guard
+    {
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
+        {
+            assignedPawns.RemoveAll(p => p is null || p.Dead || p.Destroyed);
+            return base.CompGetGizmosExtra();
+        }
+
+        public override void TryAssignPawn(Pawn pawn)
+        {
+            if (assignedPawns.Contains(pawn)) return;
+            while (assignedPawns.Count >= MaxAssignedPawnsCount)
+            {
+                var bumped = assignedPawns[0];
+                assignedPawns.RemoveAt(0);
+                GuardUtility.NotifyChanged(bumped);
+            }
+            base.TryAssignPawn(pawn);
+            GuardUtility.NotifyChanged(pawn);
+        }
+
+        public override void TryUnassignPawn(Pawn pawn, bool sort = true, bool uninstall = false)
+        {
+            var had = assignedPawns.Contains(pawn);
+            base.TryUnassignPawn(pawn, sort, uninstall);
+            if (had) GuardUtility.NotifyChanged(pawn);
+        }
+    }
+
+    public class CompAssignableToPawn_Patrol : CompAssignableToPawn_Guard
+    {
+        private PatrolRoute Route => (parent as Building_PatrolWaypoint)?.Route;
+
+        public override string GetAssignmentGizmoDesc() => "SS_AssignPatrolDesc".Translate();
+
+        private void Sync()
         {
             assignedPawns.Clear();
-            if (Post is { Spawned: true } post) assignedPawns.AddRange(post.Occupants);
+            if (Route is { } route)
+            {
+                route.assignedPawns.RemoveAll(p => p is null || p.Dead || p.Destroyed);
+                assignedPawns.AddRange(route.assignedPawns);
+            }
             SortAssignedPawns();
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            SyncFromOccupants();
+            Sync();
             return base.CompGetGizmosExtra();
         }
 
-        public override string GetAssignmentGizmoLabel() => "SS_AssignGuardToPost".Translate();
-
-        public override string GetAssignmentGizmoDesc() => "SS_AssignGuardToPostDesc".Translate(MaxAssignedPawnsCount);
-
-        public override bool AssignedAnything(Pawn pawn) => pawn.GetGuardAssignment().IsActive;
-
         public override void TryAssignPawn(Pawn pawn)
         {
-            if (Post is null || assignedPawns.Contains(pawn)) return;
-            GuardUtility.AssignPost(pawn, Post);
+            var route = Route;
+            if (route is null || route.assignedPawns.Contains(pawn)) return;
+            route.assignedPawns.Add(pawn);
+            Sync();
+            GuardUtility.NotifyChanged(pawn);
         }
 
         public override void TryUnassignPawn(Pawn pawn, bool sort = true, bool uninstall = false)
         {
-            var assignment = pawn.GetGuardAssignment();
-            if (assignment.mode == GuardDutyMode.Post && assignment.post == Post) GuardUtility.Unassign(pawn);
-            else base.TryUnassignPawn(pawn, sort, uninstall);
+            var route = Route;
+            if (route is null || route.assignedPawns.Remove(pawn) is false) return;
+            Sync();
+            GuardUtility.NotifyChanged(pawn);
         }
 
         public override void PostExposeData()
+        {
+        }
+
+        public override void PostDeSpawn(Map map, DestroyMode mode = DestroyMode.Vanish)
+        {
+        }
+
+        public override void PostSwapMap()
         {
         }
     }

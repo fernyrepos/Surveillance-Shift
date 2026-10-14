@@ -22,7 +22,7 @@ namespace SurveillanceShift
             if (parms.faction == null && CandidateFactions().TryRandomElement(out parms.faction) is false || RCellFinder.TryFindRandomPawnEntryCell(out parms.spawnCenter, map, CellFinder.EdgeRoadChance_Hostile) is false) return false;
 
             var mult = State.GetRetaliationMultiplier(parms.faction);
-            var count = Mathf.Clamp(Rand.RangeInclusive(1, 3) * mult, 1, 12);
+            var count = Mathf.Clamp(Rand.RangeInclusive(2, 8) * mult, 1, 30);
             var pawns = new List<Pawn>();
             for (var i = 0; i < count; i++)
             {

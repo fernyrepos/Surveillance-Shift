@@ -10,6 +10,36 @@ namespace SurveillanceShift
         StoragePriority Priority { get; set; }
     }
 
+    public interface IBehaviorTabTarget
+    {
+        GuardStance Stance { get; set; }
+    }
+
+    public class ITab_Behavior : ITab
+    {
+        public ITab_Behavior()
+        {
+            labelKey = "SS_TabBehavior";
+        }
+
+        public override bool IsVisible => SelThing is IBehaviorTabTarget && SelThing.Faction == Faction.OfPlayer;
+
+        public override void FillTab()
+        {
+        }
+
+        public static void OpenMenu(IBehaviorTabTarget target)
+        {
+            var options = new List<FloatMenuOption>();
+            foreach (var stance in new[] { GuardStance.Hold, GuardStance.Defend, GuardStance.Pursue })
+            {
+                var chosen = stance;
+                options.Add(new FloatMenuOption(GuardMenus.StanceLabel(chosen), () => target.Stance = chosen) { tooltip = new TipSignal(GuardMenus.StanceDescription(chosen)) });
+            }
+            Find.WindowStack.Add(new FloatMenu(options));
+        }
+    }
+
     public class ITab_Priority : ITab
     {
         public ITab_Priority()
@@ -43,9 +73,17 @@ namespace SurveillanceShift
 
         public static bool Prefix(InspectTabBase tab)
         {
-            if (tab is not ITab_Priority || Find.Selector.SingleSelectedThing is not IPriorityTabTarget target) return true;
-            ITab_Priority.OpenMenu(target);
-            return false;
+            if (tab is ITab_Priority && Find.Selector.SingleSelectedThing is IPriorityTabTarget priorityTarget)
+            {
+                ITab_Priority.OpenMenu(priorityTarget);
+                return false;
+            }
+            if (tab is ITab_Behavior && Find.Selector.SingleSelectedThing is IBehaviorTabTarget behaviorTarget)
+            {
+                ITab_Behavior.OpenMenu(behaviorTarget);
+                return false;
+            }
+            return true;
         }
     }
 }

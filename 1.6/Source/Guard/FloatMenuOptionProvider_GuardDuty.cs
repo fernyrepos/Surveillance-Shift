@@ -21,7 +21,12 @@ namespace SurveillanceShift
 
         public override bool TargetThingValid(Thing thing, FloatMenuContext context)
         {
-            return thing is Building_GuardPost || thing is Building_PatrolWaypoint { Route: not null };
+            return thing is Building_GuardPost and not Building_Watchtower || thing is Building_PatrolWaypoint { Route: not null };
+        }
+
+        public override bool TargetPawnValid(Pawn pawn, FloatMenuContext context)
+        {
+            return pawn.Spawned && pawn.IsColonistPlayerControlled;
         }
 
         public override FloatMenuOption GetSingleOptionFor(Thing clickedThing, FloatMenuContext context)
@@ -38,12 +43,32 @@ namespace SurveillanceShift
             {
                 foreach (var pawn in pawns)
                 {
-                    if (clickedThing is Building_GuardPost post) GuardUtility.AssignPost(pawn, post);
-                    else if (clickedThing is Building_PatrolWaypoint { Route: { } route }) GuardUtility.AssignRoute(pawn, route);
-                    pawn.GetGuardAssignment().keepWatch = true;
-                    if (GuardUtility.DutyIsValid(pawn, out var assignment) && GuardUtility.MakeDutyJob(pawn, assignment) is { } job) pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    if (clickedThing is Building_GuardPost post)
+                    {
+                        GuardUtility.AssignPost(pawn, post);
+                        GuardUtility.ForceDuty(pawn, post);
+                    }
+                    else if (clickedThing is Building_PatrolWaypoint { Route: { } route })
+                    {
+                        GuardUtility.AssignRoute(pawn, route);
+                        GuardUtility.ForceDuty(pawn, route);
+                    }
+                    var assignment = pawn.GetGuardAssignment();
+                    if (assignment.IsActive && GuardUtility.MakeJobForCurrentDuty(pawn, assignment) is { } job) pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
                 }
             }), pawns[0], clickedThing);
+        }
+
+        public override FloatMenuOption GetSingleOptionFor(Pawn clickedPawn, FloatMenuContext context)
+        {
+            var guards = context.ValidSelectedPawns.Where(p => p != clickedPawn).ToList();
+            if (guards.Count == 0) return null;
+            var guardName = guards.Count == 1 ? guards[0].LabelShortCap.ToString() : "SS_SelectedGuards".Translate(guards.Count).ToString();
+            if (guards.All(p => p.GetGuardAssignment().protectee == clickedPawn))
+            {
+                return new FloatMenuOption("SS_UnassignBodyguard".Translate(guardName, clickedPawn.LabelShortCap), () => guards.ForEach(p => GuardUtility.SetProtectee(p, null)));
+            }
+            return new FloatMenuOption("SS_AssignBodyguard".Translate(guardName, clickedPawn.LabelShortCap), () => guards.ForEach(p => GuardUtility.SetProtectee(p, clickedPawn)));
         }
     }
 }

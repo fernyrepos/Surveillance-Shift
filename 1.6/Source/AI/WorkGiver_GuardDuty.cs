@@ -8,7 +8,7 @@ namespace SurveillanceShift
     {
         public override bool ShouldSkip(Pawn pawn, bool forced = false)
         {
-            return pawn.CanGuard() is false || pawn.GetGuardAssignment().IsActive is false;
+            return pawn.CanGuard() is false || pawn.GetGuardAssignment().keepWatch is false || GuardUtility.HasAnyDuty(pawn) is false;
         }
 
         public override Job NonScanJob(Pawn pawn)
@@ -19,7 +19,7 @@ namespace SurveillanceShift
                 var target = GuardCombat.FindThreat(pawn, GuardUtility.Anchor(pawn, assignment), GuardUtility.Leash(assignment.stance));
                 if (target != null) return JobMaker.MakeJob(DefsOf.SS_GuardEngage, target);
             }
-            return GuardUtility.MakeDutyJob(pawn, assignment);
+            return GuardUtility.MakeDutyJob(pawn);
         }
     }
 }

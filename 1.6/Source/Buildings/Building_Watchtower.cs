@@ -9,9 +9,8 @@ using Verse.AI;
 namespace SurveillanceShift
 {
     [HotSwappable]
-    public class Building_Watchtower : Building, IPriorityTabTarget
+    public class Building_Watchtower : Building_GuardPost
     {
-        private StoragePriority priority = StoragePriority.Normal;
         private WatchtowerExtension extension;
         private Graphic topGraphic;
         private GraphicData cachedTopGraphicData;
@@ -32,11 +31,11 @@ namespace SurveillanceShift
             }
         }
 
-        public StoragePriority Priority
-        {
-            get => priority;
-            set => priority = value;
-        }
+        public override int GuardSlots => 1;
+
+        public override bool IsMarker => false;
+
+        public override bool VisualHidden => false;
 
         public bool IsManned => MannedPawn != null;
 
@@ -109,26 +108,11 @@ namespace SurveillanceShift
             });
         }
 
-        public override IEnumerable<Gizmo> GetGizmos()
-        {
-            foreach (var gizmo in base.GetGizmos())
-            {
-                yield return gizmo;
-            }
-        }
-
         public override string GetInspectString()
         {
             var text = new StringBuilder(base.GetInspectString());
-            text.AppendInNewLine("Priority".Translate() + ": " + priority.Label().CapitalizeFirst());
             text.AppendInNewLine(IsManned ? "SS_WatchtowerManned".Translate() : "SS_WatchtowerUnmanned".Translate());
             return text.ToString().TrimEndNewlines();
-        }
-
-        public override void ExposeData()
-        {
-            base.ExposeData();
-            Scribe_Values.Look(ref priority, "priority", StoragePriority.Normal);
         }
     }
 }

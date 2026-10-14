@@ -198,7 +198,7 @@
 		</costList>
 		<recipeMaker>
 			<recipeUsers>
-				<li>FabricationBench</li>
+				<li>TableMachining</li>
 			</recipeUsers>
 			<displayPriority>311</displayPriority>
 			<researchPrerequisite>SS_Binoculars</researchPrerequisite>
@@ -247,7 +247,7 @@
 		</costList>
 		<recipeMaker>
 			<recipeUsers>
-				<li>FabricationBench</li>
+				<li>TableMachining</li>
 			</recipeUsers>
 			<displayPriority>312</displayPriority>
 			<researchPrerequisite>SS_Spyglass</researchPrerequisite>

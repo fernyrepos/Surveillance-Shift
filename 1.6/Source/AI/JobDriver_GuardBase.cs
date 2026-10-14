@@ -12,7 +12,7 @@ namespace SurveillanceShift
 
         protected void BindDutyFailure()
         {
-            this.FailOn(() => pawn.IsHashIntervalTick(10) && GuardUtility.JobStillValid(pawn, job.def) is false);
+            this.FailOn(() => pawn.IsHashIntervalTick(10) && GuardUtility.JobStillValid(pawn, job) is false);
         }
 
         protected void WatchTick()

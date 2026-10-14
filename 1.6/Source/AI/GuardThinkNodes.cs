@@ -9,8 +9,7 @@ namespace SurveillanceShift
         public override bool Satisfied(Pawn pawn)
         {
             if (pawn.Spawned is false || pawn.Drafted || pawn.RaceProps.Humanlike || pawn.CanGuard() is false) return false;
-            var assignment = pawn.GetGuardAssignment();
-            if (assignment.IsActive is false || assignment.keepWatch is false) return false;
+            if (pawn.GetGuardAssignment().keepWatch is false || GuardUtility.HasAnyDuty(pawn) is false) return false;
             return PawnUtility.PlayerForcedJobNowOrSoon(pawn) is false;
         }
     }
@@ -33,24 +32,8 @@ namespace SurveillanceShift
     {
         public override Job TryGiveJob(Pawn pawn)
         {
-            var assignment = pawn.GetGuardAssignment();
-            if (GuardUtility.DutyIsValid(pawn, out assignment) is false)
-            {
-                if (assignment.IsActive && pawn.Spawned && pawn.CanGuard() && IsPermanentlyBroken(assignment)) assignment.Clear();
-                return null;
-            }
             if (GuardUtility.NeedsAttention(pawn)) return null;
-            return GuardUtility.MakeDutyJob(pawn, assignment);
-        }
-
-        private static bool IsPermanentlyBroken(GuardAssignment assignment)
-        {
-            return assignment.mode switch
-            {
-                GuardDutyMode.Post => assignment.post is null || assignment.post.Destroyed,
-                GuardDutyMode.Bodyguard => assignment.protectee is null || assignment.protectee.Dead || assignment.protectee.Destroyed,
-                _ => false
-            };
+            return GuardUtility.MakeDutyJob(pawn);
         }
     }
 }

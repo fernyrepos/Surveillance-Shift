@@ -47,81 +47,54 @@ namespace SurveillanceShift
             };
         }
 
-        public static string DutyLabel(Pawn pawn)
+        public static IEnumerable<Building_GuardPost> AssignedPosts(Pawn pawn)
         {
-            var assignment = pawn.GetGuardAssignment();
-            switch (assignment.mode)
-            {
-                case GuardDutyMode.Post:
-                    return assignment.post?.RenamableLabel ?? "SS_DutyNone".Translate().ToString();
-                case GuardDutyMode.Route:
-                    var route = pawn.MapHeld?.GetComponent<MapComponent_Guarding>()?.GetRoute(assignment.routeId);
-                    return route is null ? "SS_DutyNone".Translate().ToString() : "SS_DutyRoute".Translate(route.RenamableLabel).ToString();
-                case GuardDutyMode.Bodyguard:
-                    return assignment.protectee is null ? "SS_DutyNone".Translate().ToString() : "SS_DutyBodyguard".Translate(assignment.protectee.LabelShort).ToString();
-                default:
-                    return "SS_DutyNone".Translate().ToString();
-            }
+            var guarding = pawn.Map?.GetComponent<MapComponent_Guarding>();
+            if (guarding is null) return Enumerable.Empty<Building_GuardPost>();
+            return guarding.Posts.Where(p => p.IsAssigned(pawn));
         }
 
-        private static void ReleasePost(Pawn pawn)
+        public static IEnumerable<PatrolRoute> AssignedRoutes(Pawn pawn)
         {
-            var assignment = pawn.GetGuardAssignment();
-            if (assignment.mode == GuardDutyMode.Post) assignment.post?.GetComp<CompAssignableToPawn_GuardPost>()?.ForceRemovePawn(pawn);
+            var guarding = pawn.Map?.GetComponent<MapComponent_Guarding>();
+            if (guarding is null) return Enumerable.Empty<PatrolRoute>();
+            return guarding.routes.Where(r => r.waypoints.Count > 0 && r.assignedPawns.Contains(pawn));
         }
 
-        public static void Unassign(Pawn pawn)
+        public static bool ProtecteeValid(Pawn pawn, GuardAssignment assignment)
         {
-            var assignment = pawn.GetGuardAssignment();
-            if (assignment.IsActive is false) return;
-            ReleasePost(pawn);
-            assignment.Clear();
+            return assignment.protectee is { Spawned: true, Dead: false } protectee && protectee.Map == pawn.Map;
+        }
+
+        public static bool HasAnyDuty(Pawn pawn)
+        {
+            if (pawn.CanGuard() is false || pawn.Spawned is false) return false;
+            return ProtecteeValid(pawn, pawn.GetGuardAssignment()) || AssignedPosts(pawn).Any() || AssignedRoutes(pawn).Any();
+        }
+
+        public static void NotifyChanged(Pawn pawn)
+        {
+            if (pawn is null) return;
+            pawn.GetGuardAssignment().Clear();
             Refresh(pawn);
         }
 
         public static void AssignPost(Pawn pawn, Building_GuardPost post)
         {
-            var comp = post.GetComp<CompAssignableToPawn_GuardPost>();
-            if (comp != null)
-            {
-                comp.SyncFromOccupants();
-                while (comp.AssignedPawnsForReading.Count(p => p != pawn) >= comp.MaxAssignedPawnsCount)
-                {
-                    Unassign(comp.AssignedPawnsForReading.First(p => p != pawn));
-                }
-            }
-            ReleasePost(pawn);
-            var assignment = pawn.GetGuardAssignment();
-            assignment.Clear();
-            assignment.mode = GuardDutyMode.Post;
-            assignment.post = post;
-            comp?.ForceAddPawn(pawn);
-            Refresh(pawn);
+            post.AssignComp?.TryAssignPawn(pawn);
         }
 
         public static void AssignRoute(Pawn pawn, PatrolRoute route)
         {
-            ReleasePost(pawn);
-            var assignment = pawn.GetGuardAssignment();
-            assignment.Clear();
-            assignment.mode = GuardDutyMode.Route;
-            assignment.routeId = route.id;
-            Refresh(pawn);
+            if (route.assignedPawns.Contains(pawn)) return;
+            route.assignedPawns.Add(pawn);
+            NotifyChanged(pawn);
         }
 
-        public static void AssignBodyguard(Pawn pawn, Pawn protectee)
+        public static void SetProtectee(Pawn pawn, Pawn protectee)
         {
-            ReleasePost(pawn);
-            var assignment = pawn.GetGuardAssignment();
-            assignment.Clear();
-            assignment.mode = GuardDutyMode.Bodyguard;
-            assignment.protectee = protectee;
-            Refresh(pawn);
-        }
-
-        public static void SetStance(Pawn pawn, GuardStance stance)
-        {
-            pawn.GetGuardAssignment().stance = stance;
+            pawn.GetGuardAssignment().protectee = protectee;
+            NotifyChanged(pawn);
         }
 
         private static void Refresh(Pawn pawn)
@@ -133,36 +106,142 @@ namespace SurveillanceShift
 
         public static bool IsGuardJob(JobDef def)
         {
-            return def == DefsOf.SS_GuardPostDuty || def == DefsOf.SS_PatrolDuty || def == DefsOf.SS_BodyguardDuty || def == DefsOf.SS_GuardEngage;
+            return def == DefsOf.SS_GuardPostDuty || def == DefsOf.SS_PatrolDuty || def == DefsOf.SS_BodyguardDuty || def == DefsOf.SS_GuardEngage || def == DefsOf.SS_ManWatchtower;
+        }
+
+        private static bool CurrentDutyValid(Pawn pawn, GuardAssignment assignment)
+        {
+            switch (assignment.mode)
+            {
+                case GuardDutyMode.Post:
+                    return assignment.post is { Spawned: true } post && post.Map == pawn.Map && post.IsAssigned(pawn);
+                case GuardDutyMode.Route:
+                    return assignment.route is { waypoints: { Count: > 0 } } route && route.assignedPawns.Contains(pawn) && pawn.Map.GetComponent<MapComponent_Guarding>().routes.Contains(route);
+                case GuardDutyMode.Bodyguard:
+                    return ProtecteeValid(pawn, assignment);
+                default:
+                    return false;
+            }
+        }
+
+        private static bool PostUsable(Pawn pawn, Building_GuardPost post)
+        {
+            if (post.Spawned is false || post.Map != pawn.Map || post.Faction != Faction.OfPlayer) return false;
+            if (post is Building_Watchtower)
+            {
+                if (pawn.RaceProps.Humanlike is false || pawn == ModCompatibility.GetPerspectiveShiftAvatar()) return false;
+                return pawn.CanReserveAndReach(post, PathEndMode.InteractionCell, Danger.Some, post.GuardSlots, 0);
+            }
+            return pawn.CanReserveAndReach(post, PathEndMode.OnCell, Danger.Some, post.GuardSlots, 0);
+        }
+
+        private static bool RouteUsable(Pawn pawn, PatrolRoute route)
+        {
+            var target = route.Nearest(pawn.Position);
+            return target != null && pawn.CanReach(target, PathEndMode.OnCell, Danger.Some);
+        }
+
+        private const int BodyguardPriority = (int)StoragePriority.Critical;
+
+        public static bool SelectDuty(Pawn pawn, GuardAssignment assignment)
+        {
+            if (pawn.CanGuard() is false || pawn.Spawned is false || assignment.keepWatch is false)
+            {
+                assignment.Clear();
+                return false;
+            }
+            if (assignment.forced && CurrentDutyValid(pawn, assignment)) return true;
+
+            var previousMode = assignment.mode;
+            var previousPost = assignment.post;
+            var previousRoute = assignment.route;
+            var previousWaypoint = assignment.lastWaypoint;
+            var previousDirection = assignment.direction;
+            assignment.Clear();
+
+            var bestScore = (priority: -1, current: false, distance: float.MaxValue);
+            Building_GuardPost bestPost = null;
+            PatrolRoute bestRoute = null;
+            var bestBodyguard = false;
+
+            bool Better(int priority, bool current, float distance)
+            {
+                if (priority != bestScore.priority) return priority > bestScore.priority;
+                if (current != bestScore.current) return current;
+                return distance < bestScore.distance;
+            }
+
+            if (ProtecteeValid(pawn, assignment))
+            {
+                bestScore = (BodyguardPriority, previousMode == GuardDutyMode.Bodyguard, 0f);
+                bestBodyguard = true;
+            }
+
+            foreach (var post in AssignedPosts(pawn))
+            {
+                var priority = (int)post.Priority;
+                var current = previousMode == GuardDutyMode.Post && previousPost == post;
+                var distance = post.Position.DistanceToSquared(pawn.Position);
+                if (Better(priority, current, distance) is false || PostUsable(pawn, post) is false) continue;
+                bestScore = (priority, current, distance);
+                bestPost = post;
+                bestRoute = null;
+                bestBodyguard = false;
+            }
+
+            foreach (var route in AssignedRoutes(pawn))
+            {
+                var priority = (int)route.priority;
+                var current = previousMode == GuardDutyMode.Route && previousRoute == route;
+                var distance = (route.Nearest(pawn.Position)?.Position ?? pawn.Position).DistanceToSquared(pawn.Position);
+                if (Better(priority, current, distance) is false || RouteUsable(pawn, route) is false) continue;
+                bestScore = (priority, current, distance);
+                bestPost = null;
+                bestRoute = route;
+                bestBodyguard = false;
+            }
+
+            if (bestBodyguard)
+            {
+                assignment.mode = GuardDutyMode.Bodyguard;
+                return true;
+            }
+            if (bestPost != null)
+            {
+                assignment.mode = GuardDutyMode.Post;
+                assignment.post = bestPost;
+                return true;
+            }
+            if (bestRoute != null)
+            {
+                assignment.mode = GuardDutyMode.Route;
+                assignment.route = bestRoute;
+                if (bestRoute == previousRoute)
+                {
+                    assignment.lastWaypoint = previousWaypoint;
+                    assignment.direction = previousDirection;
+                }
+                return true;
+            }
+            return false;
         }
 
         public static bool DutyIsValid(Pawn pawn, out GuardAssignment assignment)
         {
             assignment = pawn.GetGuardAssignment();
             if (pawn.CanGuard() is false || pawn.Spawned is false || assignment.keepWatch is false) return false;
-            switch (assignment.mode)
-            {
-                case GuardDutyMode.Post:
-                    return assignment.post is { Spawned: true } post && post.Map == pawn.Map;
-                case GuardDutyMode.Route:
-                    return pawn.Map.GetComponent<MapComponent_Guarding>().GetRoute(assignment.routeId) is { waypoints: { Count: > 0 } };
-                case GuardDutyMode.Bodyguard:
-                    return assignment.protectee is { Spawned: true, Dead: false } protectee && protectee.Map == pawn.Map;
-                default:
-                    return false;
-            }
+            if (CurrentDutyValid(pawn, assignment)) return true;
+            return SelectDuty(pawn, assignment);
         }
 
-        public static bool JobStillValid(Pawn pawn, JobDef def)
+        public static bool JobStillValid(Pawn pawn, Job job)
         {
             if (DutyIsValid(pawn, out var assignment) is false) return false;
-            return def switch
-            {
-                _ when def == DefsOf.SS_GuardPostDuty => assignment.mode == GuardDutyMode.Post,
-                _ when def == DefsOf.SS_PatrolDuty => assignment.mode == GuardDutyMode.Route,
-                _ when def == DefsOf.SS_BodyguardDuty => assignment.mode == GuardDutyMode.Bodyguard,
-                _ => true
-            };
+            var def = job.def;
+            if (def == DefsOf.SS_GuardPostDuty || def == DefsOf.SS_ManWatchtower) return assignment.mode == GuardDutyMode.Post && assignment.post == job.targetA.Thing;
+            if (def == DefsOf.SS_PatrolDuty) return assignment.mode == GuardDutyMode.Route && job.targetA.Thing is Building_PatrolWaypoint waypoint && waypoint.Route == assignment.route;
+            if (def == DefsOf.SS_BodyguardDuty) return assignment.mode == GuardDutyMode.Bodyguard;
+            return true;
         }
 
         public static IntVec3 Anchor(Pawn pawn, GuardAssignment assignment)
@@ -199,9 +278,15 @@ namespace SurveillanceShift
             return HealthAIUtility.ShouldSeekMedicalRest(pawn);
         }
 
-        public static Job MakeDutyJob(Pawn pawn, GuardAssignment assignment)
+        public static Job MakeDutyJob(Pawn pawn)
         {
-            if (DutyIsValid(pawn, out assignment) is false) return null;
+            var assignment = pawn.GetGuardAssignment();
+            if (pawn.CanGuard() is false || pawn.Spawned is false || SelectDuty(pawn, assignment) is false) return null;
+            return MakeJobForCurrentDuty(pawn, assignment);
+        }
+
+        public static Job MakeJobForCurrentDuty(Pawn pawn, GuardAssignment assignment)
+        {
             switch (assignment.mode)
             {
                 case GuardDutyMode.Post:
@@ -215,9 +300,29 @@ namespace SurveillanceShift
             }
         }
 
+        public static void ForceDuty(Pawn pawn, Building_GuardPost post)
+        {
+            var assignment = pawn.GetGuardAssignment();
+            assignment.keepWatch = true;
+            assignment.Clear();
+            assignment.mode = GuardDutyMode.Post;
+            assignment.post = post;
+            assignment.forced = true;
+        }
+
+        public static void ForceDuty(Pawn pawn, PatrolRoute route)
+        {
+            var assignment = pawn.GetGuardAssignment();
+            assignment.keepWatch = true;
+            assignment.Clear();
+            assignment.mode = GuardDutyMode.Route;
+            assignment.route = route;
+            assignment.forced = true;
+        }
+
         public static IntVec3 PostSlotCell(Pawn pawn, Building_GuardPost post)
         {
-            var index = post.Occupants.OrderBy(p => p.thingIDNumber).ToList().IndexOf(pawn);
+            var index = post.AssignedGuards.OrderBy(p => p.thingIDNumber).ToList().IndexOf(pawn);
             if (index <= 0) return post.Position;
             var map = post.Map;
             var seen = 0;
@@ -232,8 +337,13 @@ namespace SurveillanceShift
         private static Job MakePostJob(Pawn pawn, GuardAssignment assignment)
         {
             var post = assignment.post;
+            if (post is Building_Watchtower tower)
+            {
+                if (PostUsable(pawn, tower) is false) return null;
+                return JobMaker.MakeJob(DefsOf.SS_ManWatchtower, tower);
+            }
             var slot = PostSlotCell(pawn, post);
-            if (pawn.CanReserveAndReach(post, PathEndMode.OnCell, Danger.Some) is false || pawn.CanReach(slot, PathEndMode.OnCell, Danger.Some) is false) return null;
+            if (pawn.CanReserveAndReach(post, PathEndMode.OnCell, Danger.Some, post.GuardSlots, 0) is false || pawn.CanReach(slot, PathEndMode.OnCell, Danger.Some) is false) return null;
             var job = JobMaker.MakeJob(DefsOf.SS_GuardPostDuty, post, post.Position + post.Rotation.FacingCell, slot);
             job.expiryInterval = 2500;
             job.checkOverrideOnExpire = true;
@@ -243,7 +353,7 @@ namespace SurveillanceShift
 
         private static Job MakePatrolJob(Pawn pawn, GuardAssignment assignment)
         {
-            var route = pawn.Map.GetComponent<MapComponent_Guarding>().GetRoute(assignment.routeId);
+            var route = assignment.route;
             var current = assignment.lastWaypoint is { Spawned: true } last && route.waypoints.Contains(last) ? last : null;
             var target = current is null ? route.Nearest(pawn.Position) : route.Next(current, ref assignment.direction);
             if (target is null || pawn.CanReach(target, PathEndMode.OnCell, Danger.Some) is false) return null;
