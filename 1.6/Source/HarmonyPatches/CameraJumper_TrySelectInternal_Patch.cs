@@ -11,7 +11,7 @@ namespace SurveillanceShift
         {
             if (SurveillanceShiftMod.settings.limitViewingMaps is false || State.IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || ModCompatibility.IsPerspectiveShiftAuthentic() is false && thing.Faction == Faction.OfPlayer || thing == ModCompatibility.GetPerspectiveShiftAvatar()) return true;
 
-            if (thing.Map.IsVisible(thing.Position) is false)
+            if (thing.Map.IsVisible(thing) is false)
             {
                 State.SpawnPing(thing.Position, thing.Map, thing.HostileTo(Faction.OfPlayer));
                 return false;

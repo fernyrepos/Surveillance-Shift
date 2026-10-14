@@ -66,6 +66,17 @@ namespace SurveillanceShift
             return cachedComp.IsVisible(cell);
         }
 
+        public static bool IsVisible(this Map map, Thing thing)
+        {
+            if (map.IsVisible(thing.PositionHeld)) return true;
+            if (thing.Spawned is false || thing.def.size.x <= 1 && thing.def.size.z <= 1) return false;
+            foreach (var cell in thing.OccupiedRect())
+            {
+                if (map.IsVisible(cell)) return true;
+            }
+            return false;
+        }
+
         public static GlobalTargetInfo ResolveTarget(GlobalTargetInfo target)
         {
             if (target.Pawn is { Dead: true } pawn && pawn.Corpse is Corpse corpse)
