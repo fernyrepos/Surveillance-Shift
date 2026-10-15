@@ -84,6 +84,17 @@ namespace SurveillanceShift
                 FogStyle.Touch();
             }
 
+            var selectInFog = FogStyle.SelectInFog;
+            row = listing.GetRect(RowHeight);
+            before = selectInFog;
+            Widgets.CheckboxLabeled(row, "SS_FogSelectInFog".Translate(), ref selectInFog);
+            TooltipHandler.TipRegion(row, "SS_FogSelectInFogDesc".Translate());
+            if (selectInFog != before)
+            {
+                FogStyle.SelectInFog = selectInFog;
+                FogStyle.Touch();
+            }
+
             listing.Gap(10f);
 
             var blur = Slider(listing, "SS_FogBlur".Translate(), FogStyle.Blur, 0f, FogStyle.BlurMax, FogStyle.Blur.ToString("0.00"), "SS_FogBlurDesc".Translate(), true);

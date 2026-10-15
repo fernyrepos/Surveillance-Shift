@@ -119,6 +119,7 @@ namespace SurveillanceShift
                 if (State.AlertsActive)
                 {
                     ProcessWalkieTalkieSightings();
+                    ProcessMechSightings();
                     ProcessSignalHornSightings();
                 }
             }
@@ -174,24 +175,72 @@ namespace SurveillanceShift
             }
         }
 
-        private void DrawPingArrow(Vector3 mapTarget, Material mat)
+        private static Vector3 PingArrowPosition(Vector3 mapTarget, out Quaternion rotation)
         {
             var center = UI.UIToMapPosition(UI.screenWidth / 2, UI.screenHeight / 2);
-            var scale = new Vector3(0.7f, 1f, 0.7f);
+            Vector3 position;
             if ((center - mapTarget).MagnitudeHorizontalSquared() < ArrowCenterRadiusSq)
             {
-                var position = mapTarget;
-                position.y = ArrowAltitude;
+                position = mapTarget;
                 position.z -= 1.5f;
-                Graphics.DrawMesh(MeshPool.plane20, Matrix4x4.TRS(position, Quaternion.identity, scale), mat, 0);
+                rotation = Quaternion.identity;
             }
             else
             {
                 var dir = (mapTarget - center).Yto0().normalized;
-                var edgePos = center + dir * ArrowEdgeDistance;
-                edgePos.y = ArrowAltitude;
-                Graphics.DrawMesh(MeshPool.plane20, Matrix4x4.TRS(edgePos, Quaternion.LookRotation(dir), scale), mat, 0);
+                position = center + dir * ArrowEdgeDistance;
+                rotation = Quaternion.LookRotation(dir);
             }
+            position.y = ArrowAltitude;
+            return position;
+        }
+
+        private void DrawPingArrow(Vector3 mapTarget, Material mat)
+        {
+            var position = PingArrowPosition(mapTarget, out var rotation);
+            Graphics.DrawMesh(MeshPool.plane20, Matrix4x4.TRS(position, rotation, new Vector3(0.7f, 1f, 0.7f)), mat, 0);
+        }
+
+        public override void MapComponentOnGUI()
+        {
+            base.MapComponentOnGUI();
+            if (State.IsLimitedAwareness is false || Find.CurrentMap != map || Find.WindowStack.WindowsPreventCameraMotion) return;
+            DoPingCloseButtons(DefsOf.SS_Mote_PingHostile);
+            DoPingCloseButtons(DefsOf.SS_Mote_PingFriendly);
+        }
+
+        private void DoPingCloseButtons(ThingDef def)
+        {
+            var motes = map.listerThings.ThingsOfDef(def);
+            for (var i = motes.Count - 1; i >= 0; i--)
+            {
+                var mote = (Mote)motes[i];
+                var position = PingArrowPosition(mote.exactPosition, out _);
+                var screen = position.MapToUIPosition();
+                var cellPixels = (position + new Vector3(1f, 0f, 0f)).MapToUIPosition().x - screen.x;
+                var half = Mathf.Max(18f, cellPixels * 0.9f);
+                var hitRect = new Rect(screen.x - half, screen.y - half, half * 2f, half * 2f);
+                if (Mouse.IsOver(hitRect) is false) continue;
+
+                var size = Mathf.Clamp(cellPixels * 0.6f, 18f, 28f);
+                var closeRect = new Rect(hitRect.xMax - size, hitRect.y - size * 0.25f, size, size);
+                if (Widgets.ButtonImage(closeRect, TexButton.CloseXSmall))
+                {
+                    mote.Destroy();
+                    Event.current.Use();
+                }
+                TooltipHandler.TipRegion(closeRect, "SS_PingDismiss".Translate());
+            }
+        }
+
+        private bool AnyCrewedVehicle()
+        {
+            if (ModCompatibility.VehicleFrameworkAvailable is false) return false;
+            foreach (var pawn in map.mapPawns.AllPawnsSpawned)
+            {
+                if (ModCompatibility.VehicleSightRadius(pawn) > 0) return true;
+            }
+            return false;
         }
 
         public void RecalculateVisibility(bool gravshipReveal = false, HashSet<IntVec3> excludeCells = null)
@@ -203,7 +252,7 @@ namespace SurveillanceShift
                 prevCells = new bool[count];
                 firstPass = true;
             }
-            if (map.mapPawns.FreeColonistsSpawned.Any() is false)
+            if (map.mapPawns.FreeColonistsSpawned.Any() is false && AnyCrewedVehicle() is false)
             {
                 (visibleCells, prevCells) = (prevCells, visibleCells);
                 for (var i = 0; i < count; i++)
@@ -265,6 +314,17 @@ namespace SurveillanceShift
                         {
                             var radius = pawn.SightRadius();
                             ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
+                        }
+                    }
+                    if (ModCompatibility.VehicleFrameworkAvailable)
+                    {
+                        foreach (var spawned in map.mapPawns.AllPawnsSpawned)
+                        {
+                            var vehicleRadius = ModCompatibility.VehicleSightRadius(spawned);
+                            if (vehicleRadius > 0)
+                            {
+                                ShadowCaster.ComputeFieldOfView(spawned.Position, vehicleRadius, map, visibleCells);
+                            }
                         }
                     }
                     foreach (var b in map.listerBuildings.allBuildingsColonist)
@@ -468,6 +528,15 @@ namespace SurveillanceShift
                         break;
                     }
                 }
+            }
+        }
+
+        private void ProcessMechSightings()
+        {
+            foreach (var pawn in map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer))
+            {
+                if (pawn.Dead || pawn.Downed || pawn.IsLinkedMech() is false) continue;
+                State.CheckMechThreat(pawn);
             }
         }
 

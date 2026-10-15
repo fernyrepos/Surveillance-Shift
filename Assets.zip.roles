@@ -22,7 +22,11 @@ Textures/Things/Building/Guard/GuardPost_north.png.dds image:Default
 Textures/Things/Building/Guard/GuardPost_south.png.dds image:Default
 Textures/Things/Building/Guard/GuardPost_west.png.dds image:Default
 Textures/Things/Building/Guard/PatrolWaypoint.png.dds image:Default
+Textures/Things/Building/Linked/HiddenVideoCable_Atlas.png.dds image:Default
+Textures/Things/Building/Linked/HiddenVideoCables_MenuIcon.png.dds image:Default
 Textures/Things/Building/Linked/VideoCable_Atlas.png.dds image:Default
+Textures/Things/Building/Linked/VideoCable_Blueprint_Atlas.png.dds image:Default
+Textures/Things/Building/Linked/VideoCables_MenuIcon.png.dds image:Default
 Textures/Things/Building/Loudspeaker/Loudspeaker.png.dds image:Default
 Textures/Things/Building/Loudspeaker/Loudspeaker_Classic.png.dds image:Default
 Textures/Things/Building/Router/Router.png.dds image:Default
@@ -47,6 +51,7 @@ Textures/Things/Mote/Spyglass/Spyglass_east.png.dds image:Default
 Textures/Things/Mote/Spyglass/Spyglass_north.png.dds image:Default
 Textures/Things/Mote/Spyglass/Spyglass_south.png.dds image:Default
 Textures/Things/Mote/Spyglass/Spyglass_west.png.dds image:Default
+Textures/UI/Gizmos/VideoCables_Deconstruct.png.dds image:Default
 Textures/UI/Guard/AnimalWatch.png.dds image:Default
 Textures/UI/Guard/Bodyguard.png.dds image:Default
 Textures/UI/Guard/Guards.png.dds image:Default

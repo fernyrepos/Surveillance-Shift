@@ -172,7 +172,14 @@
   <SS_FogBrightnessDesc>How bright the map looks under the fog.</SS_FogBrightnessDesc>
   <SS_FogHardcoreUndiscovered>Utilize hardcore fog for undiscovered areas</SS_FogHardcoreUndiscovered>
   <SS_FogHardcoreUndiscoveredDesc>Ground you have never seen stays covered in solid darkness. Only areas you have already seen get the blurred view of the real map.</SS_FogHardcoreUndiscoveredDesc>
+  <SS_FogSelectInFog>Select things in the fog</SS_FogSelectInFog>
+  <SS_FogSelectInFogDesc>Lets you click on buildings and other things standing in fogged areas.</SS_FogSelectInFogDesc>
   <SS_FogReset>Reset to defaults</SS_FogReset>
   <SS_FogPreview>Preview</SS_FogPreview>
   <SS_FogPreviewCaption>The clear area is what your colonists can see. Everything outside it is fogged with the settings on the left.</SS_FogPreviewCaption>
+	<SS_PingDismiss>Dismiss ping</SS_PingDismiss>
+	<SS_ReportToMechanitor>Report to mechanitor</SS_ReportToMechanitor>
+	<SS_MechAlertResponseTooltip>Threat response: {0}\nClick to change how this mechanoid alerts its mechanitor when it spots a hostile.</SS_MechAlertResponseTooltip>
+	<SS_HostileSpottedMechDesc>{0} has digitally alerted its mechanitor to a hostile ({1}).</SS_HostileSpottedMechDesc>
+	<SS_DeconstructVideoCables>Deconstruct video cables</SS_DeconstructVideoCables>
 </LanguageData>

@@ -57,8 +57,8 @@ namespace SurveillanceShift
 
         public static void RimHudHookStart(Rect bounds, ref float offset)
         {
-            if (Find.Selector.SingleSelectedThing is not Pawn pawn || GuardButtonsWanted(pawn) is false) return;
-            if (pawn.RaceProps.Animal) DrawAlert(RimHudRect(bounds, ref offset), pawn);
+            if (Find.Selector.SingleSelectedThing is not Pawn pawn) return;
+            if (AlertButtonWanted(pawn)) DrawAlert(RimHudRect(bounds, ref offset), pawn);
         }
 
         public static void RimHudHookAfterResponse(Rect bounds, ref float offset)
@@ -80,6 +80,12 @@ namespace SurveillanceShift
             return Find.Selector.NumSelected == 1 && pawn.RaceProps.Humanlike is false && pawn.Spawned && pawn.CanGuard();
         }
 
+        private static bool AlertButtonWanted(Pawn pawn)
+        {
+            if (pawn.RaceProps.Animal) return GuardButtonsWanted(pawn);
+            return State.IsLimitedAwareness && Find.Selector.NumSelected == 1 && pawn.Spawned && pawn.IsLinkedMech();
+        }
+
         private static bool ThreatButtonWanted(Pawn pawn)
         {
             if (State.IsLimitedAwareness is false || pawn.Faction != Faction.OfPlayer || pawn.RaceProps.Humanlike is false || pawn.IsPrisoner || pawn.IsSlave || pawn.guilt.IsGuilty) return false;
@@ -90,8 +96,7 @@ namespace SurveillanceShift
         {
             if (ModsConfig.IsActive(RimHudId) || Find.Selector.SingleSelectedThing is not Pawn pawn) return;
             if (ThreatButtonWanted(pawn)) DrawThreatReport(VanillaRect(rect, ref lineEndWidth), pawn);
-            if (GuardButtonsWanted(pawn) is false) return;
-            if (pawn.RaceProps.Animal) DrawAlert(VanillaRect(rect, ref lineEndWidth), pawn);
+            if (AlertButtonWanted(pawn)) DrawAlert(VanillaRect(rect, ref lineEndWidth), pawn);
         }
 
         private static Rect VanillaRect(Rect rect, ref float lineEndWidth)
@@ -106,13 +111,23 @@ namespace SurveillanceShift
             var data = pawn.GetSurveillanceData();
             Widgets.DrawHighlightIfMouseover(rect);
             GUI.DrawTexture(rect, AlertIcon(data.alertResponse));
-            TooltipHandler.TipRegion(rect, "SS_AlertResponseTooltip".Translate(("SS_" + data.alertResponse).Translate()));
+            TooltipHandler.TipRegion(rect, (pawn.RaceProps.IsMechanoid ? "SS_MechAlertResponseTooltip" : "SS_AlertResponseTooltip").Translate(AlertLabel(pawn)));
             if (Widgets.ButtonInvisible(rect)) OpenAlertMenu(pawn);
         }
 
         public static void OpenAlertMenu(Pawn pawn)
         {
             var data = pawn.GetSurveillanceData();
+            if (pawn.RaceProps.IsMechanoid)
+            {
+                Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>
+                {
+                    new FloatMenuOption("SS_ReportToMechanitor".Translate(), () => data.alertResponse = AnimalAlertResponse.ReportToHandler, InPersonReportTex, Color.white),
+                    new FloatMenuOption("SS_ReportViaButton".Translate(), () => data.alertResponse = AnimalAlertResponse.UseAlarmTrigger, AlarmTriggerTex, Color.white),
+                    new FloatMenuOption("SS_ReportDoNotReport".Translate(), () => data.alertResponse = AnimalAlertResponse.None, HostilityResponseMode.Ignore.GetIcon(), Color.white)
+                }));
+                return;
+            }
             Find.WindowStack.Add(new FloatMenu(new List<FloatMenuOption>
             {
                 new FloatMenuOption("SS_None".Translate(), () => data.alertResponse = AnimalAlertResponse.None, HostilityResponseMode.Ignore.GetIcon(), Color.white),
@@ -123,7 +138,17 @@ namespace SurveillanceShift
 
         public static string AlertLabel(Pawn pawn)
         {
-            return ("SS_" + pawn.GetSurveillanceData().alertResponse).Translate();
+            var response = pawn.GetSurveillanceData().alertResponse;
+            if (pawn.RaceProps.IsMechanoid)
+            {
+                return response switch
+                {
+                    AnimalAlertResponse.ReportToHandler => "SS_ReportToMechanitor".Translate(),
+                    AnimalAlertResponse.UseAlarmTrigger => "SS_ReportViaButton".Translate(),
+                    _ => "SS_ReportDoNotReport".Translate()
+                };
+            }
+            return ("SS_" + response).Translate();
         }
 
         public static string ThreatLabel(Pawn pawn)

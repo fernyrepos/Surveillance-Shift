@@ -29,6 +29,8 @@ namespace SurveillanceShift
 
         public virtual int SightRadius => Extension?.sightRadius ?? BaseSightRadius;
 
+        protected virtual float ViewConeAngle => 0f;
+
         public bool IsActive
         {
             get
@@ -81,6 +83,15 @@ namespace SurveillanceShift
         {
             if (IsActive is false || IsMonitored is false) return;
             ShadowCaster.ComputeFieldOfView(Position, SightRadius, Map, visibleCells);
+        }
+
+        public override void DrawExtraSelectionOverlays()
+        {
+            base.DrawExtraSelectionOverlays();
+            if (Spawned)
+            {
+                CameraViewPreview.Draw(Map, Position, Rotation, SightRadius, ViewConeAngle, this is Building_WallCamera);
+            }
         }
 
         public override string GetInspectString()

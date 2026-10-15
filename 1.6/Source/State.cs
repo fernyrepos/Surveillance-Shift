@@ -325,6 +325,52 @@ namespace SurveillanceShift
             return job;
         }
 
+        public static bool IsLinkedMech(this Pawn pawn)
+        {
+            return pawn.RaceProps.IsMechanoid && pawn.Faction == Faction.OfPlayer && pawn.IsColonyMech && pawn.GetOverseer() is { Dead: false };
+        }
+
+        public static void CheckMechThreat(Pawn mech)
+        {
+            var data = mech.GetSurveillanceData();
+            if (data.alertResponse == AnimalAlertResponse.None || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
+            var map = mech.Map;
+            var sightRadius = SightRadius(mech);
+            Pawn hostile = null;
+            foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
+            {
+                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && mech.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(mech.Position, p.Position, map, skipFirstCell: true))
+                {
+                    hostile = p;
+                    break;
+                }
+            }
+            if (hostile == null) return;
+            if (data.alertResponse == AnimalAlertResponse.UseAlarmTrigger)
+            {
+                Building_AlarmTrigger best = null;
+                var bestDistance = float.MaxValue;
+                foreach (var trigger in map.listerBuildings.AllBuildingsColonistOfClass<Building_AlarmTrigger>())
+                {
+                    var distance = (mech.Position - trigger.Position).LengthHorizontalSquared;
+                    if (trigger.AlarmActive is false && trigger.CanTriggerNow && Find.TickManager.TicksGame - trigger.LastTriggeredTick > GenDate.TicksPerHour && distance < bestDistance)
+                    {
+                        best = trigger;
+                        bestDistance = distance;
+                    }
+                }
+                data.lastThreatReportTick = Find.TickManager.TicksGame;
+                if (best == null) return;
+                MoteMaker.ThrowText(mech.DrawPos, map, "SS_HostileSpottedMote".Translate());
+                best.ActivateAlarm();
+                SpawnPing(hostile.Position, map, true);
+                return;
+            }
+            data.lastThreatReportTick = Find.TickManager.TicksGame;
+            DeliverThreatSpotted(mech, hostile, LetterDefOf.ThreatBig, descKey: "SS_HostileSpottedMechDesc");
+            Building_Loudspeaker.BroadcastNews(map, true);
+        }
+
         public static Job TryGetAnimalReactionJob(Pawn pawn, AnimalSurveillanceData data, float minRadius = 0f)
         {
             if (AlertsActive is false) return null;
@@ -396,7 +442,7 @@ namespace SurveillanceShift
             return null;
         }
 
-        public static void DeliverThreatSpotted(Pawn reporter, Thing hostile, LetterDef letterDef, bool inPerson = false)
+        public static void DeliverThreatSpotted(Pawn reporter, Thing hostile, LetterDef letterDef, bool inPerson = false, string descKey = null)
         {
             MoteMaker.ThrowText(reporter.DrawPos, reporter.Map, "SS_HostileSpottedMote".Translate());
             SpawnPing(hostile.Position, reporter.Map, true);
@@ -405,7 +451,7 @@ namespace SurveillanceShift
             {
                 return;
             }
-            var desc = inPerson ? "SS_HostileSpottedInPersonDesc".Translate(reporter.LabelShort, hostile.LabelShort) : "SS_HostileSpottedDesc".Translate(reporter.LabelShort, hostile.LabelShort);
+            var desc = descKey != null ? descKey.Translate(reporter.LabelShort, hostile.LabelShort) : inPerson ? "SS_HostileSpottedInPersonDesc".Translate(reporter.LabelShort, hostile.LabelShort) : "SS_HostileSpottedDesc".Translate(reporter.LabelShort, hostile.LabelShort);
             ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), desc, letterDef, new LookTargets(hostile)));
         }
     }

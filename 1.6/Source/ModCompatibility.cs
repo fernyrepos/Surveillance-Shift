@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -12,6 +14,7 @@ namespace SurveillanceShift
     {
         public static readonly bool PerspectiveShiftAvailable;
         public static readonly bool CAIAvailable;
+        public static readonly bool VehicleFrameworkAvailable;
 
         private static readonly HashSet<ThingDef> SeeThroughWallDefs = new();
 
@@ -19,6 +22,8 @@ namespace SurveillanceShift
         private static FieldInfo psStateCameraLockPositionField;
         private static FieldInfo psStateCurrentModeField;
         private static FieldInfo psAvatarPawnField;
+        private static Type vehiclePawnType;
+        private static PropertyInfo vehiclePassengersProperty;
         private static FieldInfo caiSettingsField;
         private static FieldInfo caiFogEnabledField;
 
@@ -38,6 +43,14 @@ namespace SurveillanceShift
                 psStateCameraLockPositionField = AccessTools.Field(stateType, "CameraLockPosition");
                 psStateCurrentModeField = AccessTools.Field(stateType, "CurrentMode");
                 psAvatarPawnField = AccessTools.Field(avatarType, "pawn");
+            }
+
+            VehicleFrameworkAvailable = ModsConfig.IsActive("SmashPhil.VehicleFramework");
+            if (VehicleFrameworkAvailable)
+            {
+                vehiclePawnType = AccessTools.TypeByName("Vehicles.VehiclePawn");
+                vehiclePassengersProperty = vehiclePawnType == null ? null : AccessTools.Property(vehiclePawnType, "AllPawnsAboard");
+                VehicleFrameworkAvailable = vehiclePassengersProperty != null;
             }
 
             CAIAvailable = ModsConfig.IsActive("Krkr.rule56");
@@ -123,6 +136,22 @@ namespace SurveillanceShift
             cachedAvatar = cachedHasAvatar ? (Pawn)psAvatarPawnField.GetValue(avatarObj) : null;
             var modeObj = psStateCurrentModeField.GetValue(null);
             cachedIsAuthentic = modeObj != null && (int)modeObj == 1;
+        }
+
+        public static int VehicleSightRadius(Pawn pawn)
+        {
+            if (VehicleFrameworkAvailable is false || vehiclePawnType.IsInstanceOfType(pawn) is false) return 0;
+            var aboard = vehiclePassengersProperty.GetValue(pawn) as List<Pawn>;
+            var radius = 0;
+            if (aboard != null)
+            {
+                foreach (var passenger in aboard)
+                {
+                    if (passenger.Dead || passenger.IsColonist is false) continue;
+                    radius = Mathf.Max(radius, passenger.SightRadius());
+                }
+            }
+            return radius;
         }
 
         public static Pawn GetPerspectiveShiftAvatar()

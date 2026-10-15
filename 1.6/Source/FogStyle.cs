@@ -13,6 +13,7 @@ namespace SurveillanceShift
 
         public const bool DefaultHardcore = false;
         public const bool DefaultPawnsVisible = false;
+        public const bool DefaultSelectInFog = false;
         public const bool DefaultHardcoreUndiscovered = true;
         public const float DefaultBlur = 0.75f;
         public const float DefaultContrast = 1.65f;
@@ -21,6 +22,7 @@ namespace SurveillanceShift
 
         public static bool HardcoreFog = DefaultHardcore;
         public static bool PawnsVisibleInFog = DefaultPawnsVisible;
+        public static bool SelectInFog = DefaultSelectInFog;
         public static bool HardcoreUndiscovered = DefaultHardcoreUndiscovered;
         public static float Blur = DefaultBlur;
         public static float Contrast = DefaultContrast;
@@ -32,6 +34,8 @@ namespace SurveillanceShift
         public static float HardcoreLevel => Mathf.Clamp01(25f / 255f * Brightness / DefaultBrightness);
 
         public static bool UsesGrade => HardcoreFog is false && FogShader.Available;
+
+        public static bool CanSelectInFog => UsesGrade && SelectInFog;
 
         public static bool UsesUndiscoveredFog => UsesGrade && HardcoreUndiscovered;
 
@@ -46,6 +50,7 @@ namespace SurveillanceShift
         {
             HardcoreFog = DefaultHardcore;
             PawnsVisibleInFog = DefaultPawnsVisible;
+            SelectInFog = DefaultSelectInFog;
             HardcoreUndiscovered = DefaultHardcoreUndiscovered;
             ResetSliders();
         }
@@ -63,6 +68,7 @@ namespace SurveillanceShift
         {
             Scribe_Values.Look(ref HardcoreFog, "SS_FogHardcore", true);
             Scribe_Values.Look(ref PawnsVisibleInFog, "SS_FogPawnsVisible", DefaultPawnsVisible);
+            Scribe_Values.Look(ref SelectInFog, "SS_FogSelectInFog", DefaultSelectInFog);
             Scribe_Values.Look(ref HardcoreUndiscovered, "SS_FogHardcoreUndiscovered", DefaultHardcoreUndiscovered);
             Scribe_Values.Look(ref Blur, "SS_FogBlur", DefaultBlur);
             Scribe_Values.Look(ref Contrast, "SS_FogContrast", DefaultContrast);

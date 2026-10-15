@@ -7,6 +7,24 @@
     </value>
   </Operation>
 
+  <Operation Class="PatchOperationConditional">
+    <xpath>/Defs/DesignationCategoryDef[defName="Security"]/specialDesignatorClasses</xpath>
+    <match Class="PatchOperationAdd">
+      <xpath>/Defs/DesignationCategoryDef[defName="Security"]/specialDesignatorClasses</xpath>
+      <value>
+        <li>SurveillanceShift.Designator_DeconstructVideoCable</li>
+      </value>
+    </match>
+    <nomatch Class="PatchOperationAdd">
+      <xpath>/Defs/DesignationCategoryDef[defName="Security"]</xpath>
+      <value>
+        <specialDesignatorClasses>
+          <li>SurveillanceShift.Designator_DeconstructVideoCable</li>
+        </specialDesignatorClasses>
+      </value>
+    </nomatch>
+  </Operation>
+
   <Operation Class="PatchOperationInsert">
     <xpath>Defs/ThinkTreeDef[defName="Mechanoid"]/thinkRoot/subNodes/li[@Class="ThinkNode_ConditionalPlayerControlledMech"][1]</xpath>
     <value>

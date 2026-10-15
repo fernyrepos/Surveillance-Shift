@@ -52,6 +52,7 @@
 		</building>
 		<placeWorkers>
 			<li>Placeworker_AttachedToWall</li>
+			<li>SurveillanceShift.PlaceWorker_CameraView</li>
 		</placeWorkers>
 		<altitudeLayer>BuildingOnTop</altitudeLayer>
 		<terrainAffordanceNeeded IsNull="True" />
@@ -96,6 +97,10 @@
 		</researchPrerequisites>
 		<description>A pillar with four mounted cameras, allowing for a full view of the surrounding area. Must be powered and connected to a surveillance station or router via video cables to function.</description>
 		<thingClass>SurveillanceShift.Building_Camera</thingClass>
+		<rotatable>false</rotatable>
+		<placeWorkers>
+			<li>SurveillanceShift.PlaceWorker_CameraView</li>
+		</placeWorkers>
 		<thingCategories>
 			<li>BuildingsFurniture</li>
 		</thingCategories>

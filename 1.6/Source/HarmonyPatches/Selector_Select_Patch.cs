@@ -10,6 +10,7 @@ namespace SurveillanceShift
         public static bool Prefix(object obj)
         {
             if (State.IsLimitedAwareness is false || Current.ProgramState != ProgramState.Playing || WorldComponent_GravshipController.CutsceneInProgress || obj is not Thing thing) return true;
+            if (FogStyle.CanSelectInFog) return true;
             var map = thing.MapHeld;
             if (map == null) return true;
             return map.IsVisible(thing);
