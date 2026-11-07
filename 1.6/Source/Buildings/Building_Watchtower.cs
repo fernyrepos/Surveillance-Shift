@@ -66,13 +66,13 @@ namespace SurveillanceShift
         {
             var man = MannedPawn;
             if (man is null) return;
-            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, Mathf.RoundToInt(Extension.sightRadius * man.SightFactor()), Map, visibleCells, Extension.seeOverMountains);
+            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, FogStyle.ScaleRadius(Extension.sightRadius * man.SightFactor()), Map, visibleCells, Extension.seeOverMountains);
         }
 
         public bool CanWatchtowerSee(IntVec3 targetCell)
         {
             var center = this.OccupiedRect().CenterCell;
-            var radius = Mathf.RoundToInt(Extension.sightRadius * MannedPawn.SightFactor());
+            var radius = FogStyle.ScaleRadius(Extension.sightRadius * MannedPawn.SightFactor());
             if (center.DistanceToSquared(targetCell) > radius * radius) return false;
             if (Extension.seeOverMountains)
             {

@@ -39,6 +39,7 @@
     <Reference Include="PipeSystem">
       <HintPath Condition="Exists('..\..\..\VanillaExpandedFramework\1.6\Assemblies\PipeSystem.dll')">..\..\..\VanillaExpandedFramework\1.6\Assemblies\PipeSystem.dll</HintPath>
       <HintPath Condition="!Exists('..\..\..\VanillaExpandedFramework\1.6\Assemblies\PipeSystem.dll')">..\..\..\..\..\..\..\workshop\content\294100\2023507013\1.6\Assemblies\PipeSystem.dll</HintPath>
+      <HintPath Condition="!Exists('..\..\..\VanillaExpandedFramework\1.6\Assemblies\PipeSystem.dll') And !Exists('..\..\..\..\..\..\..\workshop\content\294100\2023507013\1.6\Assemblies\PipeSystem.dll')">..\..\..\..\..\..\workshop\content\294100\2023507013\1.6\Assemblies\PipeSystem.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

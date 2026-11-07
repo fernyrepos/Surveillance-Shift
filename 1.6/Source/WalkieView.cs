@@ -17,7 +17,9 @@ namespace SurveillanceShift
 
         public static bool Active => target != null;
 
-        public static bool HasWalkie(Pawn pawn) => pawn.inventory != null && pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie);
+        public static bool CanTalk(Pawn pawn) => pawn.health?.capacities != null && pawn.health.capacities.GetLevel(PawnCapacityDefOf.Talking) > 0f;
+
+        public static bool HasWalkie(Pawn pawn) => pawn.inventory != null && pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie) && CanTalk(pawn);
 
         public static IEnumerable<Pawn> Contacts(Pawn avatar)
         {
@@ -45,7 +47,8 @@ namespace SurveillanceShift
                 icon = Icon,
                 action = () => OpenMenu(pawn)
             };
-            if (any is false) gizmo.Disable("SS_NoWalkieContacts".Translate());
+            if (CanTalk(pawn) is false) gizmo.Disable("SS_WalkieCannotTalk".Translate());
+            else if (any is false) gizmo.Disable("SS_NoWalkieContacts".Translate());
             return gizmo;
         }
 

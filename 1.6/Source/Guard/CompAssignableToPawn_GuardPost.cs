@@ -31,7 +31,9 @@ namespace SurveillanceShift
         {
             get
             {
-                return parent.Spawned ? GuardUtility.EligibleGuards(parent.Map) : Enumerable.Empty<Pawn>();
+                if (parent.Spawned is false) return Enumerable.Empty<Pawn>();
+                var guards = GuardUtility.EligibleGuards(parent.Map);
+                return parent is Building_Watchtower ? guards.Where(p => p.RaceProps.Animal is false) : guards;
             }
         }
 
@@ -46,7 +48,7 @@ namespace SurveillanceShift
     {
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            assignedPawns.RemoveAll(p => p is null || p.Dead || p.Destroyed);
+            assignedPawns.RemoveAll(p => p is null || p.Dead || p.Destroyed || parent is Building_Watchtower && p.RaceProps.Animal);
             return base.CompGetGizmosExtra();
         }
 

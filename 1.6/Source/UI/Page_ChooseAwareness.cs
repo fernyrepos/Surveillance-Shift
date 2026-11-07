@@ -11,6 +11,9 @@ namespace SurveillanceShift
     {
         private const float CardWidth = 400f;
         private const float Gap = 75f;
+        private const float RecommendedFlashDuration = 1.2f;
+
+        private float shownAt;
 
         private static Texture2D _limitedAwarenessIcon;
         private static Texture2D LimitedAwarenessIcon =>
@@ -21,6 +24,12 @@ namespace SurveillanceShift
             _fullAwarenessIcon ??= ContentFinder<Texture2D>.Get("MainMenu/FullAwareness");
 
         public override string PageTitle => "SS_SelectAwarenessStyle".Translate();
+
+        public override void PreOpen()
+        {
+            base.PreOpen();
+            shownAt = Time.realtimeSinceStartup;
+        }
 
         public override void DoWindowContents(Rect rect)
         {
@@ -47,9 +56,9 @@ namespace SurveillanceShift
             var leftRect = new Rect(startX, startY, CardWidth, rect.height);
             var rightRect = new Rect(startX + CardWidth + Gap, startY, CardWidth, rect.height);
 
-            DrawOption(leftRect, "SS_AreaOmniscience".Translate(), "SS_AreaOmniscienceDesc".Translate(), FullAwarenessIcon, State.AwarenessMode == AwarenessMode.AreaOmniscience, () => State.AwarenessMode = AwarenessMode.AreaOmniscience);
+            DrawOption(leftRect, "SS_AreaOmniscience".Translate(), "SS_AreaOmniscienceDesc".Translate(), FullAwarenessIcon, State.AwarenessMode == AwarenessMode.AreaOmniscience, false, () => State.AwarenessMode = AwarenessMode.AreaOmniscience);
 
-            DrawOption(rightRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, SelectLimitedAwareness);
+            DrawOption(rightRect, "SS_LimitedAwareness".Translate(), "SS_LimitedAwarenessDesc".Translate(), LimitedAwarenessIcon, State.AwarenessMode == AwarenessMode.LimitedAwareness, ModCompatibility.ThemingModAvailable, SelectLimitedAwareness);
         }
 
         public override void DoNext()
@@ -91,7 +100,7 @@ namespace SurveillanceShift
             }
         }
 
-        private void DrawOption(Rect rect, string label, string desc, Texture2D icon, bool selected, Action onSelect)
+        private void DrawOption(Rect rect, string label, string desc, Texture2D icon, bool selected, bool recommended, Action onSelect)
         {
             Widgets.DrawMenuSection(rect);
             if (selected)
@@ -110,6 +119,8 @@ namespace SurveillanceShift
             var iconRect = new Rect(rect.x, rect.y, rect.width, rect.width).ExpandedBy(21);
             GUI.DrawTexture(iconRect, icon, ScaleMode.ScaleToFit);
 
+            if (recommended) DrawRecommendedTag(rect);
+
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.MiddleCenter;
             var labelHeight = Text.CalcHeight(label, contentRect.width);
@@ -121,6 +132,30 @@ namespace SurveillanceShift
             var descRect = new Rect(contentRect.x, labelRect.yMax + 5f, contentRect.width, descHeight);
             Widgets.Label(descRect, desc);
             Text.Anchor = TextAnchor.UpperLeft;
+        }
+
+        private void DrawRecommendedTag(Rect cardRect)
+        {
+            Text.Font = GameFont.Tiny;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            var label = "SS_Recommended".Translate();
+            var size = Text.CalcSize(label);
+            var tagRect = new Rect(cardRect.xMax - size.x - 14f, cardRect.y - 9f, size.x + 14f, 18f);
+            GUI.color = Color.white;
+            Widgets.DrawBoxSolid(tagRect, Widgets.WindowBGFillColor);
+            GUI.color = Color.Lerp(Color.white, Color.white, RecommendedFlashIntensity());
+            Widgets.DrawBox(tagRect);
+            Widgets.Label(tagRect, label);
+            GUI.color = Color.white;
+            Text.Anchor = TextAnchor.UpperLeft;
+            Text.Font = GameFont.Small;
+        }
+
+        private float RecommendedFlashIntensity()
+        {
+            var t = (Time.realtimeSinceStartup - shownAt) / RecommendedFlashDuration;
+            if (t <= 0f || t >= 1f) return 0f;
+            return 0.5f - (0.5f * Mathf.Cos(t * 2f * Mathf.PI));
         }
     }
 }

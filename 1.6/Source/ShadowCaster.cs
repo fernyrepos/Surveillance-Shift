@@ -9,6 +9,8 @@ namespace SurveillanceShift
         private const int StackCapacity = 512;
         private static readonly Column[] Stack = new Column[StackCapacity];
 
+        private static CellRect bounds;
+
         private struct Column
         {
             public int depth;
@@ -24,6 +26,7 @@ namespace SurveillanceShift
             visibleCells[origin.z * mapSizeX + origin.x] = true;
             var radiusSq = radius * radius;
             var roofGrid = seeOverMountains ? map.roofGrid : null;
+            bounds = ModCompatibility.SightBounds(map, origin);
 
             for (var octant = 0; octant < 8; octant++)
             {
@@ -39,6 +42,7 @@ namespace SurveillanceShift
             visibleCells[origin.z * mapSizeX + origin.x] = true;
             var radiusSq = radius * radius;
             var roofGrid = seeOverMountains ? map.roofGrid : null;
+            bounds = ModCompatibility.SightBounds(map, origin);
 
             int oct1, oct2;
             if (rot == Rot4.North)
@@ -128,9 +132,10 @@ namespace SurveillanceShift
                         }
                     }
 
-                    var isOpaque = isWall || isPinched;
+                    var outside = bounds.Contains(new IntVec3(cx, 0, cz)) is false;
+                    var isOpaque = isWall || isPinched || outside;
 
-                    if (isPinched is false && isRoofed is false && dx * dx + dz * dz <= radiusSq)
+                    if (outside is false && isPinched is false && isRoofed is false && dx * dx + dz * dz <= radiusSq)
                     {
                         visibleCells[idx] = true;
                     }

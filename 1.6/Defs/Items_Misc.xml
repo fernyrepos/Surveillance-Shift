@@ -14,18 +14,31 @@
 		<researchPrerequisites>
 			<li>SS_RemoteSurveillance</li>
 		</researchPrerequisites>
-		<description>A small touchscreen data streaming tablet with wireless fucntionality. Requires a linked router to permit network surveillance.</description>
+		<description>A small touchscreen data streaming tablet with wireless functionality. Requires a linked router to permit network surveillance.</description>
 		<graphicData>
 			<texPath>Things/Item/Special/RemoteSurveillanceDevice</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 		</graphicData>
 		<statBases>
+			<WorkToMake>6000</WorkToMake>
 			<MarketValue>1200</MarketValue>
 			<MaxHitPoints>60</MaxHitPoints>
 			<Mass>0.5</Mass>
 			<Flammability>0.5</Flammability>
 			<DeteriorationRate>6</DeteriorationRate>
 		</statBases>
+		<costList>
+			<Steel>40</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+			<ComponentSpacer>1</ComponentSpacer>
+		</costList>
+		<recipeMaker>
+			<researchPrerequisite>SS_RemoteSurveillance</researchPrerequisite>
+			<recipeUsers>
+				<li>FabricationBench</li>
+			</recipeUsers>
+			<displayPriority>313</displayPriority>
+		</recipeMaker>
 		<tickerType>Rare</tickerType>
 		<techLevel>Industrial</techLevel>
 		<stackLimit>1</stackLimit>
@@ -98,8 +111,36 @@
 			<texPath>Things/Item/Equipment/WeaponMelee/SignalHorn</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 		</graphicData>
+		<colorGenerator Class="ColorGenerator_Options">
+			<options>
+				<li>
+					<weight>3</weight>
+					<only>(0.95, 0.92, 0.82)</only>
+				</li>
+				<li>
+					<weight>3</weight>
+					<only>(0.88, 0.82, 0.70)</only>
+				</li>
+				<li>
+					<weight>2</weight>
+					<only>(0.82, 0.70, 0.46)</only>
+				</li>
+				<li>
+					<weight>2</weight>
+					<only>(0.62, 0.50, 0.36)</only>
+				</li>
+				<li>
+					<weight>1</weight>
+					<only>(0.86, 0.62, 0.32)</only>
+				</li>
+				<li>
+					<weight>1</weight>
+					<only>(0.72, 0.74, 0.76)</only>
+				</li>
+			</options>
+		</colorGenerator>
 		<statBases>
-			<MarketValue>70</MarketValue>
+			<MarketValue>12</MarketValue>
 			<Mass>1</Mass>
 			<DeteriorationRate>2</DeteriorationRate>
 		</statBases>
@@ -107,7 +148,8 @@
 		<smeltable>false</smeltable>
 		<tickerType>Rare</tickerType>
 		<techLevel>Neolithic</techLevel>
-		<stackLimit>1</stackLimit>
+		<stackLimit>30</stackLimit>
+		<drawGUIOverlay>true</drawGUIOverlay>
 		<soundInteract>Standard_Drop</soundInteract>
 		<soundDrop>Standard_Drop</soundDrop>
 		<thingCategories>
@@ -135,6 +177,9 @@
 		</tools>
 		<comps>
 			<li Class="SurveillanceShift.CompProperties_SignalHorn" />
+			<li>
+				<compClass>CompColorable</compClass>
+			</li>
 		</comps>
 	</ThingDef>
 
@@ -211,18 +256,18 @@
 			<DeteriorationRate>4</DeteriorationRate>
 		</statBases>
 		<costList>
-			<Steel>25</Steel>
-			<ComponentIndustrial>1</ComponentIndustrial>
+			<Steel>35</Steel>
 		</costList>
 		<recipeMaker>
 			<recipeUsers>
-				<li>TableMachining</li>
+				<li>FueledSmithy</li>
+				<li>ElectricSmithy</li>
 			</recipeUsers>
 			<displayPriority>312</displayPriority>
 			<researchPrerequisite>SS_Spyglass</researchPrerequisite>
 		</recipeMaker>
 		<tickerType>Rare</tickerType>
-		<techLevel>Industrial</techLevel>
+		<techLevel>Medieval</techLevel>
 		<stackLimit>1</stackLimit>
 		<soundInteract>Standard_Drop</soundInteract>
 		<soundDrop>Standard_Drop</soundDrop>

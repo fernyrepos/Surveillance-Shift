@@ -27,7 +27,7 @@ namespace SurveillanceShift
 
         public CameraExtension Extension => extension ??= def.GetModExtension<CameraExtension>();
 
-        public virtual int SightRadius => Extension?.sightRadius ?? BaseSightRadius;
+        public virtual int SightRadius => FogStyle.ScaleRadius(Extension?.sightRadius ?? BaseSightRadius);
 
         protected virtual float ViewConeAngle => 0f;
 

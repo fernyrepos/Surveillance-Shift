@@ -60,6 +60,15 @@ namespace SurveillanceShift
                 FogStyle.Touch();
             }
 
+            if (shaderReady is false)
+            {
+                GUI.color = ColoredText.WarningColor;
+                var warning = "SS_FogShaderWarning".Translate();
+                var warningRect = listing.GetRect(Text.CalcHeight(warning, listing.ColumnWidth));
+                Widgets.Label(warningRect, warning);
+                GUI.color = Color.white;
+            }
+
             if (hardcore)
             {
                 listing.Gap(10f);
@@ -69,6 +78,15 @@ namespace SurveillanceShift
                     FogStyle.Brightness = level;
                     FogStyle.Touch();
                 }
+                var hardcoreSight = Slider(listing, "SS_FogSightDistance".Translate(), FogStyle.SightMultiplier, FogStyle.SightMultiplierMin, FogStyle.SightMultiplierMax, FogStyle.SightMultiplier.ToString("0.00"), "SS_FogSightDistanceDesc".Translate(), true);
+                if (hardcoreSight != FogStyle.SightMultiplier)
+                {
+                    FogStyle.SightMultiplier = hardcoreSight;
+                    FogStyle.Touch();
+                    FogStyle.RecalculateMaps();
+                }
+                listing.Gap(14f);
+                DrawButtons(listing, true);
                 listing.End();
                 return;
             }
@@ -102,6 +120,15 @@ namespace SurveillanceShift
             var saturation = Slider(listing, "SS_FogSaturation".Translate(), FogStyle.Saturation, 0f, FogStyle.SaturationMax, FogStyle.Saturation.ToString("0.00"), "SS_FogSaturationDesc".Translate(), true);
             var brightness = Slider(listing, "SS_FogBrightness".Translate(), FogStyle.Brightness, 0f, FogStyle.BrightnessMax, FogStyle.Brightness.ToString("0.00"), "SS_FogBrightnessDesc".Translate(), true);
 
+            var sight = Slider(listing, "SS_FogSightDistance".Translate(), FogStyle.SightMultiplier, FogStyle.SightMultiplierMin, FogStyle.SightMultiplierMax, FogStyle.SightMultiplier.ToString("0.00"), "SS_FogSightDistanceDesc".Translate(), true);
+
+            if (sight != FogStyle.SightMultiplier)
+            {
+                FogStyle.SightMultiplier = sight;
+                FogStyle.Touch();
+                FogStyle.RecalculateMaps();
+            }
+
             if (blur != FogStyle.Blur || contrast != FogStyle.Contrast || saturation != FogStyle.Saturation || brightness != FogStyle.Brightness)
             {
                 FogStyle.Blur = blur;
@@ -123,14 +150,29 @@ namespace SurveillanceShift
             }
 
             listing.Gap(14f);
-            var resetRect = listing.GetRect(32f);
-            resetRect.width = 170f;
-            if (Widgets.ButtonText(resetRect, "SS_FogReset".Translate()))
-            {
-                FogStyle.Reset();
-            }
+            DrawButtons(listing, false);
 
             listing.End();
+        }
+
+        private static void DrawButtons(Listing_Standard listing, bool brightnessOnly)
+        {
+            var row = listing.GetRect(32f);
+            var width = (row.width - 20f) / 3f;
+            if (Widgets.ButtonText(new Rect(row.x, row.y, width, row.height), "SS_FogReset".Translate()))
+            {
+                if (brightnessOnly) FogStyle.ResetBrightness();
+                else FogStyle.Reset();
+                FogStyle.RecalculateMaps();
+            }
+            if (Widgets.ButtonText(new Rect(row.x + width + 10f, row.y, width, row.height), "SS_FogSavePreset".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_FogPresetList_Save());
+            }
+            if (Widgets.ButtonText(new Rect(row.x + (width + 10f) * 2f, row.y, width, row.height), "SS_FogLoadPreset".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_FogPresetList_Load());
+            }
         }
 
         private static float Slider(Listing_Standard listing, string label, float value, float min, float max, string valueText, string tip, bool enabled)

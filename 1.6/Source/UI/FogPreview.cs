@@ -13,7 +13,7 @@ namespace SurveillanceShift
         private const float CellPixels = 14f;
         private const float VisionCenterX = 210f;
         private const float VisionCenterY = 224f;
-        private const float VisionRadius = 168f;
+        private static float VisionRadius => 168f * FogStyle.SightMultiplier;
         private const float VisionSoftness = 20f;
         private const float UndiscoveredStart = 400f;
         private const float UndiscoveredSoftness = 40f;
@@ -72,6 +72,7 @@ namespace SurveillanceShift
             if (builtVersion == FogStyle.Version) return;
 
             builtVersion = FogStyle.Version;
+            BuildMask();
             Compose();
             texture.SetPixelData(bytes, 0);
             texture.Apply(false, false);

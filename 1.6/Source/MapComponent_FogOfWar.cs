@@ -31,6 +31,9 @@ namespace SurveillanceShift
         private static readonly Material FriendlyArrowMat = MaterialPool.MatFrom("UI/Overlays/Arrow", ShaderDatabase.Transparent, DefsOf.SS_Mote_PingFriendly.graphicData.color, ArrowRenderQueue);
 
         private bool[] visibleCells;
+        private bool[] viewCells;
+        private bool[] prevViewCells;
+        private bool lastMerged;
         private bool[] prevCells;
         private bool[] discovered;
         private readonly Dictionary<int, Mesh> sectionMeshes = new();
@@ -130,6 +133,7 @@ namespace SurveillanceShift
             WalkieView.Update();
             Pawn_DrawGUIOverlay_Patch.RenderQueued();
             if (State.IsLimitedAwareness is false || Find.CurrentMap != map || WorldRendererUtility.WorldSelected) return;
+            if (WorldComponent_GravshipController.CutsceneInProgress || WorldComponent_GravshipController.GravshipRenderInProgess) return;
 
             RefreshScopeOverlay();
 
@@ -152,7 +156,7 @@ namespace SurveillanceShift
                     {
                         if (sectionMeshes.TryGetValue(row + sx, out var mesh))
                         {
-                            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, DarkFogMat, 0);
+                            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, DarkFogMat, SoftFogRenderer.DrawLayer);
                         }
                     }
                 }
@@ -340,9 +344,22 @@ namespace SurveillanceShift
                     }
                 }
 
+                ApplyCompanionVision();
+
                 ScopeView.ApplyFieldOfView(map, visibleCells);
 
                 ApplyFog();
+            }
+        }
+
+        private void ApplyCompanionVision()
+        {
+            var settings = SurveillanceShiftMod.settings;
+            if (settings.animalsUnfog is false && settings.mechsUnfog is false) return;
+            foreach (var pawn in map.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer))
+            {
+                if (pawn.RaceProps.Humanlike || pawn.Dead || pawn.CompanionUnfogs() is false) continue;
+                ShadowCaster.ComputeFieldOfView(pawn.Position, pawn.SightRadius(), map, visibleCells);
             }
         }
 
@@ -366,20 +383,40 @@ namespace SurveillanceShift
                     ClearSectionMeshes();
                 }
             }
+            var current = visibleCells;
+            var previous = prevCells;
+            (viewCells, prevViewCells) = (prevViewCells, viewCells);
+            var merged = ModCompatibility.MergeLowerLevelVision(map, visibleCells, ref viewCells);
+            if (merged)
+            {
+                if (prevViewCells == null || prevViewCells.Length != viewCells.Length)
+                {
+                    prevViewCells = new bool[viewCells.Length];
+                    firstPass = true;
+                }
+                current = viewCells;
+                previous = prevViewCells;
+            }
+            if (merged != lastMerged)
+            {
+                lastMerged = merged;
+                firstPass = true;
+            }
             if (SoftFogRenderer.Enabled)
             {
-                for (var i = 0; i < visibleCells.Length; i++)
+                for (var i = 0; i < current.Length; i++)
                 {
-                    if (visibleCells[i])
+                    if (current[i])
                     {
                         discovered[i] = true;
                     }
                 }
-                SoftFog.Submit(visibleCells, discovered);
+                ModCompatibility.ShareDiscoveredWithUpperLevels(map, discovered);
+                SoftFog.Submit(current, discovered, merged ? visibleCells : null);
             }
             else
             {
-                RebuildSections();
+                RebuildSections(current, previous);
             }
         }
 
@@ -392,7 +429,7 @@ namespace SurveillanceShift
             sectionMeshes.Clear();
         }
 
-        private void RebuildSections()
+        private void RebuildSections(bool[] visibleCells, bool[] prevCells)
         {
             sectionsX = (map.Size.x + SectionSize - 1) / SectionSize;
             sectionsZ = (map.Size.z + SectionSize - 1) / SectionSize;
@@ -543,7 +580,7 @@ namespace SurveillanceShift
         private void ProcessWalkieTalkieSightings()
         {
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
-            if (ModCompatibility.IsPerspectiveShiftAuthentic() && avatar != null && avatar.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie) is false)
+            if (ModCompatibility.IsPerspectiveShiftAuthentic() && avatar != null && WalkieView.HasWalkie(avatar) is false)
             {
                 return;
             }
@@ -551,7 +588,7 @@ namespace SurveillanceShift
             var spotters = new List<Pawn>();
             foreach (var colonist in map.mapPawns.FreeColonistsSpawned)
             {
-                if (colonist.Dead is false && colonist != avatar && colonist.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
+                if (colonist.Dead is false && colonist != avatar && WalkieView.HasWalkie(colonist))
                 {
                     spotters.Add(colonist);
                 }
@@ -561,7 +598,7 @@ namespace SurveillanceShift
             var anySighting = false;
             foreach (var hostile in map.mapPawns.AllPawnsSpawned)
             {
-                if (hostile.HostileTo(Faction.OfPlayer) is false || hostile.Dead || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
+                if (hostile.HostileTo(Faction.OfPlayer) is false || hostile.Dead || hostile.IsPsychologicallyInvisible() || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
                 foreach (var spotter in spotters)
                 {
                     if (spotter.Position.DistanceToSquared(hostile.Position) > WalkieTalkieSightingRadiusSq || GenSight.LineOfSight(spotter.Position, hostile.Position, map) is false) continue;
@@ -580,6 +617,26 @@ namespace SurveillanceShift
             if (newSightings.Count == 0) return;
             var text = string.Join("\n", newSightings.Select(s => "SS_HostileSpottedDesc".Translate(s.spotter.LabelShort, s.hostile.LabelShort)));
             State.ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), text, LetterDefOf.ThreatBig, new LookTargets(newSightings.Select(s => s.hostile))));
+        }
+
+        private const int ThreatGroupWindowTicks = 1800;
+        private const float ThreatGroupRadius = 15f;
+        private readonly List<(int tick, IntVec3 pos)> recentThreatReports = new();
+
+        public bool ShouldSuppressThreatLetter(Thing hostile)
+        {
+            if (SurveillanceShiftMod.settings.groupThreatReports is false) return false;
+            var now = Find.TickManager.TicksGame;
+            recentThreatReports.RemoveAll(r => now - r.tick > ThreatGroupWindowTicks);
+            if (hostile is Pawn p && LetterStackHasTarget(p)) return true;
+            for (var i = 0; i < recentThreatReports.Count; i++)
+            {
+                if (recentThreatReports[i].pos.InHorDistOf(hostile.Position, ThreatGroupRadius) is false) continue;
+                recentThreatReports[i] = (now, hostile.Position);
+                return true;
+            }
+            recentThreatReports.Add((now, hostile.Position));
+            return false;
         }
 
         public bool TryReportIncidentArrival(Pawn hostile)
@@ -632,12 +689,12 @@ namespace SurveillanceShift
 
             foreach (var hostile in map.mapPawns.AllPawnsSpawned)
             {
-                if (hostile.Dead || hostile.Downed || hostile.HostileTo(Faction.OfPlayer) is false || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
+                if (hostile.Dead || hostile.Downed || hostile.IsPsychologicallyInvisible() || hostile.HostileTo(Faction.OfPlayer) is false || sightedHostileIDs.Contains(hostile.thingIDNumber)) continue;
 
                 foreach (var (spotter, horn) in hornBearers)
                 {
                     var tower = spotter.CurJobDef == DefsOf.SS_ManWatchtower && spotter.jobs.curDriver is JobDriver_ManWatchtower driver && driver.IsAtTop ? spotter.CurJob.targetA.Thing as Building_Watchtower : null;
-                    var sightRadius = tower != null ? tower.Extension.sightRadius : spotter.SightRadius();
+                    var sightRadius = tower != null ? FogStyle.ScaleRadius(tower.Extension.sightRadius) : spotter.SightRadius();
                     var canSee = tower != null
                         ? tower.CanWatchtowerSee(hostile.Position)
                         : spotter.Position.DistanceToSquared(hostile.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(spotter.Position, hostile.Position, map, skipFirstCell: true);
@@ -648,7 +705,7 @@ namespace SurveillanceShift
                         lastSignalHornTick = Find.TickManager.TicksGame;
                         foreach (var h in map.mapPawns.AllPawnsSpawned)
                         {
-                            if (h.HostileTo(Faction.OfPlayer) && (map.IsVisible(h.Position) || spotter.Position.DistanceToSquared(h.Position) <= sightRadius * sightRadius))
+                            if (h.HostileTo(Faction.OfPlayer) && h.IsPsychologicallyInvisible() is false && (map.IsVisible(h.Position) || spotter.Position.DistanceToSquared(h.Position) <= sightRadius * sightRadius))
                             {
                                 sightedHostileIDs.Add(h.thingIDNumber);
                             }

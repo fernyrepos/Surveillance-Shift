@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<AsAboveSoBelow.ABColumnAdapterDef>
+		<defName>SS_VideoCableColumnAdapter</defName>
+		<label>video cable column adapter</label>
+		<network>VEF.SS_VideoCableNet</network>
+		<templateDef>SS_VideoCable</templateDef>
+		<columnType>Data</columnType>
+	</AsAboveSoBelow.ABColumnAdapterDef>
+</Defs>

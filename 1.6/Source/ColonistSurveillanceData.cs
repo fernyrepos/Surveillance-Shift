@@ -11,7 +11,7 @@ namespace SurveillanceShift
 
         public void UpdateWalkieStatus(Pawn pawn)
         {
-            var hasWalkie = pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie);
+            var hasWalkie = WalkieView.HasWalkie(pawn);
             if (hasWalkie && hadWalkie is false)
             {
                 hadWalkie = true;

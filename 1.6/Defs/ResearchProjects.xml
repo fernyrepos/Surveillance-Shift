@@ -41,6 +41,9 @@
 		<description>Construct colony-wide loudspeakers and alarm triggers for warning the colony of danger.</description>
 		<baseCost>1000</baseCost>
 		<techLevel>Industrial</techLevel>
+		<prerequisites>
+			<li>Electricity</li>
+		</prerequisites>
 		<researchViewX>1</researchViewX>
 		<researchViewY>2</researchViewY>
 		<tab>SS_SurveillanceTab</tab>

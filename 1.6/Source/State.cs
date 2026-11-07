@@ -26,11 +26,12 @@ namespace SurveillanceShift
 
         private const float MinSightRadius = 1.5f;
         private const int DownedSightRadius = 4;
+        private const int BaseViewDistance = 30;
 
         public static int SightRadius(this Pawn pawn)
         {
-            if (pawn.Downed) return Mathf.RoundToInt(Mathf.Clamp(DownedSightRadius * pawn.SightFactor(), MinSightRadius, DownedSightRadius));
-            return Mathf.RoundToInt(Mathf.Max(MinSightRadius, SurveillanceShiftMod.settings.fogViewDistance * pawn.SightFactor()));
+            if (pawn.Downed) return Mathf.RoundToInt(Mathf.Clamp(DownedSightRadius * pawn.SightFactor(), MinSightRadius, DownedSightRadius) * FogStyle.EffectiveSightMultiplier);
+            return Mathf.RoundToInt(Mathf.Max(MinSightRadius, BaseViewDistance * pawn.SightFactor()) * FogStyle.EffectiveSightMultiplier);
         }
 
         public static float SightFactor(this Pawn pawn)
@@ -285,7 +286,7 @@ namespace SurveillanceShift
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
             if (reaction == ThreatReportReaction.ReportViaRadio)
             {
-                if (avatar != null && avatar.Spawned && avatar.Map == pawn.Map && avatar.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie) && pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
+                if (avatar != null && avatar.Spawned && avatar.Map == pawn.Map && WalkieView.HasWalkie(avatar) && WalkieView.HasWalkie(pawn))
                 {
                     DeliverThreatSpotted(pawn, hostile, LetterDefOf.ThreatBig);
                     Building_Loudspeaker.BroadcastNews(pawn.Map, true);
@@ -325,6 +326,38 @@ namespace SurveillanceShift
             return job;
         }
 
+        private static JobGiver_GetFood foodGiver;
+
+        public static bool NeedsBreak(this Pawn pawn)
+        {
+            var needs = pawn.needs;
+            if (needs is null) return false;
+            if (needs.food != null && needs.food.CurLevelPercentage < pawn.RaceProps.FoodLevelPercentageWantEat)
+            {
+                foodGiver ??= new JobGiver_GetFood();
+                if (foodGiver.TryIssueJobPackage(pawn, default).Job != null) return true;
+            }
+            return GuardUtility.NeedsAttention(pawn);
+        }
+
+        public static bool CompanionUnfogs(this Pawn pawn)
+        {
+            var settings = SurveillanceShiftMod.settings;
+            if (settings.animalsUnfog is false && settings.mechsUnfog is false) return false;
+            if (pawn.Faction != Faction.OfPlayer || pawn.Dead) return false;
+            if (pawn.RaceProps.Animal)
+            {
+                if (settings.animalsUnfog is false) return false;
+                switch (settings.animalUnfogRequirement)
+                {
+                    case AnimalUnfogRequirement.Guard: return pawn.training != null && pawn.training.HasLearned(TrainableDefOf.Obedience);
+                    case AnimalUnfogRequirement.KeepWatch: return pawn.training != null && pawn.training.HasLearned(DefsOf.SS_KeepWatch);
+                    default: return true;
+                }
+            }
+            return settings.mechsUnfog && pawn.IsLinkedMech();
+        }
+
         public static bool IsLinkedMech(this Pawn pawn)
         {
             return pawn.RaceProps.IsMechanoid && pawn.Faction == Faction.OfPlayer && pawn.IsColonyMech && pawn.GetOverseer() is { Dead: false };
@@ -332,6 +365,7 @@ namespace SurveillanceShift
 
         public static void CheckMechThreat(Pawn mech)
         {
+            if (mech.CompanionUnfogs()) return;
             var data = mech.GetSurveillanceData();
             if (data.alertResponse == AnimalAlertResponse.None || Find.TickManager.TicksGame - data.lastThreatReportTick < ThreatCooldownTicks) return;
             var map = mech.Map;
@@ -339,7 +373,7 @@ namespace SurveillanceShift
             Pawn hostile = null;
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
-                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && mech.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(mech.Position, p.Position, map, skipFirstCell: true))
+                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && p.IsPsychologicallyInvisible() is false && mech.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(mech.Position, p.Position, map, skipFirstCell: true))
                 {
                     hostile = p;
                     break;
@@ -373,13 +407,13 @@ namespace SurveillanceShift
 
         public static Job TryGetAnimalReactionJob(Pawn pawn, AnimalSurveillanceData data, float minRadius = 0f)
         {
-            if (AlertsActive is false) return null;
+            if (AlertsActive is false || pawn.CompanionUnfogs()) return null;
             var map = pawn.Map;
             var sightRadius = Mathf.Max(SightRadius(pawn), minRadius);
             Pawn hostile = null;
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
-                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && p.Position.Fogged(map) is false && pawn.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, p.Position, map, skipFirstCell: true))
+                if (target.Thing is Pawn p && p.Spawned && p.Dead is false && p.Downed is false && p.IsPsychologicallyInvisible() is false && p.Position.Fogged(map) is false && pawn.Position.DistanceToSquared(p.Position) <= sightRadius * sightRadius && GenSight.LineOfSight(pawn.Position, p.Position, map, skipFirstCell: true))
                 {
                     hostile = p;
                     break;
@@ -422,7 +456,7 @@ namespace SurveillanceShift
 
             foreach (var target in map.attackTargetsCache.TargetsHostileToColony)
             {
-                if (target.Thing is Pawn hostile && hostile.Spawned && hostile.Dead is false && hostile.Downed is false && hostile.Position.Fogged(map) is false)
+                if (target.Thing is Pawn hostile && hostile.Spawned && hostile.Dead is false && hostile.Downed is false && hostile.IsPsychologicallyInvisible() is false && hostile.Position.Fogged(map) is false)
                 {
                     if (watchtower != null)
                     {
@@ -451,6 +485,7 @@ namespace SurveillanceShift
             {
                 return;
             }
+            if (fog.ShouldSuppressThreatLetter(hostile)) return;
             var desc = descKey != null ? descKey.Translate(reporter.LabelShort, hostile.LabelShort) : inPerson ? "SS_HostileSpottedInPersonDesc".Translate(reporter.LabelShort, hostile.LabelShort) : "SS_HostileSpottedDesc".Translate(reporter.LabelShort, hostile.LabelShort);
             ReceiveLetterUnmuted(LetterMaker.MakeLetter("SS_HostileSpotted".Translate(), desc, letterDef, new LookTargets(hostile)));
         }

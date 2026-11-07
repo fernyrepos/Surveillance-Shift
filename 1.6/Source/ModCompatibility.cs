@@ -15,6 +15,8 @@ namespace SurveillanceShift
         public static readonly bool PerspectiveShiftAvailable;
         public static readonly bool CAIAvailable;
         public static readonly bool VehicleFrameworkAvailable;
+        public static readonly bool AsAboveSoBelowAvailable;
+        public static readonly bool ThemingModAvailable;
 
         private static readonly HashSet<ThingDef> SeeThroughWallDefs = new();
 
@@ -22,6 +24,10 @@ namespace SurveillanceShift
         private static FieldInfo psStateCameraLockPositionField;
         private static FieldInfo psStateCurrentModeField;
         private static FieldInfo psAvatarPawnField;
+        private static MethodInfo bandsBandedMethod;
+        private static MethodInfo bandsCountMethod;
+        private static MethodInfo bandsSurfaceMethod;
+        private static MethodInfo bandsRectMethod;
         private static Type vehiclePawnType;
         private static PropertyInfo vehiclePassengersProperty;
         private static FieldInfo caiSettingsField;
@@ -34,6 +40,7 @@ namespace SurveillanceShift
 
         static ModCompatibility()
         {
+            ThemingModAvailable = ModsConfig.IsActive("ferny.themingformodpack");
             PerspectiveShiftAvailable = ModsConfig.IsActive("ferny.PerspectiveShift");
             if (PerspectiveShiftAvailable)
             {
@@ -51,6 +58,17 @@ namespace SurveillanceShift
                 vehiclePawnType = AccessTools.TypeByName("Vehicles.VehiclePawn");
                 vehiclePassengersProperty = vehiclePawnType == null ? null : AccessTools.Property(vehiclePawnType, "AllPawnsAboard");
                 VehicleFrameworkAvailable = vehiclePassengersProperty != null;
+            }
+
+            AsAboveSoBelowAvailable = ModsConfig.IsActive("astryl.AsAboveSoBelow2");
+            if (AsAboveSoBelowAvailable)
+            {
+                var bandsType = AccessTools.TypeByName("AsAboveSoBelow.ABBands");
+                bandsBandedMethod = AccessTools.Method(bandsType, "Banded", new[] { typeof(Map) });
+                bandsCountMethod = AccessTools.Method(bandsType, "BandCount", new[] { typeof(Map) });
+                bandsSurfaceMethod = AccessTools.Method(bandsType, "SurfaceBand", new[] { typeof(Map) });
+                bandsRectMethod = AccessTools.Method(bandsType, "RectOfBand", new[] { typeof(Map), typeof(int) });
+                AsAboveSoBelowAvailable = bandsBandedMethod != null && bandsCountMethod != null && bandsSurfaceMethod != null && bandsRectMethod != null;
             }
 
             CAIAvailable = ModsConfig.IsActive("Krkr.rule56");
@@ -136,6 +154,111 @@ namespace SurveillanceShift
             cachedAvatar = cachedHasAvatar ? (Pawn)psAvatarPawnField.GetValue(avatarObj) : null;
             var modeObj = psStateCurrentModeField.GetValue(null);
             cachedIsAuthentic = modeObj != null && (int)modeObj == 1;
+        }
+
+        public static void ShareDiscoveredWithUpperLevels(Map map, bool[] discovered)
+        {
+            if (AsAboveSoBelowAvailable is false || (bool)bandsBandedMethod.Invoke(null, new object[] { map }) is false) return;
+            var surface = (int)bandsSurfaceMethod.Invoke(null, new object[] { map });
+            var count = (int)bandsCountMethod.Invoke(null, new object[] { map });
+            openAirTerrain ??= DefDatabase<TerrainDef>.GetNamedSilentFail("AB_OpenAir");
+            wallTopTerrain ??= DefDatabase<TerrainDef>.GetNamedSilentFail("AB_WallTop");
+            var surfaceRect = (CellRect)bandsRectMethod.Invoke(null, new object[] { map, surface });
+            var sizeX = map.Size.x;
+            for (var band = surface + 1; band < count; band++)
+            {
+                var rect = (CellRect)bandsRectMethod.Invoke(null, new object[] { map, band });
+                var offset = rect.minZ - surfaceRect.minZ;
+                var rows = Mathf.Min(rect.Height, surfaceRect.Height);
+                for (var dz = 0; dz < rows; dz++)
+                {
+                    var from = (surfaceRect.minZ + dz) * sizeX;
+                    var to = (surfaceRect.minZ + dz + offset) * sizeX;
+                    for (var x = rect.minX; x <= rect.maxX; x++)
+                    {
+                        if (discovered[from + x] is false) continue;
+                        var terrain = map.terrainGrid.TerrainAt(to + x);
+                        if (terrain != null && (terrain == openAirTerrain || terrain == wallTopTerrain)) discovered[to + x] = true;
+                    }
+                }
+            }
+        }
+
+        private static TerrainDef openAirTerrain;
+        private static TerrainDef wallTopTerrain;
+
+        private static readonly Dictionary<int, CellRect[]> bandRects = new Dictionary<int, CellRect[]>();
+
+        public static CellRect SightBounds(Map map, IntVec3 origin)
+        {
+            if (AsAboveSoBelowAvailable is false || (bool)bandsBandedMethod.Invoke(null, new object[] { map }) is false) return CellRect.WholeMap(map);
+            var count = (int)bandsCountMethod.Invoke(null, new object[] { map });
+            if (bandRects.TryGetValue(map.uniqueID, out var rects) is false || rects.Length != count)
+            {
+                rects = new CellRect[count];
+                for (var band = 0; band < count; band++)
+                {
+                    rects[band] = (CellRect)bandsRectMethod.Invoke(null, new object[] { map, band });
+                }
+                bandRects[map.uniqueID] = rects;
+            }
+            foreach (var rect in rects)
+            {
+                if (rect.Contains(origin)) return rect;
+            }
+            return CellRect.WholeMap(map);
+        }
+
+        private static bool HasUpperLevelThing(Map map, int index)
+        {
+            var things = map.thingGrid.ThingsListAtFast(index);
+            for (var i = 0; i < things.Count; i++)
+            {
+                var category = things[i].def.category;
+                if (category == ThingCategory.Building || category == ThingCategory.Item) return true;
+            }
+            return false;
+        }
+
+        public static bool MergeLowerLevelVision(Map map, bool[] visible, ref bool[] view)
+        {
+            if (AsAboveSoBelowAvailable is false || IsPerspectiveShiftAuthentic() || (bool)bandsBandedMethod.Invoke(null, new object[] { map }) is false) return false;
+            if (view == null || view.Length != visible.Length)
+            {
+                view = new bool[visible.Length];
+            }
+            Array.Copy(visible, view, visible.Length);
+            var count = (int)bandsCountMethod.Invoke(null, new object[] { map });
+            var sizeX = map.Size.x;
+            openAirTerrain ??= DefDatabase<TerrainDef>.GetNamedSilentFail("AB_OpenAir");
+            wallTopTerrain ??= DefDatabase<TerrainDef>.GetNamedSilentFail("AB_WallTop");
+            var first = (CellRect)bandsRectMethod.Invoke(null, new object[] { map, 0 });
+            var rows = first.Height;
+            var below = new bool[rows * sizeX];
+            for (var band = 0; band < count; band++)
+            {
+                var rect = (CellRect)bandsRectMethod.Invoke(null, new object[] { map, band });
+                var offset = rect.minZ - first.minZ;
+                var bandRows = Mathf.Min(rect.Height, rows);
+                for (var dz = 0; dz < bandRows; dz++)
+                {
+                    var cellRow = (first.minZ + dz + offset) * sizeX;
+                    var belowRow = dz * sizeX;
+                    for (var x = rect.minX; x <= rect.maxX; x++)
+                    {
+                        var terrain = map.terrainGrid.TerrainAt(cellRow + x);
+                        if (terrain != null && (terrain == openAirTerrain || terrain == wallTopTerrain))
+                        {
+                            if (below[belowRow + x] && HasUpperLevelThing(map, cellRow + x) is false) view[cellRow + x] = true;
+                        }
+                        else
+                        {
+                            below[belowRow + x] = visible[cellRow + x];
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         public static int VehicleSightRadius(Pawn pawn)

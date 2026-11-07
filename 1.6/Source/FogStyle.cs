@@ -10,6 +10,8 @@ namespace SurveillanceShift
         public const float ContrastMax = 2f;
         public const float SaturationMax = 1.5f;
         public const float BrightnessMax = 1.5f;
+        public const float SightMultiplierMin = 0.1f;
+        public const float SightMultiplierMax = 3f;
 
         public const bool DefaultHardcore = false;
         public const bool DefaultPawnsVisible = false;
@@ -19,6 +21,7 @@ namespace SurveillanceShift
         public const float DefaultContrast = 1.65f;
         public const float DefaultSaturation = 1.5f;
         public const float DefaultBrightness = 0.45f;
+        public const float DefaultSightMultiplier = 1f;
 
         public static bool HardcoreFog = DefaultHardcore;
         public static bool PawnsVisibleInFog = DefaultPawnsVisible;
@@ -28,8 +31,15 @@ namespace SurveillanceShift
         public static float Contrast = DefaultContrast;
         public static float Saturation = DefaultSaturation;
         public static float Brightness = DefaultBrightness;
+        public static float SightMultiplier = DefaultSightMultiplier;
 
         public static int Version;
+
+        private const float BuiltInSightBoost = 1.11f;
+
+        public static float EffectiveSightMultiplier => SightMultiplier * BuiltInSightBoost;
+
+        public static int ScaleRadius(float radius) => Mathf.RoundToInt(radius * EffectiveSightMultiplier);
 
         public static float HardcoreLevel => Mathf.Clamp01(25f / 255f * Brightness / DefaultBrightness);
 
@@ -40,6 +50,15 @@ namespace SurveillanceShift
         public static bool UsesUndiscoveredFog => UsesGrade && HardcoreUndiscovered;
 
         public static bool HidesFoggedPawns => State.IsLimitedAwareness && UsesGrade && PawnsVisibleInFog is false;
+
+        public static void RecalculateMaps()
+        {
+            if (Current.ProgramState != ProgramState.Playing || Current.Game?.Maps == null) return;
+            foreach (var map in Current.Game.Maps)
+            {
+                map.GetComponent<MapComponent_FogOfWar>()?.RecalculateVisibility();
+            }
+        }
 
         public static void Touch()
         {
@@ -55,18 +74,26 @@ namespace SurveillanceShift
             ResetSliders();
         }
 
+        public static void ResetBrightness()
+        {
+            Brightness = DefaultBrightness;
+            SightMultiplier = DefaultSightMultiplier;
+            Touch();
+        }
+
         public static void ResetSliders()
         {
             Blur = DefaultBlur;
             Contrast = DefaultContrast;
             Saturation = DefaultSaturation;
             Brightness = DefaultBrightness;
+            SightMultiplier = DefaultSightMultiplier;
             Touch();
         }
 
         public static void ExposeData()
         {
-            Scribe_Values.Look(ref HardcoreFog, "SS_FogHardcore", true);
+            Scribe_Values.Look(ref HardcoreFog, "SS_FogHardcore", DefaultHardcore);
             Scribe_Values.Look(ref PawnsVisibleInFog, "SS_FogPawnsVisible", DefaultPawnsVisible);
             Scribe_Values.Look(ref SelectInFog, "SS_FogSelectInFog", DefaultSelectInFog);
             Scribe_Values.Look(ref HardcoreUndiscovered, "SS_FogHardcoreUndiscovered", DefaultHardcoreUndiscovered);
@@ -74,6 +101,7 @@ namespace SurveillanceShift
             Scribe_Values.Look(ref Contrast, "SS_FogContrast", DefaultContrast);
             Scribe_Values.Look(ref Saturation, "SS_FogSaturation", DefaultSaturation);
             Scribe_Values.Look(ref Brightness, "SS_FogBrightness", DefaultBrightness);
+            Scribe_Values.Look(ref SightMultiplier, "SS_FogSightMultiplier", DefaultSightMultiplier);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 Touch();

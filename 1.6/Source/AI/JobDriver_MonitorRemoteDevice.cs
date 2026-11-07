@@ -45,6 +45,10 @@ namespace SurveillanceShift
                     State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
                 }
                 pawn.skills.Learn(SkillDefOf.Intellectual, 0.025f);
+                if (pawn.IsHashIntervalTick(150) && pawn.NeedsBreak())
+                {
+                    EndJobWith(JobCondition.InterruptOptional);
+                }
             };
             yield return monitor;
 

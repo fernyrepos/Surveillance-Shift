@@ -27,7 +27,7 @@ namespace SurveillanceShift
         {
             if (pawn.Faction != Faction.OfPlayer || pawn.Dead || pawn.Destroyed) return false;
             if (pawn.RaceProps.Animal) return pawn.training != null && pawn.training.HasLearned(DefsOf.SS_KeepWatch);
-            if (pawn.RaceProps.IsMechanoid) return pawn.IsColonyMech && pawn.kindDef.isFighter;
+            if (pawn.RaceProps.IsMechanoid) return pawn.IsColonyMech;
             if (pawn.RaceProps.Humanlike) return (pawn.IsFreeNonSlaveColonist || pawn.IsSlaveOfColony) && pawn.DevelopmentalStage.Baby() is false;
             return false;
         }

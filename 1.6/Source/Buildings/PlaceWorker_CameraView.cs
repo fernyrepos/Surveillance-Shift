@@ -9,7 +9,7 @@ namespace SurveillanceShift
         {
             var extension = def.GetModExtension<CameraExtension>();
             var wall = typeof(Building_WallCamera).IsAssignableFrom(def.thingClass);
-            var radius = extension?.sightRadius ?? 24;
+            var radius = FogStyle.ScaleRadius(extension?.sightRadius ?? 24);
             var cone = wall ? extension?.coneAngle ?? 60f : 0f;
             CameraViewPreview.Draw(Find.CurrentMap, center, rot, radius, cone, wall);
         }

@@ -87,6 +87,8 @@ namespace SurveillanceShift
 
             yield return GuardMenus.HideVisualGizmo(this);
 
+            yield return GuardMenus.ShowWeaponGizmo(() => route.showWeapon, value => route.showWeapon = value);
+
             yield return new Command_Action
             {
                 defaultLabel = "SS_WaypointRoute".Translate(route.RenamableLabel),

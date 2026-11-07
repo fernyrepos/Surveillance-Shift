@@ -11,10 +11,23 @@ namespace SurveillanceShift
     public static class GuardMenus
     {
         private static readonly Texture2D HideVisualIcon = ContentFinder<Texture2D>.Get("UI/Guard/HideVisual");
+        private static readonly Texture2D ShowWeaponIcon = ContentFinder<Texture2D>.Get("UI/Guard/DisplayWeapon");
 
         public static string StanceLabel(GuardStance stance) => ("SS_Stance" + stance).Translate();
 
         public static string StanceDescription(GuardStance stance) => ("SS_Stance" + stance + "Desc").Translate(GuardUtility.Leash(stance).ToString("0"));
+
+        public static Gizmo ShowWeaponGizmo(Func<bool> getter, Action<bool> setter)
+        {
+            return new Command_Toggle
+            {
+                defaultLabel = "SS_ShowWeapon".Translate(),
+                defaultDesc = "SS_ShowWeaponDesc".Translate(),
+                icon = ShowWeaponIcon,
+                isActive = getter,
+                toggleAction = () => setter(getter() is false)
+            };
+        }
 
         public static Gizmo HideVisualGizmo(Building_GuardPost post)
         {

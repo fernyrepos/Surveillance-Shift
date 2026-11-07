@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <SS_SelectAwarenessStyle>Select an awareness style</SS_SelectAwarenessStyle>
+  <SS_Recommended>RECOMMENDED</SS_Recommended>
   <SS_LimitedAwareness>Limited awareness</SS_LimitedAwareness>
   <SS_LimitedAwarenessDesc>You know what your colonists know. Threats are discovered through surveillance systems or lookouts. Immersive and challenging.</SS_LimitedAwarenessDesc>
   <SS_AreaOmniscience>Area omniscience</SS_AreaOmniscience>
@@ -17,6 +18,7 @@
   <SS_ManWatchtower>Man watchtower</SS_ManWatchtower>
   <SS_WatchtowerManned>Sentry on duty</SS_WatchtowerManned>
   <SS_WatchtowerUnmanned>Unmanned</SS_WatchtowerUnmanned>
+  <SS_WalkieCannotTalk>Cannot use the walkie-talkie: unable to talk.</SS_WalkieCannotTalk>
   <SS_UseWalkie>Use walkie talkie</SS_UseWalkie>
   <SS_UseWalkieDesc>Radio a colonist who is carrying a walkie talkie and see through their eyes. The camera follows them until you stop.</SS_UseWalkieDesc>
   <SS_GiveOrdersTo>Give orders to {0}</SS_GiveOrdersTo>
@@ -41,6 +43,8 @@
   <SS_LinkedRouterOffline>The linked surveillance router is offline.</SS_LinkedRouterOffline>
   <SS_AbortMonitoring>Stop monitoring</SS_AbortMonitoring>
   <SS_AbortMonitoringDesc>Stop monitoring the surveillance feeds through the linked router.</SS_AbortMonitoringDesc>
+  <SS_GroupThreatReports>Group nearby threat reports</SS_GroupThreatReports>
+  <SS_GroupThreatReportsDesc>When several colonists spot the same group of hostiles, only the first report sends a letter and pauses the game. Later sightings near an already-reported threat still show a ping but no extra letter.</SS_GroupThreatReportsDesc>
   <SS_HideColonistBar>Hide colonist bar in authentic mode</SS_HideColonistBar>
   <SS_HideColonistBarDesc>While limited awareness is active in authentic mode, hide the colonist bar and its toggle button in the play settings.</SS_HideColonistBarDesc>
   <SS_PushAlarm>Push alarm trigger</SS_PushAlarm>
@@ -69,6 +73,10 @@
   <SS_ScoutsTruthProvided>Provided intelligence to diplomatic scouts from {0}.</SS_ScoutsTruthProvided>
   <SS_ScoutsLieSuccess>Successfully deceived diplomatic scouts from {0}.</SS_ScoutsLieSuccess>
   <SS_ScoutsLieCaught>Diplomatic scouts from {0} discovered your deception.</SS_ScoutsLieCaught>
+  <SS_AnimalsUnfog>Colony animals unfog instead of reporting</SS_AnimalsUnfog>
+  <SS_AnimalsUnfogDesc>All colony animals reveal the map around them, like colonists do, instead of reporting hostiles. Their report setting is hidden.</SS_AnimalsUnfogDesc>
+  <SS_MechsUnfog>Colony mechanoids unfog instead of reporting</SS_MechsUnfog>
+  <SS_MechsUnfogDesc>All linked colony mechanoids reveal the map around them, like colonists do, instead of reporting hostiles. Their report setting is hidden.</SS_MechsUnfogDesc>
   <SS_EnableScouts>Enable scouts/diplomatic information system</SS_EnableScouts>
   <SS_LimitViewingMaps>Limit viewing maps while player character is not present</SS_LimitViewingMaps>
   <SS_AnnounceVisits>Announce visits/raids regardless of awareness setting</SS_AnnounceVisits>
@@ -78,7 +86,6 @@
   <SS_RelationsLiePenalty>Relations hit on being caught lying</SS_RelationsLiePenalty>
   <SS_RelationsIgnorePenalty>Relations hit on ignoring sharing information</SS_RelationsIgnorePenalty>
   <SS_RelationsTruthBoost>Relations boost on sharing information</SS_RelationsTruthBoost>
-  <SS_FogViewDistance>View distance for fog of war</SS_FogViewDistance>
   <SS_GuardStance>Pursuit:\n{0}</SS_GuardStance>
   <SS_StanceHold>Hold</SS_StanceHold>
   <SS_StanceDefend>Defend</SS_StanceDefend>
@@ -157,6 +164,7 @@
 
   <SS_FogStyleTitle>Limited awareness</SS_FogStyleTitle>
   <SS_FogHardcore>Hardcore mode</SS_FogHardcore>
+  <SS_FogShaderWarning>The custom fog style can only be turned on in RimWorld 1.7. Hardcore fog is used instead.</SS_FogShaderWarning>
   <SS_FogHardcoreDesc>Unseen ground is covered in solid darkness. Turn this off to see a muted, blurred view of the real map beneath the fog.</SS_FogHardcoreDesc>
   <SS_FogPawnsVisible>Pawns visible in the fog</SS_FogPawnsVisible>
   <SS_FogPawnsVisibleDesc>Show pawns standing in fogged areas, blurred and dimmed along with the rest of the map. When off, pawns in fogged areas are hidden until you see them. Needs hardcore fog off.</SS_FogPawnsVisibleDesc>
@@ -174,6 +182,8 @@
   <SS_FogHardcoreUndiscoveredDesc>Ground you have never seen stays covered in solid darkness. Only areas you have already seen get the blurred view of the real map.</SS_FogHardcoreUndiscoveredDesc>
   <SS_FogSelectInFog>Select things in the fog</SS_FogSelectInFog>
   <SS_FogSelectInFogDesc>Lets you click on buildings and other things standing in fogged areas.</SS_FogSelectInFogDesc>
+  <SS_FogSightDistance>Sight distance</SS_FogSightDistance>
+  <SS_FogSightDistanceDesc>Global multiplier for how far colonists, mechs, cameras and watchtowers can see.</SS_FogSightDistanceDesc>
   <SS_FogReset>Reset to defaults</SS_FogReset>
   <SS_FogPreview>Preview</SS_FogPreview>
   <SS_FogPreviewCaption>The clear area is what your colonists can see. Everything outside it is fogged with the settings on the left.</SS_FogPreviewCaption>
@@ -182,4 +192,20 @@
 	<SS_MechAlertResponseTooltip>Threat response: {0}\nClick to change how this mechanoid alerts its mechanitor when it spots a hostile.</SS_MechAlertResponseTooltip>
 	<SS_HostileSpottedMechDesc>{0} has digitally alerted its mechanitor to a hostile ({1}).</SS_HostileSpottedMechDesc>
 	<SS_DeconstructVideoCables>Deconstruct video cables</SS_DeconstructVideoCables>
+	<SS_KeepWatchMechDesc>Whether this mechanoid carries out its guard duty. Turn off to pause it without losing the assignment.</SS_KeepWatchMechDesc>
+	<SS_ShowWeapon>Show weapon</SS_ShowWeapon>
+	<SS_ShowWeaponDesc>Whether guards on this duty hold out their weapons while on duty, as if drafted.</SS_ShowWeaponDesc>
+  <SS_FogSavePreset>Save preset</SS_FogSavePreset>
+  <SS_FogLoadPreset>Load preset</SS_FogLoadPreset>
+  <SS_DeleteFogPreset>Delete this fog preset</SS_DeleteFogPreset>
+  <SS_TabGeneral>General</SS_TabGeneral>
+  <SS_TabCompanions>Companions</SS_TabCompanions>
+  <SS_TabScouts>Scouts</SS_TabScouts>
+  <SS_ResetToDefault>Reset to default...</SS_ResetToDefault>
+  <SS_ResetThisTab>Reset {0} tab</SS_ResetThisTab>
+  <SS_ResetAll>Reset all settings</SS_ResetAll>
+  <SS_ResetAllConfirm>Reset every Surveillance Shift setting back to its default value?</SS_ResetAllConfirm>
+  <SS_AnimalUnfogRequirement>Training requirement for animals to unfog</SS_AnimalUnfogRequirement>
+  <SS_AnimalUnfogRequirementDesc>None: every colony animal unfogs. Guard: only animals trained in guard. Keep watch: only animals trained in keep watch.</SS_AnimalUnfogRequirementDesc>
+  <SS_AnimalUnfogGuard>Guard</SS_AnimalUnfogGuard>
 </LanguageData>

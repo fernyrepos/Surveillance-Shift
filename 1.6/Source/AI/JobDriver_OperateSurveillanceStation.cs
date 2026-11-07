@@ -10,6 +10,7 @@ namespace SurveillanceShift
     {
         private Building_SurveillanceStation Station => (Building_SurveillanceStation)job.GetTarget(TargetIndex.A).Thing;
         private const int ThreatCheckIntervalTicks = 60;
+        private const int NeedsCheckIntervalTicks = 150;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -31,6 +32,10 @@ namespace SurveillanceShift
                 if (pawn.IsHashIntervalTick(ThreatCheckIntervalTicks))
                 {
                     State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
+                }
+                if (pawn.IsHashIntervalTick(NeedsCheckIntervalTicks) && pawn.NeedsBreak())
+                {
+                    EndJobWith(JobCondition.InterruptOptional);
                 }
             };
             monitor.handlingFacing = true;

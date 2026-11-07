@@ -27,7 +27,7 @@ namespace SurveillanceShift
                 var map = avatar.Map;
                 foreach (var p in map.mapPawns.AllPawnsSpawned)
                 {
-                    if (p.HostileTo(Faction.OfPlayer) && p.Dead is false && map.IsVisible(p.Position))
+                    if (p.HostileTo(Faction.OfPlayer) && p.Dead is false && p.IsPsychologicallyInvisible() is false && map.IsVisible(p.Position))
                     {
                         return true;
                     }

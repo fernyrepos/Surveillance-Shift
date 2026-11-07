@@ -7,7 +7,7 @@ namespace SurveillanceShift
     [HarmonyPatch]
     public static class DubsMinimap_FoggedCell_Patch
     {
-        public static bool Prepare() => ModsConfig.IsActive("dubwise.dubsmintminimap");
+        public static bool Prepare() => DubsMinimapPatchGate.Ready;
 
         public static MethodBase TargetMethod() => AccessTools.Method("DubsMintMinimap.MainTabWindow_MiniMap:Fogged", new[] { typeof(IntVec3), typeof(Map) });
 

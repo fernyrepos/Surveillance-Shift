@@ -7,7 +7,7 @@ namespace SurveillanceShift
     {
         public float HalfConeAngle => ViewConeAngle / 2f;
 
-        public override int SightRadius => Extension?.sightRadius ?? 26;
+        public override int SightRadius => FogStyle.ScaleRadius(Extension?.sightRadius ?? 26);
 
         protected override float ViewConeAngle => Extension?.coneAngle ?? 60f;
 

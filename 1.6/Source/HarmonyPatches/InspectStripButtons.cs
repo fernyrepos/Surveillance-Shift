@@ -82,8 +82,8 @@ namespace SurveillanceShift
 
         private static bool AlertButtonWanted(Pawn pawn)
         {
-            if (pawn.RaceProps.Animal) return GuardButtonsWanted(pawn);
-            return State.IsLimitedAwareness && Find.Selector.NumSelected == 1 && pawn.Spawned && pawn.IsLinkedMech();
+            if (pawn.RaceProps.Animal) return pawn.CompanionUnfogs() is false && GuardButtonsWanted(pawn);
+            return SurveillanceShiftMod.settings.mechsUnfog is false && State.IsLimitedAwareness && Find.Selector.NumSelected == 1 && pawn.Spawned && pawn.IsLinkedMech();
         }
 
         private static bool ThreatButtonWanted(Pawn pawn)
@@ -215,7 +215,7 @@ namespace SurveillanceShift
             if (ModCompatibility.HasPerspectiveShiftAvatar())
             {
                 options.Add(ReactionOption("SS_ReportInPerson", data, ThreatReportReaction.ReportInPerson, InPersonReportTex));
-                if (pawn.inventory.innerContainer.Contains(DefsOf.SS_WalkieTalkie))
+                if (WalkieView.HasWalkie(pawn))
                 {
                     options.Add(ReactionOption("SS_ReportViaRadio", data, ThreatReportReaction.ReportViaRadio, WalkieTalkieTex));
                 }

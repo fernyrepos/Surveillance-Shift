@@ -12,6 +12,7 @@ namespace SurveillanceShift
         private StoragePriority priority = StoragePriority.Normal;
         public GuardStance stance = GuardStance.Defend;
         public bool hideVisual;
+        public bool showWeapon = true;
 
         public string RenamableLabel
         {
@@ -70,6 +71,7 @@ namespace SurveillanceShift
             Scribe_Values.Look(ref priority, "priority", StoragePriority.Normal);
             Scribe_Values.Look(ref stance, "SS_stance", GuardStance.Defend);
             Scribe_Values.Look(ref hideVisual, "SS_hideVisual");
+            Scribe_Values.Look(ref showWeapon, "SS_displayWeapon", true);
         }
 
         public void SetVisualHidden(bool hidden)
@@ -96,6 +98,8 @@ namespace SurveillanceShift
             if (IsMarker is false) yield break;
 
             yield return GuardMenus.HideVisualGizmo(this);
+
+            yield return GuardMenus.ShowWeaponGizmo(() => showWeapon, value => showWeapon = value);
         }
 
         public override string GetInspectString()

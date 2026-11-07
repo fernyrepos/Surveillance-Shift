@@ -9,6 +9,7 @@ namespace SurveillanceShift
         public override bool Satisfied(Pawn pawn)
         {
             if (pawn.Spawned is false || pawn.Drafted || pawn.RaceProps.Humanlike || pawn.CanGuard() is false) return false;
+            if (pawn.RaceProps.IsMechanoid && (pawn.GetOverseer()?.mechanitor?.GetControlGroup(pawn)?.WorkMode ?? null) != MechWorkModeDefOf.Work) return false;
             if (pawn.GetGuardAssignment().keepWatch is false || GuardUtility.HasAnyDuty(pawn) is false) return false;
             return PawnUtility.PlayerForcedJobNowOrSoon(pawn) is false;
         }

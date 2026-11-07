@@ -103,6 +103,11 @@ namespace SurveillanceShift
                     pawn.skills?.Learn(SkillDefOf.Intellectual, 0.015f);
                     State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
                 }
+                if (pawn.IsHashIntervalTick(150) && pawn.NeedsBreak())
+                {
+                    maxCycles = 0;
+                    ReadyForNextToil();
+                }
             };
             yield return watch;
 

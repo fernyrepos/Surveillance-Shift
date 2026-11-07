@@ -34,6 +34,10 @@ namespace SurveillanceShift
 
         private readonly object sync = new();
         private readonly bool[] pending;
+        private readonly bool[] pendingOwn;
+        private readonly bool[] ownView;
+        private bool ownActive;
+        private bool pendingOwnActive;
         private readonly bool[] barriers;
         private readonly bool[] barrierScratch;
         private readonly bool[] barrierView;
@@ -82,6 +86,8 @@ namespace SurveillanceShift
             altitude = AltitudeLayer.MapDataOverlay.AltitudeFor() + 0.05f;
 
             pending = new bool[cellCount];
+            pendingOwn = new bool[cellCount];
+            ownView = new bool[cellCount];
             barriers = new bool[cellCount];
             barrierScratch = new bool[cellCount];
             barrierView = new bool[cellCount];
@@ -117,13 +123,18 @@ namespace SurveillanceShift
             worker.Start();
         }
 
-        public void Submit(bool[] visibleCells, bool[] discoveredCells = null)
+        public void Submit(bool[] visibleCells, bool[] discoveredCells = null, bool[] ownVisibleCells = null)
         {
             if (visibleCells.Length != cellCount) return;
             var refreshed = RefreshBarrierScratch();
             lock (sync)
             {
                 Array.Copy(visibleCells, pending, cellCount);
+                pendingOwnActive = ownVisibleCells != null && ownVisibleCells.Length == cellCount;
+                if (pendingOwnActive)
+                {
+                    Array.Copy(ownVisibleCells, pendingOwn, cellCount);
+                }
                 if (discoveredCells != null && discoveredCells.Length == cellCount)
                 {
                     Array.Copy(discoveredCells, pendingDiscovered, cellCount);
@@ -191,8 +202,12 @@ namespace SurveillanceShift
             }
         }
 
+        public static readonly int DrawLayer = ModsConfig.OdysseyActive ? Mathf.Max(0, LayerMask.NameToLayer("GravshipExclude")) : 0;
+
         public void Draw()
         {
+            if (WorldComponent_GravshipController.CutsceneInProgress || WorldComponent_GravshipController.GravshipRenderInProgess || Find.CurrentGravship != null) return;
+
             EnsureResources();
 
             if (seenStyleVersion != FogStyle.Version)
@@ -224,14 +239,14 @@ namespace SurveillanceShift
                 FogShader.Apply(gradeHardMaterial, blur);
             }
 
-            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, graded ? gradeMaterial : material, 0);
+            Graphics.DrawMesh(mesh, Vector3.zero, Quaternion.identity, graded ? gradeMaterial : material, DrawLayer);
             if (HardOcclusion)
             {
-                Graphics.DrawMesh(mesh, new Vector3(0f, 0.001f, 0f), Quaternion.identity, graded ? gradeHardMaterial : hardMaterial, 0);
+                Graphics.DrawMesh(mesh, new Vector3(0f, 0.001f, 0f), Quaternion.identity, graded ? gradeHardMaterial : hardMaterial, DrawLayer);
             }
             if (FogStyle.UsesUndiscoveredFog)
             {
-                Graphics.DrawMesh(mesh, new Vector3(0f, 0.002f, 0f), Quaternion.identity, undiscMaterial, 0);
+                Graphics.DrawMesh(mesh, new Vector3(0f, 0.002f, 0f), Quaternion.identity, undiscMaterial, DrawLayer);
             }
         }
 
@@ -349,9 +364,18 @@ namespace SurveillanceShift
                     if (hasPending)
                     {
                         hasPending = false;
+                        ownActive = pendingOwnActive;
+                        if (ownActive)
+                        {
+                            for (var i = 0; i < cellCount; i++)
+                            {
+                                ownView[i] = pending[i] && pendingOwn[i] is false;
+                            }
+                        }
+                        var source = ownActive ? pendingOwn : pending;
                         for (var i = 0; i < cellCount; i++)
                         {
-                            blurA[i] = pending[i] ? 0f : 1f;
+                            blurA[i] = source[i] ? 0f : 1f;
                         }
                         Array.Copy(barriers, barrierView, cellCount);
                         Array.Copy(hardCells, hardView, cellCount);
@@ -363,6 +387,13 @@ namespace SurveillanceShift
                 if (rebuilt)
                 {
                     Blur(blurA, blurB, target);
+                    if (ownActive)
+                    {
+                        for (var i = 0; i < cellCount; i++)
+                        {
+                            if (ownView[i]) target[i] = 0f;
+                        }
+                    }
                 }
 
                 var moved = Step(dt);

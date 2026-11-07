@@ -24,6 +24,7 @@ namespace SurveillanceShift
         public RouteLoopMode loopMode;
         public StoragePriority priority = StoragePriority.Normal;
         public GuardStance stance = GuardStance.Defend;
+        public bool showWeapon = true;
         public List<Pawn> assignedPawns = new();
         public List<Building_PatrolWaypoint> waypoints = new();
 
@@ -45,6 +46,7 @@ namespace SurveillanceShift
             Scribe_Values.Look(ref loopMode, "loopMode", RouteLoopMode.Loop);
             Scribe_Values.Look(ref priority, "priority", StoragePriority.Normal);
             Scribe_Values.Look(ref stance, "stance", GuardStance.Defend);
+            Scribe_Values.Look(ref showWeapon, "SS_displayWeapon", true);
             Scribe_Collections.Look(ref waypoints, "waypoints", LookMode.Reference);
             Scribe_Collections.Look(ref assignedPawns, "assignedPawns", LookMode.Reference);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
