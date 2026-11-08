@@ -13,10 +13,10 @@ Textures/Things/Building/Cameras/PoleMountedCameraAlt.png.dds.split 24193:639171
 Textures/Things/Building/Cameras/WallCamera_east.png.dds.split 10343:639171308882668832
 Textures/Things/Building/Cameras/WallCamera_north.png.dds.split 7802:639171308882671821
 Textures/Things/Building/Cameras/WallCamera_south.png.dds.split 4949:639171308882673960
-Textures/Things/Building/DominionTower/DominionTower.png.dds.split 382254:639276214491422837
-Textures/Things/Building/DominionTower/DominionTower2.png.dds.split 334684:639276214491443444
-Textures/Things/Building/DominionTower/DominionTower3.png.dds.split 350416:639276214491460435
-Textures/Things/Building/DominionTower/DominionTower_FrontLayer.png.dds.split 24763:639252543965093690
+Textures/Things/Building/DominionTower/DominionTower.png.dds.split 412067:639297690167991516
+Textures/Things/Building/DominionTower/DominionTower2.png.dds.split 377001:639297690168010240
+Textures/Things/Building/DominionTower/DominionTower3.png.dds.split 357921:639297690168028041
+Textures/Things/Building/DominionTower/DominionTower_FrontLayer.png.dds.split 28089:639297690168032774
 Textures/Things/Building/Guard/GuardPost_east.png.dds.split 26745:639268792760241713
 Textures/Things/Building/Guard/GuardPost_north.png.dds.split 26456:639268792760096268
 Textures/Things/Building/Guard/GuardPost_south.png.dds.split 26474:639268792760357605
@@ -36,7 +36,11 @@ Textures/Things/Building/Router/Router_Alt_c.png.dds.split 25016:639252543965106
 Textures/Things/Building/SurveillanceStation/SurveillanceStation_east.png.dds.split 253915:639193719193733838
 Textures/Things/Building/SurveillanceStation/SurveillanceStation_north.png.dds.split 267387:639193719193762180
 Textures/Things/Building/SurveillanceStation/SurveillanceStation_south.png.dds.split 246259:639193719193746815
+Textures/Things/Building/TribalWatchtower/TribalWatchtower.png.dds.split 254164:639297690168044508
+Textures/Things/Building/TribalWatchtower/TribalWatchtower_MenuIcon.png.dds.split 51943:639297690168050830
+Textures/Things/Building/TribalWatchtower/TribalWatchtower_m.png.dds.split 50627:639297690168055229
 Textures/Things/Item/Equipment/WeaponMelee/SignalHorn.png.dds.split 11519:639171308882694400
+Textures/Things/Item/Equipment/WeaponRanged/FlareGun.png.dds.split 10407:639297690168058170
 Textures/Things/Item/Special/RemoteSurveillanceDevice.png.dds.split 10291:639171308882697320
 Textures/Things/Item/Special/WalkieTalkie.png.dds.split 9952:639171308882699393
 Textures/Things/Mote/Binoculars/Binoculars_east.png.dds.split 5573:639276214491478795

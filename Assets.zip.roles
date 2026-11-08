@@ -36,7 +36,11 @@ Textures/Things/Building/Router/Router_Alt_c.png.dds.split image:Default
 Textures/Things/Building/SurveillanceStation/SurveillanceStation_east.png.dds.split image:Default
 Textures/Things/Building/SurveillanceStation/SurveillanceStation_north.png.dds.split image:Default
 Textures/Things/Building/SurveillanceStation/SurveillanceStation_south.png.dds.split image:Default
+Textures/Things/Building/TribalWatchtower/TribalWatchtower.png.dds.split image:Default
+Textures/Things/Building/TribalWatchtower/TribalWatchtower_MenuIcon.png.dds.split image:Default
+Textures/Things/Building/TribalWatchtower/TribalWatchtower_m.png.dds.split image:Default
 Textures/Things/Item/Equipment/WeaponMelee/SignalHorn.png.dds.split image:Default
+Textures/Things/Item/Equipment/WeaponRanged/FlareGun.png.dds.split image:Default
 Textures/Things/Item/Special/RemoteSurveillanceDevice.png.dds.split image:Default
 Textures/Things/Item/Special/WalkieTalkie.png.dds.split image:Default
 Textures/Things/Mote/Binoculars/Binoculars_east.png.dds.split image:Default
