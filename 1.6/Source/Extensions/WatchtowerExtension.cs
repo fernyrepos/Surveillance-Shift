@@ -13,5 +13,6 @@ namespace SurveillanceShift
         public List<Vector2> vantageOffsets;
         public int sightRadius = 52;
         public bool seeOverMountains;
+        public bool seeOverWalls;
     }
 }

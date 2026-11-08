@@ -284,6 +284,11 @@ namespace SurveillanceShift
             data.lastThreatReportTick = Find.TickManager.TicksGame;
             var reaction = data.reportReaction;
             var avatar = ModCompatibility.GetPerspectiveShiftAvatar();
+            if (CompFlareGun.TryAutoFire(pawn, hostile))
+            {
+                Building_Loudspeaker.BroadcastNews(pawn.Map, true);
+                return null;
+            }
             if (reaction == ThreatReportReaction.ReportViaRadio)
             {
                 if (avatar != null && avatar.Spawned && avatar.Map == pawn.Map && WalkieView.HasWalkie(avatar) && WalkieView.HasWalkie(pawn))

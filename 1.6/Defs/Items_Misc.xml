@@ -281,4 +281,46 @@
 		</comps>
 	</ThingDef>
 
+	<ThingDef ParentName="ResourceBase">
+		<defName>SS_FlareGun</defName>
+		<label>flare gun</label>
+		<description>A short, non-violent pistol that fires a burning flare high into the sky. The flare can be seen for many miles and calls for help or warns of danger. Must be reloaded with chemfuel after each shot.</description>
+		<graphicData>
+			<texPath>Things/Item/Equipment/WeaponRanged/FlareGun</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>0.8</drawSize>
+		</graphicData>
+		<statBases>
+			<WorkToMake>2000</WorkToMake>
+			<MarketValue>150</MarketValue>
+			<MaxHitPoints>60</MaxHitPoints>
+			<Mass>0.8</Mass>
+			<Flammability>0.5</Flammability>
+			<DeteriorationRate>3</DeteriorationRate>
+		</statBases>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>1</ComponentIndustrial>
+		</costList>
+		<recipeMaker>
+			<recipeUsers>
+				<li>TableMachining</li>
+			</recipeUsers>
+			<displayPriority>313</displayPriority>
+			<researchPrerequisite>SS_FlareGun</researchPrerequisite>
+		</recipeMaker>
+		<tickerType>Never</tickerType>
+		<techLevel>Industrial</techLevel>
+		<stackLimit>1</stackLimit>
+		<soundInteract>Standard_Drop</soundInteract>
+		<soundDrop>Standard_Drop</soundDrop>
+		<thingCategories>
+			<li>Manufactured</li>
+		</thingCategories>
+		<tradeability>Sellable</tradeability>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_FlareGun" />
+		</comps>
+	</ThingDef>
+
 </Defs>

@@ -37,6 +37,9 @@ namespace SurveillanceShift
         public static ThingDef SS_WalkieTalkie;
         public static ThingDef SS_Binoculars;
         public static ThingDef SS_Telescope;
+        public static ThingDef SS_FlareGun;
+        public static JobDef SS_ReloadFlareGun;
+        public static SoundDef RocketswarmLauncher_Fire;
         [MayRequire("dubwise.dubsmintminimap")]
         public static SoundDef Sound_MapBoot;
         [MayRequire("dubwise.dubsmintminimap")]

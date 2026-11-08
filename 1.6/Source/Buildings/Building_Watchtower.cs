@@ -22,6 +22,7 @@ namespace SurveillanceShift
             get
             {
                 var data = Extension.topGraphicData;
+                if (data == null) return null;
                 if (data != null && data != cachedTopGraphicData)
                 {
                     cachedTopGraphicData = data;
@@ -66,7 +67,7 @@ namespace SurveillanceShift
         {
             var man = MannedPawn;
             if (man is null) return;
-            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, FogStyle.ScaleRadius(Extension.sightRadius * man.SightFactor()), Map, visibleCells, Extension.seeOverMountains);
+            ShadowCaster.ComputeFieldOfView(this.OccupiedRect().CenterCell, FogStyle.ScaleRadius(Extension.sightRadius * man.SightFactor()), Map, visibleCells, Extension.seeOverMountains, Extension.seeOverWalls);
         }
 
         public bool CanWatchtowerSee(IntVec3 targetCell)
@@ -75,6 +76,10 @@ namespace SurveillanceShift
             var radius = FogStyle.ScaleRadius(Extension.sightRadius * MannedPawn.SightFactor());
             if (center.DistanceToSquared(targetCell) > radius * radius) return false;
             if (Extension.seeOverMountains)
+            {
+                return Map.roofGrid.Roofed(targetCell) is false;
+            }
+            if (Extension.seeOverWalls)
             {
                 return Map.roofGrid.Roofed(targetCell) is false;
             }
@@ -88,7 +93,7 @@ namespace SurveillanceShift
             {
                 var pos = drawLoc;
                 pos.y = AltitudeLayer.PawnUnused.AltitudeFor() + 1;
-                TopGraphic.Draw(pos, Rotation, this);
+                TopGraphic?.Draw(pos, Rotation, this);
             }
         }
 

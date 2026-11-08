@@ -498,4 +498,68 @@
 	</ThingDef>
 	-->
 
+	<ThingDef ParentName="SS_BuildingBase">
+		<defName>SS_Lookout</defName>
+		<label>lookout</label>
+		<researchPrerequisites>
+			<li>SS_Lookout</li>
+		</researchPrerequisites>
+		<description>A crude timber platform on lashed stilts. A single sentry can climb up and keep watch over the surrounding land, though not nearly as far as from a proper watchtower.</description>
+		<thingClass>SurveillanceShift.Building_Watchtower</thingClass>
+		<inspectorTabs>
+			<li>SurveillanceShift.ITab_Priority</li>
+		</inspectorTabs>
+		<size>(2,2)</size>
+		<rotatable>false</rotatable>
+		<constructEffect>ConstructWood</constructEffect>
+		<graphicData>
+			<texPath>Things/Building/TribalWatchtower/TribalWatchtower</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>
+			<drawSize>(6,6)</drawSize>
+			<drawOffset>(0,0,1)</drawOffset>
+		</graphicData>
+		<uiIconPath>Things/Building/TribalWatchtower/TribalWatchtower_MenuIcon</uiIconPath>
+		<castEdgeShadows>true</castEdgeShadows>
+		<staticSunShadowHeight>0.6</staticSunShadowHeight>
+		<altitudeLayer>PawnUnused</altitudeLayer>
+		<passability>Standable</passability>
+		<fillPercent>0.4</fillPercent>
+		<pathCost>30</pathCost>
+		<hasInteractionCell>true</hasInteractionCell>
+		<interactionCellOffset>(0,0,-1)</interactionCellOffset>
+		<stuffCategories>
+			<li>Woody</li>
+		</stuffCategories>
+		<costStuffCount>120</costStuffCount>
+		<statBases>
+			<MaxHitPoints>250</MaxHitPoints>
+			<WorkToBuild>1500</WorkToBuild>
+			<Flammability>1.0</Flammability>
+		</statBases>
+		<comps>
+			<li Class="SurveillanceShift.CompProperties_GuardPostAssignable">
+				<maxAssignedPawnsCount>1</maxAssignedPawnsCount>
+			</li>
+		</comps>
+		<drawerType>MapMeshAndRealTime</drawerType>
+		<uiOrder>2013</uiOrder>
+		<modExtensions>
+			<li Class="SurveillanceShift.WatchtowerExtension">
+				<climbHeight>2.8</climbHeight>
+				<climbTicks>200</climbTicks>
+				<sightRadius>50</sightRadius>
+				<vantageOffsets>
+					<li>(0.0, 2.9)</li>
+					<li>(0.5, 2.9)</li>
+					<li>(1.0, 2.9)</li>
+					<li>(0.2, 3.3)</li>
+					<li>(0.8, 3.3)</li>
+				</vantageOffsets>
+				<seeOverMountains>false</seeOverMountains>
+				<seeOverWalls>true</seeOverWalls>
+			</li>
+		</modExtensions>
+	</ThingDef>
+
 </Defs>

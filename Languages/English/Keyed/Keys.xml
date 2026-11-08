@@ -208,4 +208,18 @@
   <SS_AnimalUnfogRequirement>Training requirement for animals to unfog</SS_AnimalUnfogRequirement>
   <SS_AnimalUnfogRequirementDesc>None: every colony animal unfogs. Guard: only animals trained in guard. Keep watch: only animals trained in keep watch.</SS_AnimalUnfogRequirementDesc>
   <SS_AnimalUnfogGuard>Guard</SS_AnimalUnfogGuard>
+  <SS_LaunchFlare>Launch flare</SS_LaunchFlare>
+  <SS_LaunchFlareDesc>Fire a burning flare high into the sky. It is reported to anyone on this map and on any map or caravan within {0} world tiles.</SS_LaunchFlareDesc>
+  <SS_ReloadFlare>Reload flare gun</SS_ReloadFlare>
+  <SS_ReloadFlareDesc>Load the flare gun with {0} chemfuel.</SS_ReloadFlareDesc>
+  <SS_FlareNotLoaded>The flare gun is empty. Reload it with {0} chemfuel.</SS_FlareNotLoaded>
+  <SS_FlareAlreadyLoaded>The flare gun is already loaded.</SS_FlareAlreadyLoaded>
+  <SS_FlareUnusable>Cannot use the flare gun right now.</SS_FlareUnusable>
+  <SS_FlareRoofed>A flare cannot be launched from under a roof.</SS_FlareRoofed>
+  <SS_FlareNoChemfuel>No {0} chemfuel is available to reload the flare gun.</SS_FlareNoChemfuel>
+  <SS_FlareLoaded>Flare gun: loaded</SS_FlareLoaded>
+  <SS_FlareEmpty>Flare gun: empty</SS_FlareEmpty>
+  <SS_FlareLetterLabel>Flare launched</SS_FlareLetterLabel>
+  <SS_FlareLetterText>{0} fired a flare into the sky.</SS_FlareLetterText>
+  <SS_FlareHostileLetterText>{0} fired a flare into the sky after spotting {1}.</SS_FlareHostileLetterText>
 </LanguageData>

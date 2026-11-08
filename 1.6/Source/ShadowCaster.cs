@@ -18,19 +18,19 @@ namespace SurveillanceShift
             public float maxSlope;
         }
 
-        public static void ComputeFieldOfView(IntVec3 origin, int radius, Map map, bool[] visibleCells, bool seeOverMountains = false)
+        public static void ComputeFieldOfView(IntVec3 origin, int radius, Map map, bool[] visibleCells, bool seeOverMountains = false, bool seeOverWalls = false)
         {
             var mapSizeX = map.Size.x;
             var mapSizeZ = map.Size.z;
             var edifices = map.edificeGrid.InnerArray;
             visibleCells[origin.z * mapSizeX + origin.x] = true;
             var radiusSq = radius * radius;
-            var roofGrid = seeOverMountains ? map.roofGrid : null;
+            var roofGrid = seeOverMountains || seeOverWalls ? map.roofGrid : null;
             bounds = ModCompatibility.SightBounds(map, origin);
 
             for (var octant = 0; octant < 8; octant++)
             {
-                ScanOctant(octant, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, 1f, seeOverMountains, roofGrid);
+                ScanOctant(octant, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, 1f, seeOverMountains, roofGrid, seeOverWalls);
             }
         }
 
@@ -70,7 +70,13 @@ namespace SurveillanceShift
             ScanOctant(oct2, origin.x, origin.z, radius, radiusSq, mapSizeX, mapSizeZ, edifices, visibleCells, 0f, maxSlope, seeOverMountains, roofGrid);
         }
 
-        private static void ScanOctant(int octant, int originX, int originZ, int radius, int radiusSq, int mapSizeX, int mapSizeZ, Building[] edifices, bool[] visibleCells, float minSlope = 0f, float maxSlope = 1f, bool seeOverMountains = false, RoofGrid roofGrid = null)
+        private static bool Blocks(Building ed, bool seeOverWalls, RoofGrid roofGrid, int idx)
+        {
+            if (ed == null || ed.CanBeSeenOver() || ModCompatibility.IsSeeThroughWall(ed)) return false;
+            return seeOverWalls is false || ed.def.building.isNaturalRock || roofGrid != null && roofGrid.Roofed(idx);
+        }
+
+        private static void ScanOctant(int octant, int originX, int originZ, int radius, int radiusSq, int mapSizeX, int mapSizeZ, Building[] edifices, bool[] visibleCells, float minSlope = 0f, float maxSlope = 1f, bool seeOverMountains = false, RoofGrid roofGrid = null, bool seeOverWalls = false)
         {
             var stackIndex = 0;
             Stack[0] = new Column
@@ -114,7 +120,7 @@ namespace SurveillanceShift
                     var dz = cz - originZ;
 
                     var ed = edifices[idx];
-                    var isWall = seeOverMountains is false && ed != null && ed.CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(ed) is false;
+                    var isWall = seeOverMountains is false && Blocks(ed, seeOverWalls, roofGrid, idx);
                     var isRoofed = roofGrid != null && roofGrid.Roofed(idx);
 
                     var isPinched = false;
@@ -124,8 +130,8 @@ namespace SurveillanceShift
                         var sz = dz > 0 ? 1 : -1;
                         var idx1 = cz * mapSizeX + (cx - sx);
                         var idx2 = (cz - sz) * mapSizeX + cx;
-                        var block1 = edifices[idx1] != null && edifices[idx1].CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(edifices[idx1]) is false && seeOverMountains is false;
-                        var block2 = edifices[idx2] != null && edifices[idx2].CanBeSeenOver() is false && ModCompatibility.IsSeeThroughWall(edifices[idx2]) is false && seeOverMountains is false;
+                        var block1 = seeOverMountains is false && Blocks(edifices[idx1], seeOverWalls, roofGrid, idx1);
+                        var block2 = seeOverMountains is false && Blocks(edifices[idx2], seeOverWalls, roofGrid, idx2);
                         if (block1 && block2)
                         {
                             isPinched = true;

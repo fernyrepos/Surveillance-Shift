@@ -30,6 +30,7 @@ namespace SurveillanceShift
         private Vector2 startVantage;
         public Job pendingJob;
         public override Vector3 ForcedBodyOffset => forcedBodyOffset.HasValue ? forcedBodyOffset.Value : Vector3.zero;
+        private bool IsAvatar => pawn == ModCompatibility.GetPerspectiveShiftAvatar();
         public bool IsAtTop => isAtTop;
         public bool IsClimbing => isClimbing;
         public bool IsElevated => forcedBodyOffset.HasValue && forcedBodyOffset.Value.y > 0f;
@@ -103,7 +104,7 @@ namespace SurveillanceShift
                     pawn.skills?.Learn(SkillDefOf.Intellectual, 0.015f);
                     State.CheckForThreatsAndReact(pawn, pawn.GetColonistSurveillanceData());
                 }
-                if (pawn.IsHashIntervalTick(150) && pawn.NeedsBreak())
+                if (pawn.IsHashIntervalTick(150) && IsAvatar is false && pawn.NeedsBreak())
                 {
                     maxCycles = 0;
                     ReadyForNextToil();
@@ -137,7 +138,7 @@ namespace SurveillanceShift
             var checkShift = ToilMaker.MakeToil("CheckShift");
             checkShift.initAction = () =>
             {
-                if (currentCycle < maxCycles)
+                if (currentCycle < maxCycles || IsAvatar)
                 {
                     JumpToToil(watch);
                 }
