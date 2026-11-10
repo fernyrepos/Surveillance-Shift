@@ -111,6 +111,7 @@
 			<texPath>Things/Item/Equipment/WeaponMelee/SignalHorn</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
 		</graphicData>
+		<equippedAngleOffset>-25</equippedAngleOffset>
 		<colorGenerator Class="ColorGenerator_Options">
 			<options>
 				<li>
