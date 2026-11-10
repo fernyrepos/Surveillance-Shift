@@ -24,6 +24,7 @@ namespace SurveillanceShift
         private static FieldInfo psStateCameraLockPositionField;
         private static FieldInfo psStateCurrentModeField;
         private static FieldInfo psAvatarPawnField;
+        private static FieldInfo psAvatarLeanTargetField;
         private static MethodInfo bandsBandedMethod;
         private static MethodInfo bandsCountMethod;
         private static MethodInfo bandsSurfaceMethod;
@@ -50,6 +51,7 @@ namespace SurveillanceShift
                 psStateCameraLockPositionField = AccessTools.Field(stateType, "CameraLockPosition");
                 psStateCurrentModeField = AccessTools.Field(stateType, "CurrentMode");
                 psAvatarPawnField = AccessTools.Field(avatarType, "pawn");
+                psAvatarLeanTargetField = AccessTools.Field(avatarType, "LeanTarget");
             }
 
             VehicleFrameworkAvailable = ModsConfig.IsActive("SmashPhil.VehicleFramework");
@@ -275,6 +277,20 @@ namespace SurveillanceShift
                 }
             }
             return radius;
+        }
+
+        public static bool TryGetAvatarLeanCell(Pawn pawn, out IntVec3 cell)
+        {
+            cell = IntVec3.Invalid;
+            if (PerspectiveShiftAvailable is false || psAvatarLeanTargetField == null) return false;
+            if (pawn == null || pawn != GetPerspectiveShiftAvatar()) return false;
+            var avatarObj = psStateAvatarField.GetValue(null);
+            if (avatarObj == null || psAvatarLeanTargetField.GetValue(avatarObj) is not Vector3 lean) return false;
+            if (lean.sqrMagnitude < 0.01f) return false;
+            var candidate = pawn.Position + new IntVec3(Mathf.RoundToInt(lean.x), 0, Mathf.RoundToInt(lean.z));
+            if (candidate == pawn.Position || candidate.InBounds(pawn.Map) is false) return false;
+            cell = candidate;
+            return true;
         }
 
         public static Pawn GetPerspectiveShiftAvatar()

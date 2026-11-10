@@ -293,6 +293,10 @@ namespace SurveillanceShift
                     {
                         var radius = avatar.SightRadius();
                         ShadowCaster.ComputeFieldOfView(avatar.Position, radius, map, visibleCells);
+                        if (ModCompatibility.TryGetAvatarLeanCell(avatar, out var leanCell))
+                        {
+                            ShadowCaster.ComputeFieldOfView(leanCell, radius, map, visibleCells);
+                        }
                     }
                     WalkieView.ApplyFieldOfView(map, visibleCells);
                     foreach (var b in map.listerBuildings.allBuildingsColonist)
@@ -318,6 +322,10 @@ namespace SurveillanceShift
                         {
                             var radius = pawn.SightRadius();
                             ShadowCaster.ComputeFieldOfView(pawn.Position, radius, map, visibleCells);
+                            if (ModCompatibility.TryGetAvatarLeanCell(pawn, out var leanCell))
+                            {
+                                ShadowCaster.ComputeFieldOfView(leanCell, radius, map, visibleCells);
+                            }
                         }
                     }
                     if (ModCompatibility.VehicleFrameworkAvailable)

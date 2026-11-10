@@ -511,7 +511,7 @@
 		</inspectorTabs>
 		<size>(2,2)</size>
 		<rotatable>false</rotatable>
-		<constructEffect>ConstructWood</constructEffect>
+		<constructEffect IsNull="True" />
 		<graphicData>
 			<texPath>Things/Building/TribalWatchtower/TribalWatchtower</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
