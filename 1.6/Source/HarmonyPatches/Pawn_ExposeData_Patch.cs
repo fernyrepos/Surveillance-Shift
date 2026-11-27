@@ -12,7 +12,7 @@ namespace SurveillanceShift
             if (__instance.def is null || __instance.RaceProps is null) return;
             var loading = Scribe.mode == LoadSaveMode.LoadingVars;
             var saving = Scribe.mode == LoadSaveMode.Saving;
-            var isPlayer = Find.FactionManager != null && __instance.Faction == Faction.OfPlayer;
+            var isPlayer = Find.World?.factionManager != null && __instance.Faction == Faction.OfPlayer;
             if (__instance.RaceProps.Animal && (isPlayer || loading))
             {
                 __instance.GetSurveillanceData().ExposeData();
